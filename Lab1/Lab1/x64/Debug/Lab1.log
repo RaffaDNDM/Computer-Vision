@@ -1,0 +1,14 @@
+﻿  ColorChange.cpp
+  Lab1.cpp
+D:\github\Computer-Vision\Lab1\Lab1\Lab1.cpp(12,52): warning C4244: 'argument': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
+D:\github\Computer-Vision\Lab1\Lab1\Lab1.cpp(12,36): warning C4244: 'argument': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
+  Generating Code...
+  Lab1.vcxproj -> D:\github\Computer-Vision\Lab1\x64\Debug\Lab1.exe
