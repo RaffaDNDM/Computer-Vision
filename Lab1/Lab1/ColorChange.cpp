@@ -7,24 +7,26 @@ void changeOnClickRGB(Mat img, int x, int y)
 	square_mean(img,x,y,color);
 	Mat new_img = img.clone();
 
+	float treshold = 0.67;
+
 	for (int i = 0; i < new_img.rows; i++)
 	{
 		for (int j = 0; j < new_img.cols; j++)
 		{
-			int color0_check1 = (img.at<Vec3b>(i, j)[0] <= static_cast<int>((1 + 0.3) * color[0]));
-			int color0_check2 = (img.at<Vec3b>(i, j)[0] >= static_cast<int>((1 - 0.3) * color[0]));
-			int color1_check1 = (img.at<Vec3b>(i, j)[1] <= static_cast<int>((1 + 0.3) * color[1]));
-			int color1_check2 = (img.at<Vec3b>(i, j)[1] >= static_cast<int>((1 - 0.3) * color[1]));
-			int color2_check1 = (img.at<Vec3b>(i, j)[2] <= static_cast<int>((1 + 0.3) * color[2]));
-			int color2_check2 = (img.at<Vec3b>(i, j)[2] >= static_cast<int>((1 - 0.3) * color[2]));
+			int color0_check1 = (img.at<Vec3b>(i, j)[0] <= static_cast<int>((1 + treshold) * color[0]));
+			int color0_check2 = (img.at<Vec3b>(i, j)[0] >= static_cast<int>((1 - treshold) * color[0]));
+			int color1_check1 = (img.at<Vec3b>(i, j)[1] <= static_cast<int>((1 + treshold) * color[1]));
+			int color1_check2 = (img.at<Vec3b>(i, j)[1] >= static_cast<int>((1 - treshold) * color[1]));
+			int color2_check1 = (img.at<Vec3b>(i, j)[2] <= static_cast<int>((1 + treshold) * color[2]));
+			int color2_check2 = (img.at<Vec3b>(i, j)[2] >= static_cast<int>((1 - treshold) * color[2]));
 
 			int check = color0_check1 && color0_check2 && color1_check1 && color1_check2 && color2_check1 && color2_check2;
 
 			if (check)
 			{
-				new_img.at<Vec3b>(i, j)[0]=92;
+				new_img.at<Vec3b>(i, j)[0]= 201;
 				new_img.at<Vec3b>(i, j)[1]=37;
-				new_img.at<Vec3b>(i, j)[2]=201;
+				new_img.at<Vec3b>(i, j)[2]= 92;
 			}
 		}
 	}
