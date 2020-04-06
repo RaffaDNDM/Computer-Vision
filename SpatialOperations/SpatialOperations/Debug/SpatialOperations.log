@@ -1,0 +1,22 @@
+﻿  SpatialOperations.cpp
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(27,31): error C2065: 'spatialOperations': undeclared identifier
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(147,23): warning C4309: 'initializing': truncation of constant value
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(148,25): warning C4309: 'initializing': truncation of constant value
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(157,39): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=char
+          ]
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(159,39): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=char
+          ]
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(179,39): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=char
+          ]
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(181,39): warning C4309: '=': truncation of constant value
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(204,39): warning C4309: '=': truncation of constant value
+D:\github\Computer-Vision\SpatialOperations\SpatialOperations\SpatialOperations.cpp(215,39): warning C4309: '=': truncation of constant value
