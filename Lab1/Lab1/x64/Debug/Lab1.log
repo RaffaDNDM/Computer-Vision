@@ -1,3 +1,0 @@
-﻿  ColorChange.cpp
-D:\github\Computer-Vision\Lab1\Lab1\ColorChange.cpp(10,23): warning C4305: 'initializing': truncation from 'double' to 'float'
-  Lab1.vcxproj -> D:\github\Computer-Vision\Lab1\x64\Debug\Lab1.exe
