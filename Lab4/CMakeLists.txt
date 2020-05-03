@@ -26,8 +26,8 @@ add_executable(
 	"src/Lab4.cpp"
 	"src/CannyDetector.cpp"
 	"src/StreetDetector.cpp" 
-	"src/HoughTransform.cpp"
-)
+	"src/HoughLinesDetector.cpp"
+ "src/HoughCirclesDetector.cpp")
 
 
 target_link_libraries(

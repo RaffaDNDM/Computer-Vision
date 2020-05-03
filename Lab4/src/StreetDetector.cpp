@@ -4,14 +4,16 @@
 StreetDetector::StreetDetector(cv::Mat input_img):
 	_input_img{ input_img },
 	_cd{ CannyDetector::CannyDetector(_input_img, 0, 0, 3) },
-	_ht{ HoughTransform::HoughTransform(_input_img, 1, 1, 0) }
+	_hld{ HoughLinesDetector::HoughLinesDetector(_input_img, 1, 1, 0) },
+	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 4, 1, 1, 4, 8) }
 {}
 
 // perform detection (Canny + Hough)
 void StreetDetector::detect()
 {
+	/*
 	_cd.detect();
-	_ht.detectLines();    
+	_hld.detectLines();    
 
 	while(true)
 	{
@@ -21,11 +23,13 @@ void StreetDetector::detect()
 		if (_cd.getModified())
 		{
 			_cd.setModified(false);
-			_ht.setInput(_cd.getResult());
-			_ht.houghLines();
+			_hld.setInput(_cd.getResult());
+			_hld.houghLines();
 		} 
 	}
-	//_ht.detectLines();
+	*/
+
+
 }
 
 // get the output of the filter

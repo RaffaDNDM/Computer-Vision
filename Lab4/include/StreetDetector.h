@@ -3,7 +3,8 @@
 
 #include "Lab4.h"
 #include "CannyDetector.h"
-#include "HoughTransform.h"
+#include "HoughLinesDetector.h"
+#include "HoughCirclesDetector.h"
 
 // Generic class implementing a filter with the input and output image data and the parameters
 class StreetDetector {
@@ -35,7 +36,8 @@ private:
 	CannyDetector _cd;
 
 	//Hough transform
-	HoughTransform _ht;
+	HoughLinesDetector _hld;
+	HoughCirclesDetector _hcd;
 };
 
 #endif

@@ -1,15 +1,13 @@
-#ifndef HOUGH_TRANSFORM
-#define HOUGH_TRANSFORM
+#ifndef HOUGH_LINES
+#define HOUGH_LINES
 
 #include "Lab4.h"
 
-//void HoughLines(InputArray image, OutputArray lines, double rho, double theta, int threshold, double srn=0, double stn=0 )
-// Generic class implementing a filter with the input and output image data and the parameters
-class HoughTransform {
+class HoughLinesDetector {
 
 public:
 	//Constructor
-	HoughTransform(cv::Mat input_img, int rho, int theta, int threshold);
+	HoughLinesDetector(cv::Mat input_img, int rho, int theta, int threshold);
 
 	//detect lines through Hough transform
 	void detectLines();
@@ -64,7 +62,7 @@ private:
 	// output image
 	cv::Mat _result_img;
 
-	const std::string window = "Hough transform";
+	const std::string window = "Hough Street Detection";
 	const double RATIO_RHO = 0.1;
 	const double RATIO2 = 100.0;
 };

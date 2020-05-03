@@ -1,7 +1,7 @@
-#include "HoughTransform.h"
+#include "HoughLinesDetector.h"
 
 //Constructor
-HoughTransform::HoughTransform(cv::Mat input_img, int rho, int theta, int threshold):
+HoughLinesDetector::HoughLinesDetector(cv::Mat input_img, int rho, int theta, int threshold):
 	_input_img{ input_img.clone() },
 	_rho{ rho },
 	_theta { theta },
@@ -12,7 +12,7 @@ HoughTransform::HoughTransform(cv::Mat input_img, int rho, int theta, int thresh
 }
 
 //detect lines through Hough transform
-void HoughTransform::detectLines()
+void HoughLinesDetector::detectLines()
 {
 	_rho = 1;
 	_theta = 37;
@@ -25,13 +25,13 @@ void HoughTransform::detectLines()
 }
 
 
-void HoughTransform::houghLinesTrackbar(int value, void* params)
+void HoughLinesDetector::houghLinesTrackbar(int value, void* params)
 {
-	HoughTransform* ht = (HoughTransform*) params;
-	ht->houghLines();
+	HoughLinesDetector* hld = (HoughLinesDetector*) params;
+	hld->houghLines();
 }
 
-void HoughTransform::houghLines()
+void HoughLinesDetector::houghLines()
 {
 	cv::Mat result = _result_img.clone();
 
@@ -96,61 +96,61 @@ void HoughTransform::houghLines()
 }
 
 //detect circles through Hough transform
-void HoughTransform::detectCircles()
+void HoughLinesDetector::detectCircles()
 {
 
 }
 
 //set the input image
-void HoughTransform::setInput(cv::Mat img)
+void HoughLinesDetector::setInput(cv::Mat img)
 {
 	_input_img = img.clone();
 }
 
 //get the input image
-cv::Mat HoughTransform::getInput()
+cv::Mat HoughLinesDetector::getInput()
 {
 	return _input_img;
 }
 
 // get the output
-cv::Mat HoughTransform::getResult()
+cv::Mat HoughLinesDetector::getResult()
 {
 	return _result_img;
 }
 
 //set the distance resolution
-void HoughTransform::setRho(int rho)
+void HoughLinesDetector::setRho(int rho)
 {
 	_rho = rho;
 }
 
 //get the distance resolution
-double HoughTransform::getRho()
+double HoughLinesDetector::getRho()
 {
 	return _rho;
 }
 
 //set the angle resolution
-void HoughTransform::setTheta(int theta)
+void HoughLinesDetector::setTheta(int theta)
 {
 	_theta = theta;
 }
 
 //get the angle resolution
-double HoughTransform::getTheta()
+double HoughLinesDetector::getTheta()
 {
 	return _theta*(CV_PI/150);
 }
 
 //set the accumulator threshold
-void HoughTransform::setThresh(int threshold)
+void HoughLinesDetector::setThresh(int threshold)
 {
 	_threshold = threshold;
 }
 
 //get the accumulator threshold
-int HoughTransform::getThresh()
+int HoughLinesDetector::getThresh()
 {
 	return _threshold*5;
 }
