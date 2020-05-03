@@ -25,7 +25,9 @@ add_executable(
 	${PROJECT_NAME}
 	"src/Lab4.cpp"
 	"src/CannyDetector.cpp"
-  "src/StreetDetector.cpp" "src/HoughTransform.cpp")
+	"src/StreetDetector.cpp" 
+	"src/HoughTransform.cpp"
+)
 
 
 target_link_libraries(
@@ -35,3 +37,5 @@ target_link_libraries(
 
 #Copy data needed by program to the build directory
 file(COPY Images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+#set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "Build")
+#set(EXECUTABLE_OUTPUT_PATH "build")

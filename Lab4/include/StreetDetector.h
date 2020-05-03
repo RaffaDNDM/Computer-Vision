@@ -24,8 +24,7 @@ public:
 	//get input image
 	cv::Mat getInput();
 
-
-protected:
+private:
 	// input image
 	cv::Mat _input_img;
 

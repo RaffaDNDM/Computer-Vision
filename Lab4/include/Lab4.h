@@ -6,9 +6,10 @@
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc.hpp>
 #include<iostream>
+#include <chrono>
+#include <ctime>
 
-using namespace std;
-
+#define MAX_TIMEOUT 50
 namespace colors {
 
 	const int num_channels = 3;

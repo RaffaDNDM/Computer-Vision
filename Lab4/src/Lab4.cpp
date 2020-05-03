@@ -12,6 +12,7 @@ int main(int argc, char** argv)
     */
 
     StreetDetector sd(img);
+    sd.detect();
 
     return 0;
 }

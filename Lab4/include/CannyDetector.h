@@ -8,7 +8,7 @@ class CannyDetector {
 
 public:
 	//Constructor
-	CannyDetector(cv::Mat input_img, double threshold1, double threshold2, int aperture_size);
+	CannyDetector(cv::Mat input_img, int threshold1, int threshold2, int aperture_size);
 
 	//perform edge detection
 	void detect();
@@ -29,33 +29,46 @@ public:
 	int getApertureSize();
 
 	//set the first threshold
-	void setThresh1(double threshold);
+	void setThresh1(int threshold);
 
 	//get the first threshold
 	double getThresh1();
 
 	//set the second threshold
-	void setThresh2(double threshold);
+	void setThresh2(int threshold);
 
 	//get the second threshold
 	double getThresh2();
 
+	//trackbar of Canny image
+	static void cannyTrackbar(int value, void* params);
+
+	//set the modified state
+	void setModified(bool value);
+
+	//get the modified state
+	bool getModified();
 
 private:
 	// input image
 	cv::Mat _input_img;
 
 	//First threshold
-	double _threshold1;
+	int _threshold1;
 
 	//Second threshold	
-	double _threshold2;
+	int _threshold2;
 
 	//Aperture size of Sobel operator
 	int _aperture_size;
 
 	// output image (filter result)
 	cv::Mat _result_img;
-};
 
+	bool _modified = false;
+
+	const std::string window = "Canny image";
+	const double RATIO1 = 1.0;
+	const double RATIO2 = 1.0;
+};
 #endif

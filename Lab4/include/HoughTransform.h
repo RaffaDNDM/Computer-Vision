@@ -9,7 +9,7 @@ class HoughTransform {
 
 public:
 	//Constructor
-	HoughTransform(cv::Mat input_img, double rho, double theta, int threshold);
+	HoughTransform(cv::Mat input_img, int rho, int theta, int threshold);
 
 	//detect lines through Hough transform
 	void detectLines();
@@ -27,13 +27,13 @@ public:
 	cv::Mat getResult();
 
 	//set the distance resolution
-	void setRho(double rho);
+	void setRho(int rho);
 
 	//get the distance resolution
 	double getRho();
 
 	//set the angle resolution
-	void setTheta(double theta);
+	void setTheta(int theta);
 
 	//get the angle resolution
 	double getTheta();
@@ -44,22 +44,29 @@ public:
 	//get the accumulator threshold
 	int getThresh();
 
+	static void houghLinesTrackbar(int value, void* params);
+
+	void houghLines();
 
 private:
 	// input image
 	cv::Mat _input_img;
 
 	//distance resolution of the accumulator in pixels
-	double _rho;
+	int _rho;
 
 	//angle resolution of the accumulator in radians
-	double _theta;
+	int _theta;
 
 	//accumulator threshold
 	int _threshold;
 
 	// output image
 	cv::Mat _result_img;
+
+	const std::string window = "Hough transform";
+	const double RATIO_RHO = 0.1;
+	const double RATIO2 = 100.0;
 };
 
 #endif
