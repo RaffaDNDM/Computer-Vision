@@ -5,7 +5,7 @@ StreetDetector::StreetDetector(cv::Mat input_img):
 	_input_img{ input_img },
 	_cd{ CannyDetector::CannyDetector(_input_img, 0, 0, 3) },
 	_hld{ HoughLinesDetector::HoughLinesDetector(_input_img, 1, 1, 0) },
-	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 4, 1, 1, 4, 8) }
+	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 30, 300, 200, 100, 200) }
 {}
 
 // perform detection (Canny + Hough)
@@ -29,7 +29,9 @@ void StreetDetector::detect()
 	}
 	*/
 
-
+	_hcd.detectCircles();
+	_hcd.houghCircles();
+	cv::waitKey(0);
 }
 
 // get the output of the filter
