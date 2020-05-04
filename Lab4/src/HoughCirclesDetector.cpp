@@ -22,8 +22,8 @@ void HoughCirclesDetector::detectCircles()
 	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
 	cv::createTrackbar("DP", window, &(_dp), 4, houghCirclesTrackbar, (void*)this);
 	cv::createTrackbar("Min dist", window, &(_minDist), 100, houghCirclesTrackbar, (void*)this);
-	cv::createTrackbar("Param1", window, &(_param1), 300, houghCirclesTrackbar, (void*)this);
-	cv::createTrackbar("Param2", window, &(_param2), 300, houghCirclesTrackbar, (void*)this);
+	cv::createTrackbar("Param1", window, &(_param1), 100, houghCirclesTrackbar, (void*)this);
+	cv::createTrackbar("Param2", window, &(_param2), 100, houghCirclesTrackbar, (void*)this);
 	cv::createTrackbar("Min radius", window, &(_minRadius), 200, houghCirclesTrackbar, (void*)this);
 	cv::createTrackbar("Max radius", window, &(_maxRadius), 200, houghCirclesTrackbar, (void*)this);
 	cv::imshow(window, _result_img);
@@ -135,7 +135,7 @@ void HoughCirclesDetector::houghCircles()
 		cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
 		int radius = cvRound(circles[i][2]);
 		// circle center
-		circle(result, center, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
+		//circle(result, center, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
 		// circle outline
 		circle(result, center, radius, cv::Scalar(0, 255, 0), cv::FILLED, 8, 0);
 	}

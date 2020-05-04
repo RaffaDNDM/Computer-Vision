@@ -5,7 +5,7 @@ StreetDetector::StreetDetector(cv::Mat input_img):
 	_input_img{ input_img },
 	_cd{ CannyDetector::CannyDetector(_input_img, 0, 0, 3) },
 	_hld{ HoughLinesDetector::HoughLinesDetector(_input_img, 1, 1, 0) },
-	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 30, 300, 200, 100, 200) }
+	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 69, 30, 23, 1, 14) }
 {}
 
 // perform detection (Canny + Hough)
