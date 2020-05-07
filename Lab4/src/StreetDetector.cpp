@@ -11,7 +11,6 @@ StreetDetector::StreetDetector(cv::Mat input_img):
 // perform detection (Canny + Hough)
 void StreetDetector::detect()
 {
-	/*
 	_cd.detect();
 	_hld.detectLines();    
 
@@ -27,8 +26,8 @@ void StreetDetector::detect()
 			_hld.houghLines();
 		} 
 	}
-	*/
 
+	//_hcd.getResult(_hld.getResult());
 	_hcd.detectCircles();
 	_hcd.houghCircles();
 	cv::waitKey(0);

@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{siunitx} %per scrivere il simbolo °
+\usepackage{verbatim} %per i commenti1
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{6}
+\usepackage{multirow}
+\newcommand{\minitab}[2][l]{\begin{tabular}#1 #2\end{tabular}}
+\usepackage{rotating}
+\usepackage{xfrac}
+\usepackage{cite}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%\usepackage{booktabs,array}
+%\usepackage{tikz}
+
+%\usepackage{tabularx}
+
+%\usepackage{chngcntr}
+%\counterwithin{table}{section}
+
+%------------------------------ colors
+\usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
+\definecolor{333}{RGB}{51, 51, 51} % define custom color
+\definecolor{background}{RGB}{248, 248, 255}
+\definecolor{comment}{RGB}{17,167,5}
+\definecolor{keyword}{RGB}{195,47,8}
+\definecolor{string}{RGB}{142,195,0}
+\definecolor{number}{RGB}{90,84,84}
+\definecolor{identifier}{RGB}{0,90,201}
+
+%------------------------------ source code
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\footnotesize\sffamily,
+  commentstyle=\itshape\color{gray},
+  captionpos=b,
+  frame=shadowbox,
+  language=HTML,
+  rulesepcolor=\color{333},
+  tabsize=2
+}
+
+\lstdefinestyle{code}{
+  backgroundcolor=\color{background},
+  basicstyle=\footnotesize\sffamily,
+  commentstyle=\color{comment},
+  frame=L,
+  identifierstyle=\color{identifier},
+  keywordstyle=\color{keyword},
+  numbers=left,
+  numbersep=10pt,
+  numberstyle=\tiny\color{number},
+  stringstyle=\color{string},
+  showstringspaces=false,  
+  stepnumber=1,
+  tabsize=2
+}
+
+\title{\textbf{Report about Lab2}} % Title
+\author{Raffaele \textsc{Di Nardo Di Maio}} % Author name
+\date{\today} % Date for the report
+
+\begin{document}
+\begin{minipage}{.20\textwidth}
+  \includegraphics[height=3cm]{../Report1/Icon4}
+\end{minipage}\begin{minipage}{.20\textwidth}
+  \begin{table}[H]
+  \begin{tabular}{l}
+  \scshape{\Large{Computer Engineering Master Degree}} \\
+  \hline \\
+  \scshape{\Large{Computer Vision}} \\
+  \end{tabular}
+  \end{table}
+\end{minipage}
+\vspace{1cm}
+
+{\let\newpage\relax\maketitle}
+
+\end{document}
