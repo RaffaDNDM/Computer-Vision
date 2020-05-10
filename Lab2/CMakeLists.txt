@@ -24,7 +24,7 @@ include_directories(
 add_executable(
 	${PROJECT_NAME}
 	"src/Lab2.cpp"
-)
+	"src/Calibration.cpp")
 
 
 target_link_libraries(
@@ -33,5 +33,13 @@ target_link_libraries(
 )
 
 #Copy data needed by program to the build directory
-file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+if (WIN32 AND MSVC)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" NATIVE_BIN_DIR)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/data" NATIVE_DATA_DIR)
+  add_custom_command(
+    TARGET "${PROJECT_NAME}" POST_BUILD
+    COMMAND xcopy "${NATIVE_DATA_DIR}" "${NATIVE_BIN_DIR}\\data" /I /C /K /E /R /Y 
+  )
+endif (WIN32 AND MSVC)
 
+#file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

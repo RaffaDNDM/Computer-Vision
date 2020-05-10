@@ -27,7 +27,8 @@ add_executable(
 	"src/CannyDetector.cpp"
 	"src/StreetDetector.cpp" 
 	"src/HoughLinesDetector.cpp"
- "src/HoughCirclesDetector.cpp")
+	"src/HoughCirclesDetector.cpp"
+)
 
 
 target_link_libraries(
@@ -36,6 +37,12 @@ target_link_libraries(
 )
 
 #Copy data needed by program to the build directory
-file(COPY Images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-#set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "Build")
-#set(EXECUTABLE_OUTPUT_PATH "build")
+if (WIN32 AND MSVC)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" NATIVE_BIN_DIR)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/data" NATIVE_DATA_DIR)
+  add_custom_command(
+    TARGET "${PROJECT_NAME}" POST_BUILD
+    COMMAND xcopy "${NATIVE_DATA_DIR}" "${NATIVE_BIN_DIR}\\data" /I /C /K /E /R /Y 
+  )
+endif (WIN32 AND MSVC)
+#file(COPY Images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

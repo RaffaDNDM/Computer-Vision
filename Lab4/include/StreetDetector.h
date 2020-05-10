@@ -6,37 +6,52 @@
 #include "HoughLinesDetector.h"
 #include "HoughCirclesDetector.h"
 
-// Generic class implementing a filter with the input and output image data and the parameters
-class StreetDetector {
+/**
+	Class implementing Street and Signal detection
+*/
+class StreetSignalDetector {
 
 public:
-	//Constructor
-	StreetDetector(cv::Mat input_img);
+	/**
+		Constructor
+		\param input_img input image for which we want to highlight street and signal
+	*/
+	StreetSignalDetector(cv::Mat input_img);
 
-	// perform detection (Canny + Hough)
+	/**
+		Perform detection (Canny + Hough)
+	*/
 	void detect();
 
-	// get the output of the filter
+	/**
+		Get the output of the filter
+	*/
 	cv::Mat getResult();
 
-	//set input image
+	/**
+		Set input image
+	*/
 	void setInput(cv::Mat img);
 
-	//get input image
+	/**
+		Get input image
+	*/
 	cv::Mat getInput();
 
 private:
-	// input image
+	//Input image
 	cv::Mat _input_img;
 
-	// output image (filter result)
+	//Output image (image with highlighted street and signal)
 	cv::Mat _result_img;
 
 	//Canny detector
 	CannyDetector _cd;
 
-	//Hough transform
+	//Hough transform to detect street
 	HoughLinesDetector _hld;
+
+	//Hough transform to detect signal
 	HoughCirclesDetector _hcd;
 };
 

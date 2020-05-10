@@ -3,16 +3,15 @@
 
 int main(int argc, char** argv)
 {
-    cv::Mat img = cv::imread("Images/input.png", cv::IMREAD_COLOR);
-    
-    /*
-    cv::namedWindow("ciao", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-    cv::imshow("ciao", img);
-    cv::waitKey(0);
-    */
+    //argv[1] = path+filename of input image
+    if (argc < 2)
+        std::cerr<<"Few arguments"<<std::endl;
 
-    StreetDetector sd(img);
-    sd.detect();
+    cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
+
+    //Detection of street and signal
+    StreetSignalDetector ssd(img);
+    ssd.detect();
 
     return 0;
 }
