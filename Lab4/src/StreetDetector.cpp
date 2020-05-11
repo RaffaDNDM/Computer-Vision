@@ -3,7 +3,7 @@
 //Constructor
 StreetSignalDetector::StreetSignalDetector(cv::Mat input_img):
 	_input_img{ input_img },
-	_cd{ CannyDetector::CannyDetector(_input_img, 200, 200, 3) },
+	_cd{ CannyDetector::CannyDetector(_input_img, 100, 200, 3) },
 	_hld{ HoughLinesDetector::HoughLinesDetector(_input_img, 1, 37, 14) },
 	_hcd{ HoughCirclesDetector::HoughCirclesDetector(_input_img, 1, 69, 30, 23, 1, 14) }
 {}
@@ -45,6 +45,12 @@ void StreetSignalDetector::detect()
 	_hcd.detectCircles();
 	_hcd.houghCircles();
 	cv::waitKey(0);
+
+	/**
+		I used this function call to store the image and use it in the report
+
+		cv::imwrite("../../../result/result.png", _hcd.getResult());
+	*/
 }
 
 // get the output of the filter

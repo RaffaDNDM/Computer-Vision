@@ -10,7 +10,7 @@ CannyDetector::CannyDetector(cv::Mat input_img, int threshold1, int threshold2, 
 
 void CannyDetector::detect()
 {
-	blur(_input_img, _input_img, cv::Size(5, 5));
+	blur(_input_img, _input_img, cv::Size(9,9));
 	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
 	cv::createTrackbar("Threshold 1", window, &(_threshold1), 200, cannyTrackbar, (void*) this);
 	cv::createTrackbar("Threshold 2", window, &(_threshold2), 200, cannyTrackbar, (void*) this);

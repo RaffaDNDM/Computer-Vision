@@ -35,7 +35,7 @@ void HoughCirclesDetector::houghCirclesTrackbar(int value, void* params)
 {
 	HoughCirclesDetector* hcd = (HoughCirclesDetector*)params;
 
-	// mindist, minR, maxR, tresh1, thresh2 != 0
+	//mindist, minRadius, maxRadius, treshold1, threshold2 != 0
 	if (hcd->getMinDist() == 0.0)
 	{
 		hcd->setMinDist(1);
@@ -151,12 +151,6 @@ void HoughCirclesDetector::houghCircles()
 	}
 
 	setResult(result.clone());
-	
-	/**
-		I used this function call to store the image used in the report
-
-		cv::imwrite("../../../result/result.png", getResult());
-	*/
 
 	cv::imshow(window, result);
 }
