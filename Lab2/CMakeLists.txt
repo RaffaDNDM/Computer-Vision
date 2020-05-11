@@ -41,5 +41,3 @@ if (WIN32 AND MSVC)
     COMMAND xcopy "${NATIVE_DATA_DIR}" "${NATIVE_BIN_DIR}\\data" /I /C /K /E /R /Y 
   )
 endif (WIN32 AND MSVC)
-
-#file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

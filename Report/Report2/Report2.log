@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2020.1.11)  11 MAY 2020 09:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2020.1.11)  11 MAY 2020 22:43
 entering extended mode
 **./Report2.tex
 (Report2.tex
@@ -897,44 +897,48 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 102.
-
-Underfull \hbox (badness 10000) in paragraph at lines 119--120
-
- []
-
-[1
+ [1
 
 {C:/Users/raffa/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <../Icon4.pn
 g>]
-<result.png, id=16, 1246.6575pt x 376.40625pt>
+<result_lines.png, id=16, 1246.6575pt x 376.40625pt>
+File: result_lines.png Graphic file (type png)
+<use result_lines.png>
+Package pdftex.def Info: result_lines.png  used on input line 159.
+(pdftex.def)             Requested size: 473.73477pt x 143.03586pt.
+<result.png, id=17, 1246.6575pt x 376.40625pt>
 File: result.png Graphic file (type png)
 <use result.png>
-Package pdftex.def Info: result.png  used on input line 158.
+Package pdftex.def Info: result.png  used on input line 165.
 (pdftex.def)             Requested size: 473.73477pt x 143.03586pt.
- [2 <./result.png (PNG copy)>] (Report2.aux) ) 
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[2 <./result_lines.png (PNG copy)>] [3 <./result.png (PNG copy)>] (Report2.aux)
+ ) 
 Here is how much of TeX's memory you used:
- 20685 strings out of 492452
- 388518 string characters out of 3134016
- 630201 words of memory out of 3000000
- 24848 multiletter control sequences out of 15000+200000
+ 20693 strings out of 492452
+ 388671 string characters out of 3134016
+ 631201 words of memory out of 3000000
+ 24856 multiletter control sequences out of 15000+200000
  542126 words of font info for 60 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 50i,12n,67p,418b,591s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\raffa\AppData\Local\Mi
-KTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk><D:/Programs/Miktex/fon
-ts/type1/public/amsfonts/cm/cmbx10.pfb><D:/Programs/Miktex/fonts/type1/public/a
-msfonts/cm/cmbx12.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmcsc1
-0.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmmi10.pfb><D:/Program
-s/Miktex/fonts/type1/public/amsfonts/cm/cmmi7.pfb><D:/Programs/Miktex/fonts/typ
-e1/public/amsfonts/cm/cmr10.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts
-/cm/cmr12.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmr7.pfb><D:/P
-rograms/Miktex/fonts/type1/public/amsfonts/cm/cmr8.pfb><D:/Programs/Miktex/font
-s/type1/public/amsfonts/cm/cmsy10.pfb><D:/Programs/Miktex/fonts/type1/public/am
-sfonts/cm/cmsy7.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmti10.p
-fb>
-Output written on Report2.pdf (2 pages, 913945 bytes).
+ 50i,12n,67p,413b,593s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
+tcrm1000.pk><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmbx10.pfb><D:/P
+rograms/Miktex/fonts/type1/public/amsfonts/cm/cmbx12.pfb><D:/Programs/Miktex/fo
+nts/type1/public/amsfonts/cm/cmcsc10.pfb><D:/Programs/Miktex/fonts/type1/public
+/amsfonts/cm/cmmi10.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmmi
+7.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmr10.pfb><D:/Programs
+/Miktex/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/Programs/Miktex/fonts/type
+1/public/amsfonts/cm/cmr7.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/c
+m/cmr8.pfb><D:/Programs/Miktex/fonts/type1/public/amsfonts/cm/cmsy10.pfb><D:/Pr
+ograms/Miktex/fonts/type1/public/amsfonts/cm/cmsy7.pfb><D:/Programs/Miktex/font
+s/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on Report2.pdf (3 pages, 1727788 bytes).
 PDF statistics:
- 66 PDF objects out of 1000 (max. 8388607)
+ 70 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

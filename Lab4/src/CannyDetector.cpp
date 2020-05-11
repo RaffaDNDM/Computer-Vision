@@ -1,3 +1,9 @@
+/**
+	@file CannyDetector.cpp
+	@brief Class for Canny edge detection.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "CannyDetector.h"
 
 CannyDetector::CannyDetector(cv::Mat input_img, int threshold1, int threshold2, int aperture_size):

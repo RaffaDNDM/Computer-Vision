@@ -1,102 +1,106 @@
+/**
+	@file CannyDetector.h
+	@brief Class for Canny edge detection.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef CANNY_DETECTOR
 #define CANNY_DETECTOR
 
 #include "Lab4.h"
 
-/**
-	Class implementing Canny Edge detection
-*/
 class CannyDetector {
 
 public:
 	/**
-		Constructor
-		\param input_img RGB input image
-		\param threshold1 first threshold for the hysteresis procedure
-		\param threshold2 second threshold for the hysteresis procedure
-		\param aperture_size aperture size for the Sobel() operator
+		@brief Constructor.
+		@param input_img RGB input image
+		@param threshold1 first threshold for the hysteresis procedure
+		@param threshold2 second threshold for the hysteresis procedure
+		@param aperture_size aperture size for the Sobel() operator
 	*/
 	CannyDetector(cv::Mat input_img, int threshold1, int threshold2, int aperture_size);
 
 	/**
-		Initialization of edge detection window
+		@brief Initialization of edge detection window.
 	*/
 	void detect();
 
 	/**
-		Callback for the trackbars of Canny window
-		\param value value of modfied trackbar that User set
-		\param params object passed as parameter to trackbar
+		@brief Callback for the trackbars of Canny window.
+		@param value value of modfied trackbar that User set
+		@param params object passed as parameter to trackbar
 	*/
 	static void cannyTrackbar(int value, void* params);
 
 	/**
-		Performs edge detection
+		@brief Performs edge detection.
 	*/
 	void canny();
 
 	/**
-		Set the input image equal to img
-		\param img image that is going to be set as input image in detection
+		@brief Set the input image equal to img.
+		@param img image that is going to be set as input image in detection
 	*/
 	void setInput(cv::Mat img);
 
 	/**
-		Get the input image
-		\returns input image
+		@brief Get the input image.
+		@return input image
 	*/
 	cv::Mat getInput();
 
 	/**
-		Get the output of the detection
+		@brief Get the output of the detection.
+		@return result image
 	*/
 	cv::Mat getResult();
 
 	/**
-		Set the aperture size
-		\param size new value for aperture size
+		@brief Set the aperture size.
+		@param size new value for aperture size
 	*/
 	void setApertureSize(int size);
 
 	/**
-		Get the aperture Size
-		\returns aperture size
+		@brief Get the aperture size.
+		@return aperture size
 	*/
 	int getApertureSize();
 
 	/**
-		Set the first threshold for the hysteresis procedure
-		\param threshold new value for the threshold
+		@brief Set the first threshold for the hysteresis procedure.
+		@param threshold new value for the threshold
 	*/
 	void setThresh1(int threshold);
 
 	/**
-		Get the first threshold for the hysteresis procedure
-		\returns value of the first threshold
+		@brief Get the first threshold for the hysteresis procedure.
+		@return value of the first threshold
 	*/
 	double getThresh1();
 
 	/**
-		Set the second threshold for the hysteresis procedure
-		\param threshold new value for the threshold
+		@brief Set the second threshold for the hysteresis procedure.
+		@param threshold new value for the threshold
 	*/
 	void setThresh2(int threshold);
 
 	/**
-		Get the second threshold for the hysteresis procedure
-		\param threshold new value for the threshold
+		@brief Get the second threshold for the hysteresis procedure.
+		@return value of the second threshold
 	*/
 	double getThresh2();
 
 	/**
-		Set the modified state value
-		\param value new value of modified state
+		@brief Set the modified state value.
+		@param value new value of modified state
 	*/
 	void setModified(bool value);
 
 	/**
-		Get the modified state value
-		\returns value of modified state
+		@brief Get the modified state value.
+		@return value of modified state
 	*/
 	bool getModified();
 
@@ -110,7 +114,7 @@ private:
 	//First threshold
 	int _threshold1;
 
-	//Second threshold	
+	//Second threshold
 	int _threshold2;
 
 	//Aperture size of Sobel operator
@@ -121,10 +125,10 @@ private:
 
 	//Name of the window
 	const std::string window = "Canny image";
-	
+
 	//Ratio for which first threshold is multiplied
 	const double RATIO1 = 1.0;
-	
+
 	//Ratio for which first threshold is multiplied
 	const double RATIO2 = 1.0;
 };

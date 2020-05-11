@@ -1,13 +1,22 @@
+/**
+	@file Lab2.cpp
+	@brief Source file with main().
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "Lab2.h"
 #include "Calibration.h"
 
 int main(int argc, char** argv)
 {
-    //argv[1] = data folder
+    //argv[1] = chessboard images folder
     //argv[2] = test folder
-    if (argc < 3)
+    if (argc != 3)
     {
-        std::cerr << "Few arguments" << std::endl;
+        std::cerr << LINE << std::endl;
+        std::cerr << "You need to specify as command line arguments, in this order:" << std::endl;
+        std::cerr << "    chessboard_images_folder     test_images_folder" << std::endl;
+        std::cerr << LINE << std::endl;
         return 1;
     }
 

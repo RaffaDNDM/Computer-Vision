@@ -89,43 +89,44 @@
 {\let\newpage\relax\maketitle}
 
 \section{Goal of the experience}
-The goal of this lab experience was to detect street and a street signal in an image, highlighting them respectively with red and green colors. The extraction of them was done by using Canny edge detector and Hough transforms and tuning their parameters.
-\section{Organization of code}
-The code of this lab is organized in ten main files:
+The goal of this lab experience was to detect a road lane and a street signal in an image, highlighting them respectively with red and green colors. Their extraction was done by using the Canny edge detector and Hough transforms and by tuning their parameters.
+\section{Code Organization}
+The code of this lab is organized in ten main files (for which I provide also the documentation through doxygen):
 \begin{itemize}
-\item{\textbf{Lab4.cpp} and its header file \textbf{Lab4.h}\\
-they are associated to the \textit{main()} in which an instance of \textit{StreetDetector()} is created and its function \textbf{detect()} is called;}
-\item{\textbf{StreetDetector.cpp} and its header file \textbf{StreetDetector.h}\\
-these are used to create the class \textit{StreetDetector}, which its main function called \textbf{detect()}, that creates all the windows for Canny detector and Hough transforms, creating objects of the classes that implement them. In this function, the main flow of the program is managed and this is organized in two main phases:
+\item{\textbf{Lab4.cpp} and its header file \textbf{Lab4.h}.\\
+They are associated to \textit{main()} where an instance of \textit{StreetDetector()} is created and its function \textbf{detect()} is called.}
+\item{\textbf{StreetDetector.cpp} and its header file \textbf{StreetDetector.h}.\\
+These are used to create the class \textit{StreetDetector}. Its main function is called \textbf{detect()} and it creates all the windows for the Canny detector and Hough transforms, creating objects of the classes that implement them. In this function, the main flow of the program is managed. This is organized in two main phases:
 \begin{enumerate}
-\item{\textbf{Detection of street}\\
-on screen there are two windows in the same time (Canny edge detection and Hough lines transform windows) and updating the first one, the second one is affected also by these changes. When one key, between 'q','ESC' and '\textbackslash{r}', is pressed by user, the last image in the Hough line window is used for the next part;
+\item{\textbf{Detection of the street}.\\
+On screen there are two windows at the same time (Canny edge detection and Hough lines transform). By updating the first one, the second one is also affected by these changes. When one key, between 'q', 'ESC' and '\textbackslash{r}', is pressed by user, the last image in the Hough lines window is used for the next phase.
 }
-\item{\textbf{Detection of signal}\\
-Using previously computed image, a new window is created for Hough Circle Transform;
+\item{\textbf{Detection of the signal}.\\
+Using the previously computed image, a new window is created for Hough circles transform.
 }
 \end{enumerate}
 }
-\item{\textbf{CannyDetector.cpp} and its header file \textbf{CannyDetector.h}\\
-these are used to create the class \textit{CannyDetector};, that performs Canny edge detection}
-\item{\textbf{HoughLinesDetector.cpp} and its header file \textbf{HoughLinesDetector.h}\\
-these are used to create the class \textit{HoughLinesDetector};, that performs Hough transform detection for lines and highlights in red the triangle in the image, obtained by two most significant detected lines if they intersect;}
-\item{\textbf{HoughCirclesDetector.cpp} and its header file \textbf{HoughCirclesDetector.h}\\
-these are used to create the class \textit{HoughCirclesDetector};, that performs Hough transform detection for circles and highlights in green the most significant circle in the image, between all detected circles;}
+\item{\textbf{CannyDetector.cpp} and its header file \textbf{CannyDetector.h}.\\
+These are used to create the class \textit{CannyDetector}, that performs the Canny edge detection.}
+\item{\textbf{HoughLinesDetector.cpp} and its header file \textbf{HoughLinesDetector.h}.\\
+These are used to create the class \textit{HoughLinesDetector}, that performs Hough transform detection for lines and highlights in red a triangle in the image. This is obtained by the two most significant detected lines.}
+\item{\textbf{HoughCirclesDetector.cpp} and its header file \textbf{HoughCirclesDetector.h}.\\
+These are used to create the class \textit{HoughCirclesDetector}, that performs Hough transform detection for circles and highlights in green the most significant circle in the image, among all detected circles.}
 \end{itemize}
 \section{Command line parameters}
-The program needs to have, as command line argument, the specification of the path of the image, including also the name of the image, on which you want to detect street and signal. 
+The program needs to have, as command line argument, the path of the image ( including its name) on which you want to detect the street and the signal. 
 \section{Experimental results}
-In the following part there are the resulting images used in my workflow, to detect the circle and the image:\\
+In the following part there are the resulting images used in my workflow:
 \begin{enumerate}
-\item{\textbf{Evaluation of parameters of Canny detection and Hough lines transform}\\
-Before applying the Canny Detection, to reduce hysteresis thresholds values, I apply a Blur filter of size 9x9. After this smoothing step, I apply Canny Detector and after Hough Lines transform. The most significant parameters of these detectors are respectively the first threshold and the angle resolution.
+\item{\textbf{Parameters evaluation for Canny detection and Hough lines transform}.\\
+Before applying the Canny Detection, to reduce hysteresis thresholds values, I apply a Blur filter of size 9x9. After this smoothing step, I apply the Canny Detector and, after that, the Hough lines transform. The most significant parameters of these detectors are respectively the first threshold and the angle resolution. 
+Through Hough Transform, I found the two most significant lines (e.g. Figure \ref{result_lines}). Then evaluating their equations, I compute the three corners, that defines the triangle of the street, and I draw it through \textit{cv::fillPoly()} function.
 }
-\item{\textbf{Evaluation of parameters of Hogh circles transform}\\
-The most significant parameters of Hough Circles transform are max radius, if fixed min radius to 1, and the second method parameter. By changing second method parameter, the range of maximum radius, that highlights the signal, changes.  
+\item{\textbf{Parameters evaluation for Hough circles transform}.\\
+The most significant parameters of Hough circles transform are max radius, if we consider a fixed minimum radius of 1, and the second method parameter. By changing second method parameter, in fact, the range of maximum radii, that correctly highlights the signal, changes.  
 }
 \end{enumerate}
-In Table \ref{param}, there are the parameters I used to obtain good detection of street and signal. In Figure \ref{result}, there is the image obtained by the program, using specified parameters at construction of objects, with detected street and signal. 
+In Table \ref{param}, there are the parameters I used to obtain a good detection of the road lane and the signal. In Figure \ref{result} there is the image, obtained by my program, with detected street and signal. The specified parameters are set at object construction.
 \begin{table}[h]
 \centering
 \begin{tabular}{|c|l|c|}
@@ -148,11 +149,17 @@ In Table \ref{param}, there are the parameters I used to obtain good detection o
 \cline{2-3}
 &{\textit{minimum radius}}&{$1$}\\
 \cline{2-3}
-&{\textit{maximum radius}}&{$[10-21]$}\\
+&{\textit{maximum radius}}&{$[10,21]$}\\
 \hline
 \end{tabular}
-\caption{Estimated parameters of detectors that highlights signal and street.}\label{param}
+\caption{Estimated detected parameters that highlight the signal and the street.}\label{param}
 \end{table}
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[scale=0.38]{result_lines}\\ 
+  \caption{\footnotesize{Image with highlighted most significant lines.}}\label{result_lines} 
+\end{center} 
+\end{figure}
 \begin{figure}[h]
 \begin{center}
   \includegraphics[scale=0.38]{result}\\ 

@@ -1,3 +1,9 @@
+/**
+	@file StreetDetector.cpp
+	@brief Class for Street and Signal detection.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "StreetDetector.h"
 
 //Constructor
@@ -22,23 +28,28 @@ void StreetSignalDetector::detect()
 	_hld.setInput(_cd.getResult());
 	_hld.houghLines();
 
-	//Continuous refresh of Hough Line window if there is an update of 
+	//Continuous refresh of Hough Line window if there is an update of
 	//Canny window because of changes of trackbar positions
 	while(!check)
 	{
 		char key = (char) cv::waitKey(MAX_TIMEOUT);
-		
-		if (key == (char)27 || key == 'q' || key == '\r')
-			check = true;
 
-		if (_cd.getModified())
+		if (key == (char) 27 || key == 'q' || key == '\r')
+			check = true;
+		else if (_cd.getModified())
 		{
-			
+
 			_cd.setModified(false);
 			_hld.setInput(_cd.getResult());
 			_hld.houghLines();
-		} 
+		}
 	}
+
+	/**
+		I used this function call to store the image and use it in the report
+
+		cv::imwrite("../../../result/result_lines.png", _hld.getResult());
+	*/
 
 	cv::destroyAllWindows();
 	_hcd.setInput(_hld.getResult());

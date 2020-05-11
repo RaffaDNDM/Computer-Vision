@@ -1,7 +1,13 @@
+/**
+	@file HoughCirclesDetector.cpp
+	@brief Class for Hough transform to detect signal.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "HoughCirclesDetector.h"
 
 //Constructor
-HoughCirclesDetector::HoughCirclesDetector(cv::Mat input_img, int dp, int minDist, int param1, 
+HoughCirclesDetector::HoughCirclesDetector(cv::Mat input_img, int dp, int minDist, int param1,
 	                                       int param2, int minRadius, int maxRadius):
 	_input_img{ input_img.clone() },
 	_result_img{ input_img.clone() },
@@ -18,7 +24,7 @@ void HoughCirclesDetector::detectCircles()
 {
 	//Initialization with original image (so we need to convert it)
 	cvtColor(_input_img, _input_img, cv::COLOR_BGR2GRAY);
-	
+
 	//Gaussian applied to input image to increase efficency of Canny
 	GaussianBlur(_input_img, _input_img, cv::Size(9, 9), 2, 2);
 
@@ -110,7 +116,7 @@ void HoughCirclesDetector::houghCircles()
 		setParam2(1);
 		std::cout << "Param2 set to 1 because it can't be 0.0" << std::endl;
 	}
-	
+
 	/// Apply the Hough Transform to find the circles
 	cv::HoughCircles(getInput(), circles, cv::HOUGH_GRADIENT, getdp(), getMinDist(), getParam1(), getParam2(), getMinRadius(), getMaxRadius());
 
@@ -251,4 +257,3 @@ int HoughCirclesDetector::getMaxRadius()
 {
 	return _maxRadius;
 }
-

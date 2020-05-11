@@ -75,17 +75,17 @@
 \end{minipage}
 {\let\newpage\relax\maketitle}
 \section{Goal of the experience}
-The goal of the Lab2 was to calibrate a camera, using a set of images of the same checkerboard, each one with differenct aspect, taken with the same camera. Each image represents the chessboard at a different distance from the camera and with a different orientation in the space. After generating the calibration parameters of the used camera, the goal to find best and worst input images in terms of mean reprojection error. The last thing to do, was the rectification of an image,representing a room and taken by the same camera, by using the parameters estimated previously.
-\section{Organization of code}
-The code of this lab is organized in four main files:
+The goal of the Lab2 was to calibrate a camera, using a set of images of the same checkerboard, seen from different perspectives, taken with the same camera. After generating the calibration parameters of the used camera, the goal was to find best and worst input images in terms of mean reprojection error. The last thing to do was to use the previously computed calibration parameters to rectify an image of a room, taken by the same camera we calibrated.
+\section{Code organization}
+The code of this lab is organized in four main files (for which I provide also the documentation through doxygen):
 \begin{itemize}
-\item{\textbf{Lab2.cpp} and its header file \textbf{Lab2.h}\\
-they are associated to the \textit{main()} and to a function, used to print info about read input files;}
-\item{\textbf{Calibration.cpp} and its header file \textbf{Calibration.h}\\
-these contain the function \textit{calibrate()} that, using other functions performs checkerboard corners detection on input images and rectifies the test image.}
+\item{\textbf{Lab2.cpp} and its header file \textbf{Lab2.h}.\\
+They are associated to \textit{main()} and to a function used to print names of the input files.}
+\item{\textbf{Calibration.cpp} and its header file \textbf{Calibration.h}.\\
+These contain the function \textit{calibrate()} that, using other functions, performs checkerboard corner detection on the input images and rectifies the test image.}
 \end{itemize}
 \section{Command line parameters}
-The program needs to have, as command line arguments, in order, the specification of the path of checkerboards images folder and the path of test images folder. For example, the sequence of command line arguments, considering "data/checkerboard\_images" as folder of chessboard input images and "data" as folder of test images is:\\
+The program needs to have, as command line arguments, the path of the checkerboard images folder and the path of the test images folder, in this order. For example, the sequence of command line arguments, considering "data/checkerboard\_images" as folder of chessboard input images and "data" as folder of test images, is:\\
 \begin{center}
 \begin{tabular}{c}
 \begin{lstlisting}[linewidth=160pt, basicstyle=\footnotesize\sffamily,] 
@@ -94,10 +94,10 @@ data/checkerboard_images   data
 \end{tabular}
 \end{center}
 \section{Experimental results}
-In the extraction of corners from the input images, I've tried two approaches to compute them. They give me different parameters and mean reprojection errors (see Table \ref{calib} and Table \ref{mean}):
+In the extraction of corners from the input images, I've tried two approaches to compute them. They give me different parameters and mean reprojection errors (see Table \ref{calib} and Table \ref{mean}). These approaches are:
 \begin{enumerate}
-\item{Direct computation through cv::findChessboardCorners() function}
-\item{Improvement of corners precision of first approach using cv::cornerSubPix()\\}
+\item{Direct computation through cv::findChessboardCorners() function.}
+\item{Improvement of the precision of the previously detected corners using cv::cornerSubPix().\\}
 \end{enumerate}
 \begin{table}[h]
 \centering
@@ -107,7 +107,7 @@ In the extraction of corners from the input images, I've tried two approaches to
 \hline
 \multirow{4}{*}{Intrinsic parameters}&{$\alpha_u$}&{1245.72}&{1245.11}\\
 \cline{2-4}
-&{$\alpha_u$}&{1245.19}&{1244.22}\\
+&{$\alpha_v$}&{1245.19}&{1244.22}\\
 \cline{2-4}
 &{$u_c$}&{978.874}&{974.987}\\
 \cline{2-4}
@@ -145,8 +145,8 @@ In the extraction of corners from the input images, I've tried two approaches to
 \caption{Mean reprojection errors with 2 approaches.}\label{mean}
 \end{table}
 \vspace{6cm}
-The program also has some commented pieces that I've used to compute and store on disk all checkerboards images, with highlighted chessboard corners(e.g. Figure \ref{chess::best} and Figure \ref{chess::best}), and also final image with comparison between original image and rectified image (see Figure \ref{originVSrect}).\\
-For Approach 2, the image in Figure \ref{chess::best} is better than the one in \ref{chess::worst}, in terms of mean reprojection error, because of the angle of chessboard, with respect to the space, and the smoothness of the image.\\
+The program also has some commented pieces that I've used to compute and store on disk all checkerboard images, with highlighted chessboard corners(e.g. Figure \ref{chess::worst} and Figure \ref{chess::best}), and also the final image with comparison between the original image and its rectified version (see Figure \ref{originVSrect}).\\
+For Approach 2, the image in Figure \ref{chess::best} is better than the one in Figure \ref{chess::worst}, in terms of mean reprojection error. This is because of the angle of chessboard with respect to the space, and because of the smoothness of the image. I noticed also that using too many chessboard images, we are going to overfit the calibration.\\
 \begin{figure}[h]
 \begin{center}
   \includegraphics[scale=0.17]{chessboard44}\\ 
@@ -164,7 +164,7 @@ For Approach 2, the image in Figure \ref{chess::best} is better than the one in 
 \begin{center} 
   \includegraphics[scale=0.35]{comparison1}\\ 
   \caption{\footnotesize{Original test image (on the left) vs Rectified image (on the right).}}
-  \label{originalVSrect} 
+  \label{originVSrect} 
 \end{center} 
 \end{figure}
 

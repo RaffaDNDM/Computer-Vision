@@ -1,3 +1,9 @@
+/**
+	@file Lab2.h
+	@brief Header of source file with main().
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef LAB2
 #define LAB2
 
@@ -18,9 +24,8 @@
 #define LINE "-----------------------------------------------"
 
 /**
-	Print the string s, specifying also what is the number
-	of times the function was called
-	\param s string (representing the image path)
+	@brief Print the string s, specifying also what is the number of times the function was called.
+	@param s string (representing the image path)
 */
 void printName(cv::String s);
 

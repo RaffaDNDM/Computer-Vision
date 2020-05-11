@@ -1,3 +1,8 @@
+/**
+	@file HoughLinesDetector.cpp
+	@brief Class for Hough transform to detect street.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
 #include "HoughLinesDetector.h"
 
 HoughLinesDetector::HoughLinesDetector(cv::Mat input_img, int rho, int theta, int threshold):
@@ -47,7 +52,7 @@ void HoughLinesDetector::houghLines()
 	cv::Mat result = _detected_img.clone();
 
 	/*
-		The check about the parameter is repeated because 
+		The check about the parameter is repeated because
 		this function could be called by user without
 		trackbars in future version of the program
 	*/
@@ -66,7 +71,7 @@ void HoughLinesDetector::houghLines()
 	std::vector<cv::Vec2f> lines;
 
 	cv::HoughLines(getInput(), lines, getRho(), getTheta(), getThresh());
-	
+
 	std::cout << LINE << std::endl;
 	std::cout << "Number of detected lines: " << lines.size()<<std::endl;
 	std::cout << LINE << std::endl;
@@ -76,7 +81,7 @@ void HoughLinesDetector::houghLines()
 	std::cout << LINE << std::endl;
 
 	/*
-		To print all the lines, instead of the for used next 
+		//To print all the lines, instead of the for used next
 
 		for (size_t i = 0; i < lines.size() && lines.size() >= 2; i++)
 		{
@@ -91,8 +96,9 @@ void HoughLinesDetector::houghLines()
 		}
 	*/
 
+
 	std::vector<std::vector<cv::Point>> triangle_corners;
-	
+
 	if(lines.size() >= 2)
 	{
 		std::vector<cv::Point> corners;
@@ -102,12 +108,12 @@ void HoughLinesDetector::houghLines()
 		float rho2 = lines[1][0];
 		float theta2 = lines[1][1];
 		double cos2 = cos(theta2), sin2 = sin(theta2);
-		
+
 		cv::Point intersection;
 		intersection.x = cvRound((rho1 / sin1 - rho2 / sin2) / (cos1 / sin1 - cos2 / sin2));
 		intersection.y = cvRound(-((cos1/sin1)*intersection.x) + (rho1/sin1));
 		corners.push_back(intersection);
-		
+
 		cv::Point point1, point2;
 		point1.y = point2.y = result.rows-1;
 		point1.x = cvRound((rho1 / cos1) - (point1.y * (sin1 / cos1)));

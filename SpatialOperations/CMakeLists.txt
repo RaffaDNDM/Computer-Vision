@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(SpatialOperations)
+project(Lab4)
 
 if(WIN32)
 	set(OpenCV_dir $ENV{OPENCV_DIR})
@@ -23,7 +23,11 @@ include_directories(
 
 add_executable(
 	${PROJECT_NAME}
-	"src/SpatialOperations.cpp"
+	"src/Lab4.cpp"
+	"src/CannyDetector.cpp"
+	"src/StreetDetector.cpp" 
+	"src/HoughLinesDetector.cpp"
+	"src/HoughCirclesDetector.cpp"
 )
 
 
@@ -33,5 +37,12 @@ target_link_libraries(
 )
 
 #Copy data needed by program to the build directory
-file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
+if (WIN32 AND MSVC)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" NATIVE_BIN_DIR)
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/data" NATIVE_DATA_DIR)
+  add_custom_command(
+    TARGET "${PROJECT_NAME}" POST_BUILD
+    COMMAND xcopy "${NATIVE_DATA_DIR}" "${NATIVE_BIN_DIR}\\data" /I /C /K /E /R /Y 
+  )
+endif (WIN32 AND MSVC)
+#file(COPY Images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

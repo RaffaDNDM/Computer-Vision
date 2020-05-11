@@ -1,3 +1,9 @@
+/**
+	@file StreetDetector.h
+	@brief Class for Street and Signal detection.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef STREET_DETECTOR
 #define STREET_DETECTOR
 
@@ -6,35 +12,35 @@
 #include "HoughLinesDetector.h"
 #include "HoughCirclesDetector.h"
 
-/**
-	Class implementing Street and Signal detection
-*/
 class StreetSignalDetector {
 
 public:
 	/**
-		Constructor
-		\param input_img input image for which we want to highlight street and signal
+		@brief Constructor.
+		@param input_img input image for which we want to highlight street and signal
 	*/
 	StreetSignalDetector(cv::Mat input_img);
 
 	/**
-		Perform detection (Canny + Hough)
+		@brief Perform detection (Canny + Hough).
 	*/
 	void detect();
 
 	/**
-		Get the output of the filter
+		@brief Get the output of the filter.
+		@return result image
 	*/
 	cv::Mat getResult();
 
 	/**
-		Set input image
+		@brief Set input image.
+		@param img new input image
 	*/
 	void setInput(cv::Mat img);
 
 	/**
-		Get input image
+		@brief Get input image.
+		@return input image
 	*/
 	cv::Mat getInput();
 

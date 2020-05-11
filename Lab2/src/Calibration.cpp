@@ -1,3 +1,8 @@
+/**
+	@file Calibration.cpp
+	@brief Camera Calibration.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
 #include "Calibration.h"
 
 void calibrate(const std::vector<cv::String> chess_imgs, const std::vector<cv::String> test_imgs)
@@ -32,7 +37,7 @@ void calibrate(const std::vector<cv::String> chess_imgs, const std::vector<cv::S
         std::cout << "Test" << i + 1 << ": " << test_imgs[i] << std::endl;
         std::cout << LINE << std::endl;
         cv::Mat img = cv::imread(test_imgs[i], cv::IMREAD_COLOR);
-        
+
         //Rectify the test image
         cv::Mat m = rectify_image(img, K, distCoeffs);
 
@@ -57,12 +62,14 @@ void corners2D_detect(const std::vector<cv::String> img_names, std::vector<std::
         bool found = cv::findChessboardCorners(img, chessboard_size, coord2, 0);
 
         //Improvement of precision for found corners
-        //if (found)
-        //    cv::cornerSubPix(img, coord2, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+        if (found)
+            cv::cornerSubPix(img, coord2, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 
         /*
             I used this instruction to store images, used in report
-            drawChessboardCorners(img, chessboard_size, cv::Mat(coord2), found);
+
+            cv::cvtColor(img, img, cv::COLOR_GRAY2BGR);
+            cv::drawChessboardCorners(img, chessboard_size, cv::Mat(coord2), found);
             cv::imwrite("../../../result/chessboard" + std::to_string(i + 1) + ".png", img);
         */
 
@@ -114,14 +121,14 @@ void print_calibration(const cv::Mat K, const std::vector<float> distCoeffs)
 }
 
 void error(const std::vector<cv::String> img_names, std::vector<std::vector<cv::Point3f>> corners3D,
-           const std::vector<std::vector<cv::Point2f>> corners2D, const std::vector<cv::Mat> rvecs, 
+           const std::vector<std::vector<cv::Point2f>> corners2D, const std::vector<cv::Mat> rvecs,
            const std::vector<cv::Mat> tvecs, const cv::Mat K, const std::vector<float> distCoeffs)
 {
     //Best mean reprojection error
     double best_err = std::numeric_limits<double>::max();
     //Index of image with best_err
     int best = 0;
-    
+
     //Worst mean reprojection error
     double worst_err = 0.0;
     //Index of image with worst_err
@@ -174,7 +181,7 @@ cv::Mat rectify_image(cv::Mat img, const cv::Mat K, const std::vector<float> dis
     cv::Mat m1 = cv::Mat::eye(img.size(), CV_32FC1);
     cv::Mat m2 = cv::Mat::eye(img.size(), CV_32FC1);
     cv::Mat new_K;
- 
+
     //Rectify the image, using previously computed parameters with calibration
     initUndistortRectifyMap(K, distCoeffs, cv::Mat(), new_K, img.size(), CV_32FC1, m1, m2);
     remap(rect_img, rect_img, m1, m2, cv::INTER_LINEAR);
@@ -190,5 +197,6 @@ cv::Mat rectify_image(cv::Mat img, const cv::Mat K, const std::vector<float> dis
         cv::imwrite("../../../result/comparison" + std::to_string(++count_test) + ".png", m);
     */
 
+    cv::imwrite("../../../result/comparison" + std::to_string(++count_test) + ".png", m);
     return m;
 }

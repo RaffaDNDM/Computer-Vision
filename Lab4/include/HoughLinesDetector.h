@@ -1,97 +1,100 @@
+/**
+	@file HoughLinesDetector.h
+	@brief Class for Hough transform to detect street.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef HOUGH_LINES
 #define HOUGH_LINES
 
 #include "Lab4.h"
 
-/**
-	Class implementing Hough transform to detect street
-*/
 class HoughLinesDetector {
 
 public:
 	/**
-		Constructor
-		\param input_img input image
-		\param rho
-		\param theta
-		\threshold
+		@brief Constructor.
+		@param input_img input image
+		@param rho distance resolution
+		@param theta angle resolution
+		@param threshold accumulator threshold
 	*/
 	HoughLinesDetector(cv::Mat input_img, int rho, int theta, int threshold);
 
 	/**
-		Initialization of Hough transform window for line detection
+		@brief Initialization of Hough transform window for line detection.
 	*/
 	void detectLines();
 
 	/**
-		Callback for the trackbars of Hough transform window
-		\param value value of modfied trackbar that User set
-		\param params object passed as parameter to trackbar
+		@brief Callback for the trackbars of Hough transform window.
+		@param value value of modfied trackbar that User set
+		@param params object passed as parameter to trackbar
 	*/
 	static void houghLinesTrackbar(int value, void* params);
 
 	/**
-		Detection of lines
+		@brief Detection of lines.
 	*/
 	void houghLines();
 
 	/**
-		Set the input image
-		\param img new input image
+		@brief Set the input image.
+		@param img new input image
 	*/
 	void setInput(cv::Mat img);
 
 	/**
-		Get the input image
-		\returns input image
+		@brief Get the input image.
+		@return input image
 	*/
 	cv::Mat getInput();
 
 	/**
-		Get the image with detected street
-		\returns detected street image
+		@brief Get the image with detected street.
+		@param img new result image
 	*/
 	void setResult(cv::Mat img);
 
 	/**
-		Get the image with detected street
-		\returns detected street image
+		@brief Get the image with detected street.
+		@return output image
 	*/
 	cv::Mat getResult();
 
 	/**
-		Set the distance resolution
-		\param rho new value for distance resolution
+		@brief Set the distance resolution.
+		@param rho new value for distance resolution
 	*/
 	void setRho(int rho);
 
 	/**
-		Get the distance resolution
-		\returns distance resolution
+		@brief Get the distance resolution.
+		@return distance resolution
 	*/
 	double getRho();
 
 	/**
-		Set the angle resolution
-		\param theta new value for angle resolution 
+		@brief Set the angle resolution.
+		@param theta new value for angle resolution
 	*/
 	void setTheta(int theta);
 
 	/**
-		Get the angle resolution
-		\returns angle resolution
+		@brief Get the angle resolution.
+		@return angle resolution
 	*/
 	double getTheta();
 
 	/**
-		Set the accumulator threshold
-		\param threshold new value for accumulator threshold 
+		@brief Set the accumulator threshold.
+		@param threshold new value for accumulator threshold
 	*/
 	void setThresh(int threshold);
 
 	/**
-		Get the accumulator threshold
-		\returns accumulator threshold
+		@brief Get the accumulator threshold.
+		@return accumulator threshold
 	*/
 	int getThresh();
 
@@ -114,10 +117,16 @@ private:
 	//Accumulator threshold
 	int _threshold;
 
-
+	//Name of the window
 	const std::string window = "Hough Street Detection";
+
+	//Step of distance resolution trackbar
 	const double RATIO_RHO = 1.0;
+
+	//Step of angle resolution trackbar
 	const double RATIO_THETA = (CV_PI / 150);
+
+	//Step of accumulator threshold trackbar
 	const int RATIO_THRESHOLD = 5;
 };
 
