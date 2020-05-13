@@ -1,0 +1,3 @@
+D:/github/Computer-Vision/Lab5/out/build/x64-Debug/CMakeFiles/Lab5.dir
+D:/github/Computer-Vision/Lab5/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+D:/github/Computer-Vision/Lab5/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
