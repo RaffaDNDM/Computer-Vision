@@ -31,13 +31,3 @@ target_link_libraries(
 	${PROJECT_NAME}
 	${OpenCV_LIBS}
 )
-
-#Copy data needed by program to the build directory
-if (WIN32 AND MSVC)
-  file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" NATIVE_BIN_DIR)
-  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/data" NATIVE_DATA_DIR)
-  add_custom_command(
-    TARGET "${PROJECT_NAME}" POST_BUILD
-    COMMAND xcopy "${NATIVE_DATA_DIR}" "${NATIVE_BIN_DIR}\\data" /I /C /K /E /R /Y 
-  )
-endif (WIN32 AND MSVC)

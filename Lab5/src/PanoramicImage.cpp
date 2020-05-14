@@ -64,7 +64,7 @@ void PanoramicImage::panoramicImage()
 				pointsO.push_back(keypoints[i][matches[i][j].queryIdx].pt);
 			
 				//indice del keypoint dell'immagine i
-				pointsS.push_back(keypoints[i][matches[i][j].trainIdx].pt);
+				pointsS.push_back(keypoints[i+1][matches[i][j].trainIdx].pt);
 			}
 		}
 
@@ -88,13 +88,14 @@ void PanoramicImage::panoramicImage()
 		translations.push_back(transl);
 	}
 
-	float  width_f = _projected_imgs[0].cols;
+	float  width_f = _projected_imgs[0].cols+0.0;
 	for (int i = 1; i < _projected_imgs.size(); i++)
-		width_f += (_projected_imgs[i].cols - translations[i-1].x);
+		width_f += (translations[i-1].x);
 
 	int width = cvRound(width_f);
 
-	for (cv::Mat img_r : _projected_imgs)
+	
+	for (const auto& img_r : _projected_imgs)
 	{
 		cv::equalizeHist(img_r, img_r);
 	}
@@ -107,7 +108,7 @@ void PanoramicImage::panoramicImage()
 
 	for (int i = 1; i < _projected_imgs.size(); i++)
 	{
-		x1 = x2 - 1 - cvRound(translations[i-1].x);
+		x1 = x1+ cvRound(translations[i-1].x);
 		x2 = x1 + _projected_imgs[i].cols ;
 	
 		cv::Mat img = panoramic_view(cv::Range(0, _projected_imgs[0].rows), cv::Range(x1, x2));
