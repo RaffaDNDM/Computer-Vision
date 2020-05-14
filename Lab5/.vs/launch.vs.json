@@ -7,7 +7,7 @@
       "project": "CMakeLists.txt",
       "projectTarget": "Lab5.exe",
       "name": "Lab5.exe",
-      "args": ["data/dataset_kitchen/kitchen"]
+      "args": ["data/dataset_dolomites/dolomites"]
     }
   ]
 }

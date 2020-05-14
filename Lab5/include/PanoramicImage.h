@@ -11,7 +11,7 @@ class PanoramicImage
 {
 public:
 
-	PanoramicImage(cv::String path, float ratio);
+	PanoramicImage(cv::String path);
 
 	/**
 		@brief It create panoramic image from a set of images
@@ -39,9 +39,9 @@ private:
 	std::vector<cv::Mat> _projected_imgs;
 
 	//Pattern to look for PNG images in folder 
-	const cv::String PATTERN = "*.bmp";
+	const std::vector<cv::String> patterns{ "*.bmp","*.png" };
 
-	const double FOV = 66.0;
+	const double FOV = 54.0;
 
 	const std::string window = "Panoramic View";
 

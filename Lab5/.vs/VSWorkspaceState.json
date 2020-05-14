@@ -2,9 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\dataset_dolomites",
+    "\\data\\dataset_dolomites\\dolomites",
+    "\\data\\dataset_kitchen\\kitchen",
     "\\src"
   ],
-  "SelectedNode": "\\src\\Lab5.cpp",
+  "SelectedNode": "\\data\\dataset_kitchen",
   "PreviewInSolutionExplorer": false
 }
