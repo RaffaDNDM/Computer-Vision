@@ -5,7 +5,7 @@ PanoramicImage::PanoramicImage(cv::String path)
 	loadImages(path);
 }
 
-void PanoramicImage::panoramicImage()
+void PanoramicImage::panoramicImage(bool isORB)
 {
 	for(cv::Mat img : _input_imgs)
 	{ 
@@ -18,7 +18,8 @@ void PanoramicImage::panoramicImage()
 		cv::equalizeHist(img_r, img_r);
 	}
 
-	cv::Ptr<cv::ORB> orb = cv::ORB::create();
+	//cv::Ptr<cv::ORB> orb = cv::ORB::create();
+	cv::Ptr<cv::xfeatures2d::SIFT> orb = cv::xfeatures2d::SIFT::create();
 	std::vector<std::vector<cv::KeyPoint>> keypoints;
 	std::vector<cv::Mat> descriptors;
 
@@ -33,7 +34,8 @@ void PanoramicImage::panoramicImage()
 		keypoints.push_back(kpts);
 	}
 
-	cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(cv::NORM_HAMMING, true);
+	//	cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(cv::NORM_HAMMING, true);
+	cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	std::cout << LINE << std::endl;
 	std::cout << "Insert ratio " << std::endl;
 	std::cin >> _ratio;

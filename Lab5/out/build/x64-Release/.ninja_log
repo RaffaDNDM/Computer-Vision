@@ -1,0 +1,18 @@
+# ninja log v5
+0	1134	611283739	CMakeFiles/Lab5.dir/src/Lab5.cpp.obj	6dd41f78105156bb
+3	1384	611283740	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1384	3022	611283740	Lab5.exe	73f3921c6980f4c1
+0	1345	611283763	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1345	4630	611283764	Lab5.exe	73f3921c6980f4c1
+0	1232	611283916	CMakeFiles/Lab5.dir/src/Lab5.cpp.obj	6dd41f78105156bb
+3	1482	611283916	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1483	3319	611283917	Lab5.exe	73f3921c6980f4c1
+1	1301	611283997	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1301	1698	611283997	Lab5.exe	73f3921c6980f4c1
+1	1348	611284451	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1348	1812	611284452	Lab5.exe	73f3921c6980f4c1
+1	1442	611284519	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1442	1885	611284519	Lab5.exe	73f3921c6980f4c1
+0	1224	611284564	CMakeFiles/Lab5.dir/src/Lab5.cpp.obj	6dd41f78105156bb
+3	1434	611284564	CMakeFiles/Lab5.dir/src/PanoramicImage.cpp.obj	395fae0ff2143a00
+1435	1892	611284565	Lab5.exe	73f3921c6980f4c1

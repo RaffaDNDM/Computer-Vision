@@ -15,8 +15,9 @@ public:
 
 	/**
 		@brief It create panoramic image from a set of images
+		@param isORB true if you want to use ORB, false if you want to use SIFT
 	*/
-	void panoramicImage();
+	void panoramicImage(bool isORB);
 
 private:
 	/**
@@ -41,7 +42,7 @@ private:
 	//Pattern to look for PNG images in folder 
 	const std::vector<cv::String> patterns{ "*.bmp","*.png" };
 
-	const double FOV = 54.0;
+	const double FOV = 66.0;
 
 	const std::string window = "Panoramic View";
 

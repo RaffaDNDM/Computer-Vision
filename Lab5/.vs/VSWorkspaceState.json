@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\dataset_dolomites\\dolomites",
-    "\\data\\dataset_kitchen\\kitchen",
+    "\\data\\dataset_kitchen",
+    "\\include",
     "\\src"
   ],
-  "SelectedNode": "\\data\\dataset_kitchen",
+  "SelectedNode": "\\src\\PanoramicImage.cpp",
   "PreviewInSolutionExplorer": false
 }
