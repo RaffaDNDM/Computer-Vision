@@ -20,6 +20,7 @@ public:
 	void panoramicImage(bool isORB);
 
 private:
+
 	/**
 		@brief Load input images
 		@param path input images (PNG) folder
@@ -33,11 +34,56 @@ private:
 	*/
 	void findMin(float& min, std::vector<cv::DMatch> d_matches);
 
+
+	template <class T>
+	/**
+		@brief Compute keypoints and descriptors
+		@param method pointer to method object ()
+	*/
+	void key_desc(cv::Ptr<T>& method);
+
+	/**
+		@brief Compute matches and thresholds looking to descriptors
+		@param matches all the matches found between descriptors
+		@param thresholds all the threshold (ratio*min), each one related to a vector of @matches 
+	*/
+	void match(cv::Ptr<cv::BFMatcher> matcher, std::vector<std::vector<cv::DMatch>>& matches, std::vector<float>& thresholds);
+
+	/**
+		@brief Compute all the mean translations 
+		@param translations vector where there will be store translations, represented as points in 2D-space
+		@param matches all the matches found between descriptors
+		@param thresholds all the threshold (ratio*min), each one related to a vector of @matches
+	*/
+	void translate_imgs(std::vector<cv::Point2f>& translations,
+		                std::vector<std::vector<cv::DMatch>> matches,
+		                std::vector<float> thresholds);
+
+	/**
+		@brief Compute all the mean translations and final panoramic view image
+		@param translations vector where there will be store translations, represented as points in 2D-space
+	*/
+	void final_image(std::vector<cv::Point2f>& translations);
+
+	/**
+		@brief Compute cylinder projection images
+	*/
+	void cylinderProjection();
+
 	//Array of names of images
 	std::vector<cv::Mat> _input_imgs;
 
 	//Array of projected images
 	std::vector<cv::Mat> _projected_imgs;
+
+	//Keypoints vector
+	std::vector<std::vector<cv::KeyPoint>> keypoints;
+	
+	//Descriptors vector
+	std::vector<cv::Mat> descriptors;
+
+	//Result panoramic image
+	cv::Mat panoramic_view;
 
 	//Pattern to look for PNG images in folder 
 	const std::vector<cv::String> patterns{ "*.bmp","*.png" };

@@ -197,7 +197,7 @@ Lab5_BINARY_DIR:STATIC=D:/github/Computer-Vision/Lab5/out/build/x64-Release
 Lab5_SOURCE_DIR:STATIC=D:/github/Computer-Vision/Lab5
 
 //The directory containing a CMake configuration file for OpenCV.
-OpenCV_DIR:PATH=D:/Programs/opencv3/build/install/x64/vc16/lib
+OpenCV_DIR:PATH=D:/Programs/opencv3/build
 
 
 ########################
@@ -333,5 +333,5 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding OpenCV
-FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[D:/Programs/opencv3/build/install][v4.2.0()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[D:/Programs/opencv3/build][v4.2.0()]
 

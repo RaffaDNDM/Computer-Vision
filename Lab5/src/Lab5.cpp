@@ -12,10 +12,13 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
+	std::string orb = "1";
+	std::string sift = "2";
 	bool isORB;
-	if (argv[2] == "1")
+
+	if (argv[2] == orb)
 		isORB = true;
-	else if (argv[2] == "2")
+	else if (argv[2] == sift)
 		isORB = false;
 	else
 		return 1;

@@ -2,10 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\dataset_kitchen",
     "\\include",
     "\\src"
   ],
-  "SelectedNode": "\\src\\PanoramicImage.cpp",
+  "SelectedNode": "\\include\\Lab5.h",
   "PreviewInSolutionExplorer": false
 }
