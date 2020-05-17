@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-	if (argc != 3)
+	if (argc != 2)
 	{
 		std::cerr << LINE << std::endl;
 		std::cerr << "You need to insert, as command line arguments, in order" << std::endl;
@@ -12,16 +12,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	std::string orb = "1";
-	std::string sift = "2";
-	bool isORB;
-
-	if (argv[2] == orb)
-		isORB = true;
-	else if (argv[2] == sift)
-		isORB = false;
-	else
-		return 1;
+	bool isORB=true;
 
 	PanoramicImage pi(argv[1]);
 	pi.panoramicImage(isORB);

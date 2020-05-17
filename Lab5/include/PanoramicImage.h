@@ -29,10 +29,10 @@ private:
 
 	/**
 		@brief Find min distance between all decriptors matches and passed min
-		@param min minimum value of distance in this moment
 		@param d_matches actual vector of descriptors matches
+		@return min distance among all the matches
 	*/
-	void findMin(float& min, std::vector<cv::DMatch> d_matches);
+	float findMin(std::vector<cv::DMatch> d_matches);
 
 
 	template <class T>
@@ -83,7 +83,7 @@ private:
 	std::vector<cv::Mat> descriptors;
 
 	//Result panoramic image
-	cv::Mat panoramic_view;
+	cv::Mat _panoramic_view;
 
 	//Pattern to look for PNG images in folder 
 	const std::vector<cv::String> patterns{ "*.bmp","*.png" };

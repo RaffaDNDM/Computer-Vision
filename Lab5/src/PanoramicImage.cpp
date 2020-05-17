@@ -36,12 +36,10 @@ void PanoramicImage::panoramicImage(bool isORB)
 	std::vector<cv::Point2f> translations;
 	translate_imgs(translations, matches, thresholds);
 
-	int width, height;
 	final_image(translations);
 
 	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::moveWindow(window, 40, 40);
-	cv::imshow(window, panoramic_view);
+	cv::imshow(window, _panoramic_view);
 	cv::waitKey(0);
 }
 
@@ -69,25 +67,29 @@ void PanoramicImage::loadImages(cv::String path)
 
 void PanoramicImage::cylinderProjection()
 {
-	for (cv::Mat img : _input_imgs)
+	for (cv::Mat& img : _input_imgs)
 	{
 		cv::Mat projected_img = PanoramicUtils::cylindricalProj(img, FOV / 2);
 		_projected_imgs.push_back(projected_img);
 	}
 
-	for (const auto& img_r : _projected_imgs)
+	for (cv::Mat& img_r : _projected_imgs)
 	{
 		cv::equalizeHist(img_r, img_r);
 	}
 }
 
-void PanoramicImage::findMin(float &min, std::vector<cv::DMatch> d_matches)
+float PanoramicImage::findMin(std::vector<cv::DMatch> d_matches)
 {
+	float min = std::numeric_limits<float>::max();
+
 	for (cv::DMatch match : d_matches)
 	{
 		if (match.distance < min)
 			min = match.distance;
 	}
+
+	return min;
 }
 
 template <class T>
@@ -95,7 +97,12 @@ void PanoramicImage::key_desc(cv::Ptr<T>& method)
 {
 	method = T::create();
 
-	for (cv::Mat img : _projected_imgs)
+	/*
+	method->detect(_projected_imgs, keypoints);
+	method->compute(_projected_imgs, keypoints, descriptors);
+	*/
+
+	for (cv::Mat &img : _projected_imgs)
 	{
 		std::vector<cv::KeyPoint> kpts;
 		cv::Mat desc;
@@ -116,15 +123,20 @@ void PanoramicImage::match(cv::Ptr<cv::BFMatcher> matcher,
 
 	for (int i = 1; i < descriptors.size(); i++)
 	{
-		float min = std::numeric_limits<float>::max();
-		std::vector<cv::DMatch> match1;
-		matcher->match(descriptors[i - 1], descriptors[i], match1, cv::Mat());
-		findMin(min, match1);
-		matches.push_back(match1);
+		std::vector<cv::DMatch> match;
+		matcher->match(descriptors[i - 1], descriptors[i], match);
+		float min = findMin(match);
+		matches.push_back(match);
 		thresholds.push_back(_ratio * min);
-		std::cout << i <<":  "<< thresholds[i] << std::endl;
+		std::cout << i <<":  "<< thresholds[i-1] << std::endl;
 	}
 
+
+	/**
+		cv::Mat res;
+		cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1),
+		Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+	*/
 	std::cout << LINE;
 }
 
@@ -158,17 +170,19 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 		cv::Point2f transl(0.0, 0.0);
 
 		int k = 0;
+		int count = 0;
 		for (; k < mask.rows; k++)
 		{
-			if (mask.at<bool>(k))
+			if ((unsigned int)mask.at<uchar>(k))
 			{
+				count++;
 				transl.x += (pointsO[k].x - pointsS[k].x);
 				transl.y += (pointsO[k].y - pointsS[k].y);
 			}
 		}
 
-		transl.x /= k;
-		transl.y /= k;
+		transl.x /= count;
+		transl.y /= count;
 		translations.push_back(transl);
 		std::cout << "i: " << i+1 << "     " << translations[i] << std::endl;
 	}
@@ -185,10 +199,10 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 		width += cvRound(translations[i - 1].x);
 	}
 
-	panoramic_view = cv::Mat(cv::Size(width, _projected_imgs[0].rows), _projected_imgs[0].type());
+	_panoramic_view = cv::Mat(cv::Size(width, _projected_imgs[0].rows), _projected_imgs[0].type());
 	int x1 = 0;
 	int x2 = _projected_imgs[0].cols;
-	cv::Mat img = panoramic_view(cv::Range(0, _projected_imgs[0].rows), cv::Range(x1, x2));
+	cv::Mat img = _panoramic_view(cv::Range(0, _projected_imgs[0].rows), cv::Range(x1, x2));
 	_projected_imgs[0].copyTo(img);
 
 	for (int i = 1; i < _projected_imgs.size(); i++)
@@ -196,7 +210,9 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 		x1 = x1 + cvRound(translations[i - 1].x);
 		x2 = x1 + _projected_imgs[i].cols;
 
-		cv::Mat img = panoramic_view(cv::Range(0, _projected_imgs[0].rows), cv::Range(x1, x2));
+		img = _panoramic_view(cv::Range(0, _projected_imgs[0].rows), cv::Range(x1, x2));
 		_projected_imgs[i].copyTo(img);
 	}
+
+	cv::equalizeHist(_panoramic_view, _panoramic_view);
 }

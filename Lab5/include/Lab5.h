@@ -10,9 +10,9 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
+#include <opencv2/xfeatures2d.hpp>
 #include <opencv2/stitching.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/core/fast_math.hpp>
 
 #define LINE "-----------------------------------------------\n"
 
