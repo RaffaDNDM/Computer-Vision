@@ -1,14 +1,25 @@
+/**
+	@file PanoramicImage.cpp
+	@brief Implementation of the class used for panoramic view.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "PanoramicImage.h"
 
 PanoramicImage::PanoramicImage(cv::String path)
 {
 	loadImages(path);
+	cylinderProjection();
+}
+
+PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs)
+{
+	_projected_imgs.reserve(projected_imgs.size());
+	copy(projected_imgs.begin(), projected_imgs.end(), std::back_inserter(_projected_imgs));
 }
 
 void PanoramicImage::panoramicImage(bool isORB)
 {
-	cylinderProjection();
-
 	cv::Ptr<cv::BFMatcher> matcher;
 
 	if (isORB)
@@ -38,9 +49,7 @@ void PanoramicImage::panoramicImage(bool isORB)
 
 	final_image(translations);
 
-	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window, _panoramic_view);
-	cv::waitKey(0);
+
 }
 
 void PanoramicImage::loadImages(cv::String path)
@@ -215,4 +224,14 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 	}
 
 	cv::equalizeHist(_panoramic_view, _panoramic_view);
+}
+
+std::vector<cv::Mat> PanoramicImage::getProjected()
+{
+	return _projected_imgs;
+}
+
+cv::Mat PanoramicImage::getResult()
+{
+	return _panoramic_view;
 }

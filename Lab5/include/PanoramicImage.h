@@ -1,3 +1,9 @@
+/**
+	@file PanoramicImage.h
+	@brief Class for creation of panoramic view.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef PANORAMIC_IMAGE
 #define PANORAMIC_IMAGE
 
@@ -5,7 +11,7 @@
 #include "PanoramicUtils.h"
 
 /**
-@brief Transform of images to panoramic image
+@brief Transform images to panoramic image
 */
 class PanoramicImage
 {
@@ -13,11 +19,17 @@ public:
 
 	PanoramicImage(cv::String path);
 
+	PanoramicImage(std::vector<cv::Mat> &projected_imgs);
+
 	/**
 		@brief It create panoramic image from a set of images
 		@param isORB true if you want to use ORB, false if you want to use SIFT
 	*/
 	void panoramicImage(bool isORB);
+
+	std::vector<cv::Mat> getProjected();
+
+	cv::Mat getResult();
 
 private:
 
@@ -66,7 +78,7 @@ private:
 	void final_image(std::vector<cv::Point2f>& translations);
 
 	/**
-		@brief Compute cylinder projection images
+		@brief Compute cylindrical projection of all input images
 	*/
 	void cylinderProjection();
 
@@ -88,10 +100,10 @@ private:
 	//Pattern to look for PNG images in folder 
 	const std::vector<cv::String> patterns{ "*.bmp","*.png" };
 
+	//Field of view used in the set of images
 	const double FOV = 66.0;
 
-	const std::string window = "Panoramic View";
-
+	//Ratio parameter used to compute the threshold
 	float _ratio = 0.0;
 };
 

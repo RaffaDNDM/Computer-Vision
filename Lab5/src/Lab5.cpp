@@ -1,3 +1,9 @@
+/**
+	@file Lab5.cpp
+	@brief Source file with main.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "PanoramicImage.h"
 
 int main(int argc, char** argv)
@@ -12,8 +18,18 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	bool isORB=true;
+	PanoramicImage p1(argv[1]);
+	std::vector<cv::Mat> projections = p1.getProjected();
+	p1.panoramicImage(true);
+	cv::namedWindow(window_ORB, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+	cv::imshow(window_ORB, p1.getResult());
+	cv::waitKey(0);
 
-	PanoramicImage pi(argv[1]);
-	pi.panoramicImage(isORB);
+	PanoramicImage p2(projections);
+	p2.panoramicImage(false);
+	cv::namedWindow(window_SIFT, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+	cv::imshow(window_SIFT, p2.getResult());
+	cv::waitKey(0);
 }
+
+//Aggiungere 2 thread e funzione con riferimento a oggetto PanoramicImage e tipo di procedura isORB

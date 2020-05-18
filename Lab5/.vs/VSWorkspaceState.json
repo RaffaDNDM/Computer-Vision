@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\data",
     "\\include",
     "\\src"
   ],
-  "SelectedNode": "\\CMakeLists.txt",
+  "SelectedNode": "\\include\\PanoramicUtils.h",
   "PreviewInSolutionExplorer": false
 }
