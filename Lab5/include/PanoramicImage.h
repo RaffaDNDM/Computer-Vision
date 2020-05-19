@@ -17,9 +17,9 @@ class PanoramicImage
 {
 public:
 
-	PanoramicImage(cv::String path);
+	PanoramicImage(cv::String path, float ratio);
 
-	PanoramicImage(std::vector<cv::Mat> &projected_imgs);
+	PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio);
 
 	/**
 		@brief It create panoramic image from a set of images

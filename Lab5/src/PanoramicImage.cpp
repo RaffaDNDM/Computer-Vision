@@ -6,13 +6,15 @@
 
 #include "PanoramicImage.h"
 
-PanoramicImage::PanoramicImage(cv::String path)
+PanoramicImage::PanoramicImage(cv::String path, float ratio):
+	_ratio{ratio}
 {
 	loadImages(path);
 	cylinderProjection();
 }
 
-PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs)
+PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio):
+	_ratio{ ratio }
 {
 	_projected_imgs.reserve(projected_imgs.size());
 	copy(projected_imgs.begin(), projected_imgs.end(), std::back_inserter(_projected_imgs));
@@ -34,11 +36,6 @@ void PanoramicImage::panoramicImage(bool isORB)
 		key_desc<cv::xfeatures2d::SIFT>(sift);
 		matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	}
-
-	std::cout << LINE;
-	std::cout << "Insert ratio " << std::endl;
-	std::cin >> _ratio;
-	std::cout << "\n" << LINE;
 	
 	std::vector<std::vector<cv::DMatch>> matches;
 	std::vector<float> thresholds;
@@ -48,8 +45,6 @@ void PanoramicImage::panoramicImage(bool isORB)
 	translate_imgs(translations, matches, thresholds);
 
 	final_image(translations);
-
-
 }
 
 void PanoramicImage::loadImages(cv::String path)
@@ -174,7 +169,7 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 			}
 		}
 
-		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC, thresholds[i]);
+		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
 
 		cv::Point2f transl(0.0, 0.0);
 
