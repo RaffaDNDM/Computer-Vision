@@ -15,3 +15,11 @@ Lab5/.vs/Lab5/v16/.suo
 Lab5/.vs/Lab5/v16/Browse.VC.db
 Lab5/.vs/Lab5/v16/Browse.VC.db
 *.db
+*.db
+*.ipch
+*.sqlite
+Lab6/data/video.mov
+Lab6/data/objects/obj4.png
+Lab6/data/objects/obj3.png
+Lab6/data/objects/obj2.png
+Lab6/data/objects/obj1.png
