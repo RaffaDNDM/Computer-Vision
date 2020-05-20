@@ -6,6 +6,7 @@
 
 #include "PanoramicImage.h"
 
+std::mutex mutex;
 void panoramic(PanoramicImage &p, bool isORB);
 
 int main(int argc, char** argv)
@@ -48,4 +49,7 @@ int main(int argc, char** argv)
 void panoramic(PanoramicImage &p, bool isORB)
 {
 	p.panoramicImage(isORB);
+	mutex.lock();
+	p.printInfo();
+	mutex.unlock();
 }

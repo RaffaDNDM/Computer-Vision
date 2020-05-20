@@ -10,6 +10,8 @@
 #include <memory>
 #include <iostream>
 #include <limits>
+#include <thread>
+#include <mutex>
 
 #include <opencv2/core.hpp>
 #include <opencv2/core/utils/filesystem.hpp>

@@ -11,25 +11,47 @@
 #include "PanoramicUtils.h"
 
 /**
-@brief Transform images to panoramic image
+@brief Transform images to panoramic image.
 */
 class PanoramicImage
 {
 public:
-
+	/**
+		@brief Constructor.
+		@param path path of the folder with images 
+		@param ratio ratio for threshold
+	*/
 	PanoramicImage(cv::String path, float ratio);
-
+	
+	/**
+		@brief Constructor.
+		@param projected_imgs vector of input projected 
+		@param ratio ratio for threshold
+	*/
 	PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio);
 
 	/**
-		@brief It create panoramic image from a set of images
+		@brief It create panoramic image from a set of images.
 		@param isORB true if you want to use ORB, false if you want to use SIFT
 	*/
 	void panoramicImage(bool isORB);
 
+	/**
+		@brief Get projected images.
+		@return vector of projected images
+	*/
 	std::vector<cv::Mat> getProjected();
 
+	/**
+		@brief Get panoramic view image.
+		@return panoramic view image 
+	*/
 	cv::Mat getResult();
+
+	/**
+		Print useful informations
+	*/
+	void printInfo();
 
 private:
 
@@ -101,10 +123,19 @@ private:
 	const std::vector<cv::String> patterns{ "*.bmp","*.png" };
 
 	//Field of view used in the set of images
-	const double FOV = 66.0;
+	const double FOV = 54.0;
 
 	//Ratio parameter used to compute the threshold
 	float _ratio = 0.0;
+
+	//Name of the method selected
+	std::string method_name;
+
+	//Computed thresholds
+	std::vector<float> _thresholds;
+	
+	//Computed translations
+	std::vector<cv::Point2f> _translations;
 };
 
 #endif
