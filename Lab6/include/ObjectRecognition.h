@@ -11,7 +11,7 @@
 #include "Lab6.h"
 
 /**
-@brief Transform images to panoramic image.
+@brief Detect video and detect objects.
 */
 class ObjectRecognition
 {
@@ -52,13 +52,22 @@ public:
 		@brief Get panoramic view image.
 		@return panoramic view image 
 	*/
-	cv::Mat getResult();
+	std::vector<cv::Mat> getDetectedFrame();
 
 	/**
-		Print useful informations
+		@brief Print useful informations.
 	*/
 	void printInfo();
 
+	/**
+		@brief.
+	*/
+	double getFrameRate();
+
+	/**
+		@brief.
+	*/
+	int getNumFrames();
 private:
 
 	/**
@@ -80,15 +89,11 @@ private:
 	*/
 	float findMin(std::vector<cv::DMatch> d_matches);
 
-	template <class T>
 	/**
 		@brief Compute keypoints and descriptors
 		@param method pointer to method object ()
 	*/
-	void key_desc(cv::Ptr<T>& method, 
-		          cv::Mat frame, 
-		          std::vector<cv::KeyPoint>& keypoints, 
-		          std::vector<cv::Mat>& descriptors);
+	void key_desc(bool isORB);
 
 	/**
 		@brief Compute matches and thresholds looking to descriptors
@@ -104,7 +109,8 @@ private:
 		@param thresholds all the threshold (ratio*min), each one related to a vector of @matches
 	*/
 	void computeMatches(std::vector<std::vector<cv::DMatch>> matches,
-		                std::vector<float> thresholds);
+		                std::vector<float> thresholds,
+						bool isORB);
 
 	//Descriptors vector
 	std::vector<cv::Mat> _frames;
@@ -119,16 +125,16 @@ private:
 	std::vector< std::vector<cv::KeyPoint>> _keypointsObjects;
 
 	//Descriptors vector
-	std::vector<cv::Mat> _descriptorsFrame;
+	cv::Mat _descriptorsFrame;
 
 	//Descriptors vector
-	std::vector< std::vector<cv::Mat>> _descriptorsObjects;
+	std::vector<cv::Mat> _descriptorsObjects;
 
 	//Computed thresholds
 	std::vector<float> _thresholds;
 
 	//First frame with detected objects
-	cv::Mat _detected_frame;
+	std::vector<cv::Mat> _detected_frame;
 
 	//Pattern to look for video in the folder 
 	const cv::String video_pattern = "*.mov";
@@ -141,6 +147,22 @@ private:
 
 	//Name of the method selected
 	std::string _method_name;
+
+	//Used colors to draw keypoints 
+	const std::vector<cv::Scalar> _colors = { cv::Scalar(255,0,0),//blue
+										  	  cv::Scalar(0,255,0),//green
+											  cv::Scalar(0,0,255),//red
+											  cv::Scalar(0,255,255)//yellow
+											 };
+
+	//Inlier points on the frames
+	std::vector <cv::Point> _inliers_frame_prev;
+
+	//Corners of objects 
+	std::vector<std::vector<cv::Point2f>> _corners_frame;
+
+	//Frame rate of the camera
+	double _frame_rate = 0.0;
 };
 
 #endif

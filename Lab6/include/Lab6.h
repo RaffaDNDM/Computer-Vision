@@ -15,6 +15,7 @@
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/stitching.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/video/tracking.hpp>
 
 #define LINE "-----------------------------------------------\n"
 

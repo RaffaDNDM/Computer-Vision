@@ -6,16 +6,16 @@
 #include "Lab6.h"
 #include "ObjectRecognition.h"
 
+void recognition(ObjectRecognition& or_inst, bool isORB);
 std::mutex mutex;
 
 int main(int argc, char** argv)
 {
-	if (argc != 2)
+	if (argc != 3)
 	{
 		std::cerr << LINE << std::endl;
 		std::cerr << "You need to insert, as command line arguments, in order" << std::endl;
-		std::cerr << "       <input_images_folder>     <1|2>" << std::endl;
-		std::cerr << " 1 = ORB   2 = SIFT  "<< std::endl;
+		std::cerr << "       <video_pathname>     <objects_folder>" << std::endl;
 		std::cerr << LINE << std::endl;
 		return 1;
 	}
@@ -36,17 +36,20 @@ int main(int argc, char** argv)
 
 	t1.join();
 	t2.join();
-
-	cv::namedWindow(window_ORB, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window_ORB, or1.getResult());
-	cv::namedWindow(window_SIFT, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window_SIFT, or2.getResult());
-	cv::waitKey(0);
 }
 
 
 //Aggiungere 2 thread e funzione con riferimento a oggetto PanoramicImage e tipo di procedura isORB
-void recognition(ObjectRecognition &or, bool isORB)
+void recognition(ObjectRecognition& or_inst, bool isORB)
 {
-	or.panoramicImage(isORB);
+	or_inst.recognition(isORB);
+
+	std::string window = (isORB) ? window_ORB : window_SIFT;
+
+	for (int i = 0; i < or_inst.getNumFrames(); i++)
+	{
+		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+		cv::imshow(window, or_inst.getDetectedFrame());
+		cv::waitKey(1000 / or_inst.getFrameRate());
+	}
 }
