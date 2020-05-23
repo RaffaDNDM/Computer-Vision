@@ -26,7 +26,29 @@ int main(int argc, char** argv)
 	std::cin >> ratio;
 	std::cout << "\n" << LINE;
 
+	bool isORB = false;
+
 	ObjectRecognition or1(argv[1], argv[2], ratio);
+	or1.recognition(isORB);
+
+	std::string window = (isORB) ? window_ORB : window_SIFT;
+
+	
+	for (int i = 0; i < or1.getNumFrames(); i++)
+	{
+		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+		cv::imshow(window, or1.getDetectedFrame()[i]);
+		cv::waitKey(1000 / or1.getFrameRate());
+	}
+
+	/*
+	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+	cv::imshow(window, or1.getDetectedFrame()[0]);
+	cv::waitKey(0);
+	cv::waitKey(1000 / or1.getFrameRate());
+	*/
+	
+	/*
 	std::vector<cv::Mat> frames = or1.getFrames();
 	std::vector<cv::Mat> objects = or1.getObjects();
 	ObjectRecognition or2(frames, objects, ratio);
@@ -35,13 +57,15 @@ int main(int argc, char** argv)
 	std::thread t2(recognition, std::ref(or2), false);
 
 	t1.join();
-	t2.join();
+	t2.join()
+	*/
 }
 
 
 //Aggiungere 2 thread e funzione con riferimento a oggetto PanoramicImage e tipo di procedura isORB
 void recognition(ObjectRecognition& or_inst, bool isORB)
 {
+	/*
 	or_inst.recognition(isORB);
 
 	std::string window = (isORB) ? window_ORB : window_SIFT;
@@ -52,4 +76,5 @@ void recognition(ObjectRecognition& or_inst, bool isORB)
 		cv::imshow(window, or_inst.getDetectedFrame());
 		cv::waitKey(1000 / or_inst.getFrameRate());
 	}
+	*/
 }

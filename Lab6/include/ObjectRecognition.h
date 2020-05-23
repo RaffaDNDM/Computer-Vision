@@ -40,12 +40,6 @@ public:
 		@brief Get projected images.
 		@return vector of projected images
 	*/
-	std::vector<cv::Mat> getFrames();
-
-	/**
-		@brief Get projected images.
-		@return vector of projected images
-	*/
 	std::vector<cv::Mat> getObjects();
 
 	/**
@@ -69,12 +63,6 @@ public:
 	*/
 	int getNumFrames();
 private:
-
-	/**
-		@brief Load video
-		@param path input images (PNG) folder
-	*/
-	void loadVideo(cv::String path);
 
 	/**
 		@brief Load objects images
@@ -112,8 +100,14 @@ private:
 		                std::vector<float> thresholds,
 						bool isORB);
 
-	//Descriptors vector
-	std::vector<cv::Mat> _frames;
+	//Video capture to detect frames
+	cv::VideoCapture _cap;
+
+	//Actual frame in the video
+	cv::Mat _frame;
+
+	//Actual frame in the video
+	cv::Mat _frame_next;
 
 	//Descriptors vector
 	std::vector<cv::Mat> _objects;
@@ -133,8 +127,8 @@ private:
 	//Computed thresholds
 	std::vector<float> _thresholds;
 
-	//First frame with detected objects
-	std::vector<cv::Mat> _detected_frame;
+	//Frames with detected objects
+	std::vector<cv::Mat> _detected_frames;
 
 	//Pattern to look for video in the folder 
 	const cv::String video_pattern = "*.mov";
@@ -156,10 +150,10 @@ private:
 											 };
 
 	//Inlier points on the frames
-	std::vector <cv::Point> _inliers_frame_prev;
+	std::vector <std::vector<cv::Point2f>> _inliers_frame_prev;
 
 	//Corners of objects 
-	std::vector<std::vector<cv::Point2f>> _corners_frame;
+	std::vector<std::vector<cv::Point2f>> _corners_frame_prev;
 
 	//Frame rate of the camera
 	double _frame_rate = 0.0;
