@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
 	std::string window = (isORB) ? window_ORB : window_SIFT;
 
-	
+	/*
 	for (int i = 0; i < or1.getNumFrames(); i++)
 	{
 		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 		cv::waitKey(1000 / or1.getFrameRate());
 	}
 
-	/*
+	
 	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
 	cv::imshow(window, or1.getDetectedFrame()[0]);
 	cv::waitKey(0);

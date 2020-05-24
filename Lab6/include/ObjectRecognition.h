@@ -103,11 +103,17 @@ private:
 	//Video capture to detect frames
 	cv::VideoCapture _cap;
 
+	//Video writer to write final video
+	cv::VideoWriter _out;
+
 	//Actual frame in the video
 	cv::Mat _frame;
 
 	//Actual frame in the video
 	cv::Mat _frame_next;
+
+	//Number of frames
+	int _size = 0;
 
 	//Descriptors vector
 	std::vector<cv::Mat> _objects;
@@ -127,8 +133,8 @@ private:
 	//Computed thresholds
 	std::vector<float> _thresholds;
 
-	//Frames with detected objects
-	std::vector<cv::Mat> _detected_frames;
+	//Frame with detected objects
+	cv::Mat _detected_frame;
 
 	//Pattern to look for video in the folder 
 	const cv::String video_pattern = "*.mov";
@@ -140,7 +146,7 @@ private:
 	float _ratio = 0.0;
 
 	//Name of the method selected
-	std::string _method_name = "SIFT";
+	std::string _window_name = "SIFT";
 
 	//Used colors to draw keypoints 
 	const std::vector<cv::Scalar> _colors = { cv::Scalar(255,0,0),//blue
@@ -148,6 +154,9 @@ private:
 											  cv::Scalar(0,0,255),//red
 											  cv::Scalar(0,255,255)//yellow
 											 };
+
+	//Filename of output detected video
+	const cv::String _output_filename = "output.avi";
 
 	//Inlier points on the frames
 	std::vector <std::vector<cv::Point2f>> _inliers_frame_prev;

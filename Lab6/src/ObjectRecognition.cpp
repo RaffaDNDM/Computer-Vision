@@ -9,7 +9,8 @@
 ObjectRecognition::ObjectRecognition(cv::String video_path, cv::String objects_path, float ratio):
 	_ratio{ratio},
 	_cap{ cv::VideoCapture(video_path) },
-	_frame_rate{ _cap.get(cv::CAP_PROP_FPS) }
+	_frame_rate{ _cap.get(cv::CAP_PROP_FPS) },
+	_size{ static_cast<int>(_cap.get(cv::CAP_PROP_FRAME_COUNT)) }
 {
 	if (!_cap.isOpened())
 	{
@@ -24,9 +25,15 @@ void ObjectRecognition::recognition(bool isORB)
 	cv::Ptr<cv::BFMatcher> matcher;
 
 	_cap >> _frame;
-	_detected_frames.push_back(_frame.clone());
-	key_desc(isORB);
 
+	if (_frame.empty())
+	{
+		throw "Empty first frame";
+		exit(1);
+	}
+
+	_detected_frame=_frame.clone();
+	key_desc(isORB);
 	matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	
 	//Compute thresholds and matches
@@ -34,6 +41,13 @@ void ObjectRecognition::recognition(bool isORB)
 	match(matcher, matches, _thresholds);
 	computeMatches(matches, _thresholds, isORB);
 
+	cv::namedWindow(_window_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+	cv::imshow(_window_name, _detected_frame);
+	
+	/*
+		Store detected video on the disk
+		_out=cv::VideoWriter(_output_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), _frame_rate, _frame.size());
+	*/
 	bool check = false;
 	int i = 0;
 
@@ -48,7 +62,7 @@ void ObjectRecognition::recognition(bool isORB)
 		}
 
 		i++;
-		_detected_frames.push_back(_frame_next.clone());
+		_detected_frame =_frame_next.clone();
 
 		for(int h=0; h<_inliers_frame_prev.size(); h++)
 		{
@@ -67,7 +81,7 @@ void ObjectRecognition::recognition(bool isORB)
 				{
 					inliers_prev_ok.push_back(_inliers_frame_prev[h][k]);
 					inliers_next_ok.push_back(inliers_frame_next[k]);
-					cv::circle(_detected_frames[i], inliers_frame_next[k], 2, _colors[h]);
+					cv::circle(_detected_frame, inliers_frame_next[k], 2, _colors[h]);
 				}
 			}
 
@@ -78,16 +92,20 @@ void ObjectRecognition::recognition(bool isORB)
 			cv::perspectiveTransform(_corners_frame_prev[h], corners, H);
 			_corners_frame_prev[h] = corners;
 
-			_inliers_frame_prev[h].clear();
-			_inliers_frame_prev[h].reserve(inliers_next_ok.size());
-			copy(inliers_next_ok.begin(), inliers_next_ok.end(), std::back_inserter(_inliers_frame_prev[h]));
-			//fai come 79
+			_inliers_frame_prev[h] = inliers_next_ok;
 
 			for(int k=0; k<_corners_frame_prev[h].size(); k++)
-				cv::line(_detected_frames[i], _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2);
+				cv::line(_detected_frame, _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2);
 		}
 	
 		_frame = _frame_next.clone();
+		
+		cv::imshow(_window_name, _detected_frame);
+		cv::waitKey(1000/_cap.get(cv::CAP_PROP_FPS));
+		/*
+			Store the final image on disk
+			_out << _detected_frame;
+		*/
 	}
 }
 
@@ -192,7 +210,7 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 				cv::Point2f inlier(cvRound(pointsS[k].x), cvRound(pointsS[k].y));
 				inliers.push_back(inlier);
 
-				cv::circle(_detected_frames[0], inlier, 2, _colors[i]);
+				cv::circle(_detected_frame, inlier, 2, _colors[i]);
 			}
 		}
 		_inliers_frame_prev.push_back(inliers);
@@ -214,7 +232,7 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 			cv::Mat res;
 			cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1), Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 			*/
-			cv::line(_detected_frames[0], _corners_frame_prev[i][h], _corners_frame_prev[i][(h + 1) % 4], _colors[i], 2);
+			cv::line(_detected_frame, _corners_frame_prev[i][h], _corners_frame_prev[i][(h + 1) % 4], _colors[i], 2);
 		}
 		
 	}
@@ -225,11 +243,6 @@ std::vector<cv::Mat> ObjectRecognition::getObjects()
 	return _objects;
 }
 
-std::vector<cv::Mat> ObjectRecognition::getDetectedFrame()
-{
-	return _detected_frames;
-}
-
 double ObjectRecognition::getFrameRate()
 {
 	return _frame_rate;
@@ -237,17 +250,15 @@ double ObjectRecognition::getFrameRate()
 
 int ObjectRecognition::getNumFrames()
 {
-	return _detected_frames.size();
+	return _size;
 }
 
 void ObjectRecognition::printInfo()
 {
-	std::cout << LINE << "[" << _method_name << "] Thresholds\n" << LINE;
+	std::cout << LINE << "[" << _window_name << "] Thresholds\n" << LINE;
 
 	for (int i = 0; i < _thresholds.size(); i++)
 		std::cout << i << ":  " << _thresholds[i] << std::endl;
-
-	std::cout << LINE << "[" << _method_name << "] Translations\n" << LINE;
 
 	std::cout << LINE;
 }
