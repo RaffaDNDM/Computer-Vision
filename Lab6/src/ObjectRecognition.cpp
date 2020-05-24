@@ -27,17 +27,8 @@ void ObjectRecognition::recognition(bool isORB)
 	_detected_frames.push_back(_frame.clone());
 	key_desc(isORB);
 
-	if (isORB)
-	{
-		_method_name = "ORB";
-		matcher = cv::BFMatcher::create(cv::NORM_HAMMING, true);
-	}
-	else
-	{
-		_method_name = "SIFT";
-		matcher = cv::BFMatcher::create(cv::NORM_L2, true);
-	}
-
+	matcher = cv::BFMatcher::create(cv::NORM_L2, true);
+	
 	//Compute thresholds and matches
 	std::vector<std::vector<cv::DMatch>> matches;
 	match(matcher, matches, _thresholds);
@@ -62,31 +53,35 @@ void ObjectRecognition::recognition(bool isORB)
 		for(int h=0; h<_inliers_frame_prev.size(); h++)
 		{
 			std::vector<cv::Point2f> inliers_frame_next;
-			std::vector<cv::Point2f> corners_frame_next;
 			std::vector<uchar> status;
 			std::vector<float> err;
 
 			cv::calcOpticalFlowPyrLK(_frame, _frame_next, _inliers_frame_prev[h], inliers_frame_next, status, err);
 
-			_inliers_frame_prev[h].clear();
+			std::vector<cv::Point2f> inliers_prev_ok;
+			std::vector<cv::Point2f> inliers_next_ok;
+
 			for (int k = 0; k < status.size(); k++)
 			{
 				if (status[k] == 1)
 				{
-					_inliers_frame_prev[h].push_back(inliers_frame_next[k]);
+					inliers_prev_ok.push_back(_inliers_frame_prev[h][k]);
+					inliers_next_ok.push_back(inliers_frame_next[k]);
 					cv::circle(_detected_frames[i], inliers_frame_next[k], 2, _colors[h]);
 				}
 			}
 
-			cv::calcOpticalFlowPyrLK(_frame, _frame_next, _corners_frame_prev[h], corners_frame_next, status, err);
+			cv::Mat mask;
+			cv::Mat H = cv::findHomography(inliers_prev_ok, inliers_next_ok, mask, cv::RANSAC);
 
-			for (int k = 0; k < status.size(); k++)
-			{
-				if (status[k] == 1)
-				{
-					_corners_frame_prev[h][k] = corners_frame_next[k];
-				}
-			}
+			std::vector<cv::Point2f> corners;
+			cv::perspectiveTransform(_corners_frame_prev[h], corners, H);
+			_corners_frame_prev[h] = corners;
+
+			_inliers_frame_prev[h].clear();
+			_inliers_frame_prev[h].reserve(inliers_next_ok.size());
+			copy(inliers_next_ok.begin(), inliers_next_ok.end(), std::back_inserter(_inliers_frame_prev[h]));
+			//fai come 79
 
 			for(int k=0; k<_corners_frame_prev[h].size(); k++)
 				cv::line(_detected_frames[i], _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2);
@@ -103,7 +98,7 @@ void ObjectRecognition::loadObjects(cv::String path)
 
 	if (imgs_names.size() == 0)
 	{
-		std::cout << LINE << "Error in the video path" << LINE;
+		throw "Error in the video path";
 		exit(1);
 	}
 	else
@@ -158,10 +153,6 @@ void ObjectRecognition::match(cv::Ptr<cv::BFMatcher> matcher,
 		thresholds.push_back(_ratio * min);
 	}
 
-	/**
-		cv::Mat res;
-		cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1), Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-	*/
 	std::cout << LINE;
 }
 
@@ -189,12 +180,8 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 
 		cv::Mat H;
 
-		if(isORB)
-			H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC, thresholds[i]);
-		else
-			H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
+		H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
 
-		cv::Point2f transl(0.0, 0.0);
 		std::vector<cv::Point2f> inliers;
 		int k = 0;
 		for (; k < mask.rows; k++)
@@ -222,7 +209,14 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		
 		_corners_frame_prev.push_back(corners);
 		for (int h = 0; h < _corners_frame_prev[0].size(); h++)
-			cv::line(_detected_frames[0], _corners_frame_prev[i][h], _corners_frame_prev[i][(h+1)%4], _colors[i], 2);
+		{
+			/**
+			cv::Mat res;
+			cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1), Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+			*/
+			cv::line(_detected_frames[0], _corners_frame_prev[i][h], _corners_frame_prev[i][(h + 1) % 4], _colors[i], 2);
+		}
+		
 	}
 }
 

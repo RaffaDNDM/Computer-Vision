@@ -140,7 +140,7 @@ private:
 	float _ratio = 0.0;
 
 	//Name of the method selected
-	std::string _method_name;
+	std::string _method_name = "SIFT";
 
 	//Used colors to draw keypoints 
 	const std::vector<cv::Scalar> _colors = { cv::Scalar(255,0,0),//blue
