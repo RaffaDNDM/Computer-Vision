@@ -25,7 +25,8 @@ void ObjectRecognition::recognition(bool isORB)
 	cv::Ptr<cv::BFMatcher> matcher;
 
 	_cap >> _frame;
-
+	cv::resize(_frame, _frame, cv::Size(_frame.cols / 2, _frame.rows / 2));
+	
 	if (_frame.empty())
 	{
 		throw "Empty first frame";
@@ -41,7 +42,7 @@ void ObjectRecognition::recognition(bool isORB)
 	match(matcher, matches, _thresholds);
 	computeMatches(matches, _thresholds, isORB);
 
-	cv::namedWindow(_window_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+	cv::namedWindow(_window_name, cv::WINDOW_AUTOSIZE);
 	cv::imshow(_window_name, _detected_frame);
 	
 	/*
@@ -61,6 +62,7 @@ void ObjectRecognition::recognition(bool isORB)
 			continue;
 		}
 
+		cv::resize(_frame_next, _frame_next, cv::Size(_frame_next.cols / 2, _frame_next.rows / 2));
 		i++;
 		_detected_frame =_frame_next.clone();
 
@@ -71,7 +73,6 @@ void ObjectRecognition::recognition(bool isORB)
 			std::vector<float> err;
 
 			cv::calcOpticalFlowPyrLK(_frame, _frame_next, _inliers_frame_prev[h], inliers_frame_next, status, err);
-
 			std::vector<cv::Point2f> inliers_prev_ok;
 			std::vector<cv::Point2f> inliers_next_ok;
 
@@ -101,7 +102,8 @@ void ObjectRecognition::recognition(bool isORB)
 		_frame = _frame_next.clone();
 		
 		cv::imshow(_window_name, _detected_frame);
-		cv::waitKey(1000/_cap.get(cv::CAP_PROP_FPS));
+		cv::waitKey(1);
+
 		/*
 			Store the final image on disk
 			_out << _detected_frame;
