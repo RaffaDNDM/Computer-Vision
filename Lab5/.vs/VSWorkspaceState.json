@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\data",
+    "\\data\\dataset_lab\\data",
+    "\\include"
   ],
+  "SelectedNode": "\\include\\PanoramicImage.h",
   "PreviewInSolutionExplorer": false
 }
