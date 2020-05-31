@@ -1,7 +1,7 @@
 /**
 	@file HoughCirclesDetector.h
 	@brief Class for Hough transform to detect signal.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 
 #ifndef HOUGH_CIRCLES

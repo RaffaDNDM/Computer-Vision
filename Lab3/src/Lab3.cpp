@@ -1,3 +1,9 @@
+/**
+    @file Lab3.cpp
+    @brief Source file with main.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "Lab3.h"
 
 #include "Histogram.h"

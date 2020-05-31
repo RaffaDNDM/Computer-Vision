@@ -1,7 +1,9 @@
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <iostream>
-#include <cstring>
+/**
+    @file Test.cpp
+    @brief Source file used to change input image.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "Test.h"
 
 using namespace cv;

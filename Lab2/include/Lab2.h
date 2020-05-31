@@ -1,7 +1,7 @@
 /**
 	@file Lab2.h
 	@brief Header of source file with main().
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 
 #ifndef LAB2

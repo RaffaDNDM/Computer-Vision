@@ -1,3 +1,9 @@
+/**
+    @file HelloWorld.cpp
+    @brief Source file with main.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "Test.h"
 #include <opencv2/highgui.hpp>
 #include "HelloWorld.h"

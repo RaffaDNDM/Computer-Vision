@@ -1,3 +1,9 @@
+/**
+	@file ColorChange.cpp
+	@brief Source file for processing of image.
+	@author Di Nardo Di Maio Raffaele
+*/
+
 #include "ColorChange.h"
 #include <iostream>
 

@@ -1,6 +1,12 @@
-#ifndef LAB3
+/**
+	@file Lab3.h
+	@brief Header of source file with main.
+	@author Di Nardo Di Maio Raffaele
+*/
 
+#ifndef LAB3
 #define LAB3
+
 #include<opencv2/opencv.hpp>
 #include<opencv2/highgui.hpp>
 #include<opencv2/highgui/highgui.hpp>

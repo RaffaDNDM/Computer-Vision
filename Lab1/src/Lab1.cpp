@@ -1,3 +1,9 @@
+/**
+    @file Lab1.cpp
+    @brief Source file with main.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "Lab1.h"
 
 using namespace std;

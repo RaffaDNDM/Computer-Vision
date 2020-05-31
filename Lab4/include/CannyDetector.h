@@ -1,7 +1,7 @@
 /**
 	@file CannyDetector.h
 	@brief Class for Canny edge detection.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 
 #ifndef CANNY_DETECTOR

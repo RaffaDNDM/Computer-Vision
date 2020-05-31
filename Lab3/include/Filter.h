@@ -1,3 +1,12 @@
+/**
+	@file Filter.h
+	@brief Filters.
+	@author Di Nardo Di Maio Raffaele
+*/
+
+#ifndef FILTER
+#define FILTER
+
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -76,3 +85,5 @@ private:
 	double sigma_range = 0.0;
 	double sigma_space = 0.0;
 };
+
+#endif

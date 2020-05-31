@@ -1,7 +1,7 @@
 /**
 	@file Calibration.cpp
 	@brief Camera Calibration.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 #include "Calibration.h"
 

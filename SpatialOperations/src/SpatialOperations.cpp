@@ -1,3 +1,9 @@
+/**
+    @file SpatialOperations.cpp
+    @brief Source file with main.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "SpatialOperations.h"
 
 int main(int argc, char**argv)

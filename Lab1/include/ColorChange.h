@@ -1,4 +1,11 @@
-#pragma once
+/**
+	@file ColorChange.cpp
+	@brief Header of source file for processing of image.
+	@author Di Nardo Di Maio Raffaele
+*/
+
+#ifndef COLOR_CHANGE
+#define COLOR_CHANGE
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -13,3 +20,5 @@ using namespace cv;
 void square_mean(Mat img, int x, int y, Vec3i &color);
 void changeOnClickRGB(Mat img, int x, int y);
 void changeOnClickHSV(Mat img, int x, int y);
+
+#endif

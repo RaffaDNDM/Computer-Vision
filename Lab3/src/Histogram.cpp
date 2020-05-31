@@ -1,3 +1,9 @@
+/**
+    @file Histogram.cpp
+    @brief Compute histogram and equalization.
+    @author Di Nardo Di Maio Raffaele
+*/
+
 #include "Histogram.h"
 
 Mat histogram_equalization(Mat& img)

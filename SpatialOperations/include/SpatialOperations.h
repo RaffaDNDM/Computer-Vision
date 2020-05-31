@@ -1,4 +1,9 @@
-#pragma once
+/**
+	@file SpatialOperations.h
+	@brief Header of source file with main.
+	@author Di Nardo Di Maio Raffaele
+*/
+
 #include<opencv2/opencv.hpp>
 #include<iostream>
 #include<cmath>

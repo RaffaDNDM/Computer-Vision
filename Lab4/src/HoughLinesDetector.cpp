@@ -1,7 +1,7 @@
 /**
 	@file HoughLinesDetector.cpp
 	@brief Class for Hough transform to detect street.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 #include "HoughLinesDetector.h"
 

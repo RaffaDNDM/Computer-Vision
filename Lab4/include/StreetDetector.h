@@ -1,7 +1,7 @@
 /**
 	@file StreetDetector.h
 	@brief Class for Street and Signal detection.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
 
 #ifndef STREET_DETECTOR
