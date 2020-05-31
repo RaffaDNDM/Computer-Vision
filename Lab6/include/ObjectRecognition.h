@@ -1,12 +1,11 @@
 /**
-	@file VideoMatching.h
-	@brief Class for creation of panoramic view.
-	@author Di Nardo Di Maio Raffaele 1204879
-	@author Bonato Dario 
+	@file ObjectRecognition.h
+	@brief Class for objection recognition in videos.
+	@author Di Nardo Di Maio Raffaele
 */
 
-#ifndef PANORAMIC_IMAGE
-#define PANORAMIC_IMAGE
+#ifndef OBJECT_RECOGNITION
+#define OBJECT_RECOGNITION
 
 #include "Lab6.h"
 
@@ -16,37 +15,20 @@
 class ObjectRecognition
 {
 public:
+
+	ObjectRecognition();
 	/**
 		@brief Constructor.
-		@param path path of the folder with images 
+		@param video_path complete pathname of the video
+		@param objects_path path of the folder with png images of the objects
 		@param ratio ratio for threshold
 	*/
 	ObjectRecognition(cv::String video_path, cv::String objects_path, float ratio);
-	
-	/**
-		@brief Constructor.
-		@param projected_imgs vector of input projected 
-		@param ratio ratio for threshold
-	*/
-	ObjectRecognition(std::vector<cv::Mat>& frames, std::vector<cv::Mat>& objects, float ratio);
 
 	/**
-		@brief It create panoramic image from a set of images.
-		@param isORB true if you want to use ORB, false if you want to use SIFT
+		@brief Object recognition and traking among all video frames.
 	*/
-	void recognition(bool isORB);
-
-	/**
-		@brief Get projected images.
-		@return vector of projected images
-	*/
-	std::vector<cv::Mat> getObjects();
-
-	/**
-		@brief Get panoramic view image.
-		@return panoramic view image 
-	*/
-	std::vector<cv::Mat> getDetectedFrame();
+	void recognition();
 
 	/**
 		@brief Print useful informations.
@@ -54,14 +36,17 @@ public:
 	void printInfo();
 
 	/**
-		@brief.
+		@brief Frame rate of input video.
+		@return frame rate
 	*/
 	double getFrameRate();
 
 	/**
-		@brief.
+		@brief Number of frame in input video.
+		@return number of frames
 	*/
 	int getNumFrames();
+
 private:
 
 	/**
@@ -78,13 +63,13 @@ private:
 	float findMin(std::vector<cv::DMatch> d_matches);
 
 	/**
-		@brief Compute keypoints and descriptors
-		@param method pointer to method object ()
+		@brief Compute keypoints and descriptors of objects and first frame.
 	*/
-	void key_desc(bool isORB);
+	void key_desc();
 
 	/**
 		@brief Compute matches and thresholds looking to descriptors
+		@param matcher matcher we use to compute matches
 		@param matches all the matches found between descriptors
 		@param thresholds all the threshold (ratio*min), each one related to a vector of @matches 
 	*/
@@ -97,8 +82,7 @@ private:
 		@param thresholds all the threshold (ratio*min), each one related to a vector of @matches
 	*/
 	void computeMatches(std::vector<std::vector<cv::DMatch>> matches,
-		                std::vector<float> thresholds,
-						bool isORB);
+		                std::vector<float> thresholds);
 
 	//Video capture to detect frames
 	cv::VideoCapture _cap;
@@ -115,32 +99,29 @@ private:
 	//Number of frames
 	int _size = 0;
 
-	//Descriptors vector
+	//Vector of object images
 	std::vector<cv::Mat> _objects;
 
-	//Keypoints vector
+	//Keypoints vector of first frame
 	std::vector<cv::KeyPoint> _keypointsFrame;
 
-	//Descriptors vector
+	//Keypoints vector (one for each object image)
 	std::vector< std::vector<cv::KeyPoint>> _keypointsObjects;
 
-	//Descriptors vector
+	//Descriptors vector of first frame
 	cv::Mat _descriptorsFrame;
 
-	//Descriptors vector
+	//Descriptors vector of objects 
 	std::vector<cv::Mat> _descriptorsObjects;
 
 	//Computed thresholds
 	std::vector<float> _thresholds;
 
-	//Frame with detected objects
+	//Current frame with detected objects
 	cv::Mat _detected_frame;
 
-	//Pattern to look for video in the folder 
-	const cv::String video_pattern = "*.mov";
-
 	//Pattern to look for PNG image in the folder 
-	const cv::String objects_pattern = "*.png";
+	const cv::String _objects_pattern = "*.png";
 
 	//Ratio parameter used to compute the threshold
 	float _ratio = 0.0;
@@ -155,6 +136,8 @@ private:
 											  cv::Scalar(0,255,255)//yellow
 											 };
 
+	const cv::Scalar _marker_color = cv::Scalar(255, 255, 255);
+
 	//Filename of output detected video
 	const cv::String _output_filename = "output.avi";
 
@@ -166,6 +149,52 @@ private:
 
 	//Frame rate of the camera
 	double _frame_rate = 0.0;
+};
+
+class VideoException : public std::exception
+{
+public:
+	virtual char const* what() const
+	{
+		return "Video file can't be opened (Check if you insert the correct path)";
+	}
+};
+
+class InputIMGException : public std::exception
+{
+public:
+	virtual char const* what() const
+	{
+		return "No images found with bmp or png extension in <objects_folder>.";
+	}
+};
+
+class NoFirstFrameException : public std::exception
+{
+public:
+	virtual char const* what() const
+	{
+		return "Empty first frame";
+	}
+};
+
+class NoTrackedPointsException : public std::exception
+{
+public:
+	virtual char const* what() const
+	{
+
+		return "Lucas-Kanade wasn't able to track any points.";
+	}
+};
+
+class NoInliersException : public std::exception
+{
+public:
+	virtual char const* what() const
+	{
+		return "No inliers found, increase the ratio.";
+	}
 };
 
 #endif

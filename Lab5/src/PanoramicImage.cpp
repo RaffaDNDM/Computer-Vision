@@ -6,14 +6,15 @@
 
 #include "PanoramicImage.h"
 
-PanoramicImage::PanoramicImage(cv::String path, float ratio):
-	_ratio{ratio}
+PanoramicImage::PanoramicImage(cv::String path, float ratio, double FOV) :
+	_ratio{ ratio },
+	_FOV{FOV}
 {
 	loadImages(path);
 	cylinderProjection();
 }
 
-PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio):
+PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio, double FOV):
 	_ratio{ ratio }
 {
 	_projected_imgs.reserve(projected_imgs.size());
@@ -24,17 +25,22 @@ void PanoramicImage::panoramicImage(bool isORB)
 {
 	cv::Ptr<cv::BFMatcher> matcher;
 
+	//Method for detection 
 	if (isORB)
 	{
-		method_name = "ORB";
+		_method_name = "ORB";
 		cv::Ptr<cv::ORB> orb;
+
+		//Detection
 		key_desc<cv::ORB>(orb);
 		matcher = cv::BFMatcher::create(cv::NORM_HAMMING, true);
 	}
 	else
 	{
-		method_name = "SIFT";
+		_method_name = "SIFT";
 		cv::Ptr<cv::xfeatures2d::SIFT> sift;
+		
+		//Detection
 		key_desc<cv::xfeatures2d::SIFT>(sift);
 		matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	}
@@ -46,12 +52,13 @@ void PanoramicImage::panoramicImage(bool isORB)
 	//Compute translations
 	translate_imgs(_translations, matches, _thresholds);
 	
+	//Compute panoramic view
 	final_image(_translations);
 }
 
 void PanoramicImage::loadImages(cv::String path)
 {
-	for(cv::String pattern : patterns)
+	for(cv::String pattern : _patterns)
 	{
 		std::vector<cv::String> imgs_names;
 		cv::utils::fs::glob(path, pattern, imgs_names);
@@ -68,6 +75,9 @@ void PanoramicImage::loadImages(cv::String path)
 		}
 	}
 
+	if (_input_imgs.size() == 0)
+		throw InputIMGException();
+
 	std::cout << LINE << "Number of input images:   " << _input_imgs.size() << "\n" << LINE;
 }
 
@@ -75,7 +85,7 @@ void PanoramicImage::cylinderProjection()
 {
 	for (cv::Mat& img : _input_imgs)
 	{
-		cv::Mat projected_img = PanoramicUtils::cylindricalProj(img, FOV / 2);
+		cv::Mat projected_img = PanoramicUtils::cylindricalProj(img, _FOV / 2);
 		_projected_imgs.push_back(projected_img);
 	}
 
@@ -91,7 +101,7 @@ float PanoramicImage::findMin(std::vector<cv::DMatch> d_matches)
 
 	for (cv::DMatch match : d_matches)
 	{
-		if (match.distance < min)
+		if (match.distance < min && match.distance >0)
 			min = match.distance;
 	}
 
@@ -110,8 +120,8 @@ void PanoramicImage::key_desc(cv::Ptr<T>& method)
 
 		method->detectAndCompute(img, cv::Mat(), kpts, desc);
 
-		descriptors.push_back(desc);
-		keypoints.push_back(kpts);
+		_descriptors.push_back(desc);
+		_keypoints.push_back(kpts);
 	}
 }
 
@@ -119,20 +129,15 @@ void PanoramicImage::match(cv::Ptr<cv::BFMatcher> matcher,
 						   std::vector<std::vector<cv::DMatch>>& matches, 
 	                       std::vector<float>& thresholds)
 {
-	for (int i = 1; i < descriptors.size(); i++)
+	for (int i = 1; i < _descriptors.size(); i++)
 	{
 		std::vector<cv::DMatch> match;
-		matcher->match(descriptors[i - 1], descriptors[i], match);
+		matcher->match(_descriptors[i - 1], _descriptors[i], match);
 		float min = findMin(match);
 		matches.push_back(match);
 		thresholds.push_back(_ratio * min);
 	}
 
-
-	/**
-		cv::Mat res;
-		cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1), Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-	*/
 	std::cout << LINE;
 }
 
@@ -152,15 +157,15 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 			if (matches[i][j].distance <= thresholds[i])
 			{
 				//indice del keypoint dell'immagine i-1 
-				pointsO.push_back(keypoints[i][matches[i][j].queryIdx].pt);
+				pointsO.push_back(_keypoints[i][matches[i][j].queryIdx].pt);
 
 				//indice del keypoint dell'immagine i
-				pointsS.push_back(keypoints[i + 1][matches[i][j].trainIdx].pt);
+				pointsS.push_back(_keypoints[i + 1][matches[i][j].trainIdx].pt);
 
 			}
 		}
 
-		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
+		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC, thresholds[i]);
 
 		cv::Point2f transl(0.0, 0.0);
 
@@ -176,6 +181,9 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 			}
 		}
 
+		if(count==0)
+			throw NoInliersException();
+
 		transl.x /= count;
 		transl.y /= count;
 		translations.push_back(transl);
@@ -184,18 +192,21 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 
 void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 {
-	std::vector<cv::Point2f> final_translations;
+	std::vector<cv::Point> final_translations;
 
 	int min_height=0;
 	int max_height=_projected_imgs[0].rows;
 	int current_height=0;
-	int width = _projected_imgs[0].cols;
+
+	int min_width = 0;
+	int max_width = _projected_imgs[0].cols;
+	int current_width = 0;
+
 	for (int i = 1; i < _projected_imgs.size(); i++)
 	{
-		//translations[i - 1].x = (translations[i - 1].x < 0) ? _projected_imgs[i - 1].cols : translations[i - 1].x;
-		float x = (translations[i - 1].x < 0) ? _projected_imgs[i - 1].cols : translations[i - 1].x;
-		final_translations.push_back(cv::Point2f(cvRound(x), cvRound(translations[i-1].y)));
+		final_translations.push_back(cv::Point(cvRound(translations[i - 1].x), cvRound(translations[i - 1].y)));
 
+		current_width += final_translations[i - 1].x;
 		current_height += final_translations[i - 1].y;
 
 		if (current_height < min_height)
@@ -207,12 +218,19 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 			max_height += (_projected_imgs[i].rows + current_height - max_height);
 		}
 
-		width += final_translations[i-1].x;
+		if (current_width < min_width)
+		{
+			min_width += (current_width - min_width);
+		}
+		else if ((current_width + _projected_imgs[i].cols) > max_width)
+		{
+			max_width += (_projected_imgs[i].cols + current_width - max_width);
+		}
 	}
 
-	_panoramic_view = cv::Mat(cv::Size(width, max_height-min_height), _projected_imgs[0].type());
-	int x1 = 0;
-	int x2 = _projected_imgs[0].cols;
+	_panoramic_view = cv::Mat(cv::Size(max_width-min_width, max_height-min_height), _projected_imgs[0].type());
+	int x1 = 0-min_width;
+	int x2 = x1+_projected_imgs[0].cols;
 	int y1 = 0-min_height;
 	int y2 = y1 + _projected_imgs[0].rows;
 	cv::Mat img = _panoramic_view(cv::Range(y1, y2), cv::Range(x1, x2));
@@ -220,10 +238,10 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 
 	for (int i = 1; i < _projected_imgs.size(); i++)
 	{
-		x1 += cvRound(final_translations[i - 1].x);
-		x2 = x1 + _projected_imgs[i].cols;
-		y1 += cvRound(final_translations[i - 1].y);
-		y2 += cvRound(final_translations[i - 1].y);
+		x1 += final_translations[i - 1].x;
+		x2 += final_translations[i - 1].x;
+		y1 += final_translations[i - 1].y;
+		y2 += final_translations[i - 1].y;
 
 		img = _panoramic_view(cv::Range(y1, y2), cv::Range(x1, x2));
 		_projected_imgs[i].copyTo(img);
@@ -242,14 +260,31 @@ cv::Mat PanoramicImage::getResult()
 	return _panoramic_view;
 }
 
+std::string PanoramicImage::getMethod()
+{
+	return _method_name;
+}
+
+void PanoramicImage::setRatio(float ratio)
+{
+	_ratio=ratio;
+}
+
+void PanoramicImage::clearUsedVectors()
+{
+	_keypoints.clear();
+	_descriptors.clear();
+	_thresholds.clear();
+	_translations.clear();
+}
 void PanoramicImage::printInfo()
 {
-	std::cout << LINE << "[" << method_name << "] Thresholds\n" << LINE;
+	std::cout << LINE << "[" << _method_name << "] Thresholds\n" << LINE;
 
 	for (int i = 0; i < _thresholds.size(); i++)
 		std::cout << i << ":  " << _thresholds[i] << std::endl;
 
-	std::cout << LINE << "[" << method_name << "] Translations\n" << LINE;
+	std::cout << LINE << "[" << _method_name << "] Translations\n" << LINE;
 
 	for (int i = 0; i < _translations.size(); i++)
 		std::cout << "i: " << i + 1 << "     " << _translations[i] << std::endl;

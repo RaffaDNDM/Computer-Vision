@@ -1,10 +1,13 @@
 /**
-	@file PanoramicImage.cpp
-	@brief Implementation of the class used for panoramic view.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@file ObjectRecognition.cpp
+	@brief Implementation of the class used for object recognition in videos.
+	@author Di Nardo Di Maio Raffaele
 */
 
 #include "ObjectRecognition.h"
+
+ObjectRecognition::ObjectRecognition() 
+{}
 
 ObjectRecognition::ObjectRecognition(cv::String video_path, cv::String objects_path, float ratio):
 	_ratio{ratio},
@@ -14,43 +17,48 @@ ObjectRecognition::ObjectRecognition(cv::String video_path, cv::String objects_p
 {
 	if (!_cap.isOpened())
 	{
-		throw "Video file can't be opened";
+		throw VideoException();
 	}
 
 	loadObjects(objects_path);
 }
 
-void ObjectRecognition::recognition(bool isORB)
+void ObjectRecognition::recognition()
 {
 	cv::Ptr<cv::BFMatcher> matcher;
+
+	std::cout << " Keypoints detection on first frame" << std::endl;
 
 	_cap >> _frame;
 	cv::resize(_frame, _frame, cv::Size(_frame.cols / 2, _frame.rows / 2));
 	
 	if (_frame.empty())
 	{
-		throw "Empty first frame";
+		throw NoFirstFrameException();
 		exit(1);
 	}
 
 	_detected_frame=_frame.clone();
-	key_desc(isORB);
+	key_desc();
 	matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	
 	//Compute thresholds and matches
 	std::vector<std::vector<cv::DMatch>> matches;
 	match(matcher, matches, _thresholds);
-	computeMatches(matches, _thresholds, isORB);
+	computeMatches(matches, _thresholds);
 
 	cv::namedWindow(_window_name, cv::WINDOW_AUTOSIZE);
 	cv::imshow(_window_name, _detected_frame);
 	
+	std::cout << LINE << "Tracking phase on other frames" << std::endl;
+
 	/*
 		Store detected video on the disk
 		_out=cv::VideoWriter(_output_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), _frame_rate, _frame.size());
 	*/
 	bool check = false;
-	int i = 0;
+	int i = 1;
+	int upload_step = _size / 10;
 
 	while(!check)
 	{
@@ -86,6 +94,9 @@ void ObjectRecognition::recognition(bool isORB)
 				}
 			}
 
+			if (inliers_prev_ok.size() == 0)
+				throw NoTrackedPointsException();
+
 			cv::Mat mask;
 			cv::Mat H = cv::findHomography(inliers_prev_ok, inliers_next_ok, mask, cv::RANSAC);
 
@@ -95,32 +106,47 @@ void ObjectRecognition::recognition(bool isORB)
 
 			_inliers_frame_prev[h] = inliers_next_ok;
 
-			for(int k=0; k<_corners_frame_prev[h].size(); k++)
-				cv::line(_detected_frame, _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2);
+			for (int k = 0; k < _corners_frame_prev[0].size(); k++)
+			{
+				cv::line(_detected_frame, _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2, cv::LineTypes::LINE_AA);
+				cv::drawMarker(_detected_frame, _corners_frame_prev[h][k], _marker_color, cv::MARKER_CROSS);
+			}
 		}
 	
 		_frame = _frame_next.clone();
 		
 		cv::imshow(_window_name, _detected_frame);
 		cv::waitKey(1);
-
+		
 		/*
 			Store the final image on disk
 			_out << _detected_frame;
 		*/
+
+		if (i % upload_step == 0)
+		{
+			int k = 0;
+			int percentage_done = i / upload_step;
+			
+			std::cout << "\r[";
+
+			for (; k < percentage_done; k++)
+				std::cout << "=";
+			for(;k<10; k++)
+				std::cout << " ";
+			std::cout << "] " << percentage_done*10 << "%";
+		}
 	}
+	std::cout << LINE;
 }
 
 void ObjectRecognition::loadObjects(cv::String path)
 {
 	std::vector<cv::String> imgs_names;
-	cv::utils::fs::glob(path, objects_pattern, imgs_names);
+	cv::utils::fs::glob(path, _objects_pattern, imgs_names);
 
 	if (imgs_names.size() == 0)
-	{
-		throw "Error in the video path";
-		exit(1);
-	}
+		throw InputIMGException();
 	else
 	{
 		for (auto name : imgs_names)
@@ -145,7 +171,7 @@ float ObjectRecognition::findMin(std::vector<cv::DMatch> d_matches)
 	return min;
 }
 
-void ObjectRecognition::key_desc(bool isORB)
+void ObjectRecognition::key_desc()
 {
 	cv::Ptr<cv::xfeatures2d::SIFT> sift = cv::xfeatures2d::SIFT::create();
 	sift->detectAndCompute(_frame, cv::Mat(), _keypointsFrame, _descriptorsFrame);
@@ -173,11 +199,11 @@ void ObjectRecognition::match(cv::Ptr<cv::BFMatcher> matcher,
 		thresholds.push_back(_ratio * min);
 	}
 
-	std::cout << LINE;
+	printInfo();
 }
 
 void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matches,
-                                       std::vector<float> thresholds, bool isORB)
+                                       std::vector<float> thresholds)
 {
 	for (int i = 0; i < matches.size(); i++)
 	{
@@ -198,17 +224,18 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 			}
 		}
 
-		cv::Mat H;
 
+		cv::Mat H;
 		H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
 
 		std::vector<cv::Point2f> inliers;
+		int count = 0;
 		int k = 0;
 		for (; k < mask.rows; k++)
 		{
 			if ((unsigned int)mask.at<uchar>(k))
 			{
-
+				count++;
 				cv::Point2f inlier(cvRound(pointsS[k].x), cvRound(pointsS[k].y));
 				inliers.push_back(inlier);
 
@@ -216,6 +243,11 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 			}
 		}
 		_inliers_frame_prev.push_back(inliers);
+
+		if (count == 0)
+			throw NoInliersException();
+		
+		std::cout << "[Object " << "] Found " << count << "/" << k << " inliers" << std::endl;
 
 		//Define corners of the object
 		std::vector<cv::Point2f> corners_object;
@@ -228,21 +260,14 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		cv::perspectiveTransform(corners_object, corners, H);
 		
 		_corners_frame_prev.push_back(corners);
-		for (int h = 0; h < _corners_frame_prev[0].size(); h++)
+		for (int h = 0; h < _corners_frame_prev[i].size(); h++)
 		{
-			/**
 			cv::Mat res;
-			cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, Scalar::all(-1), Scalar::all(-1), match_mask, DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-			*/
-			cv::line(_detected_frame, _corners_frame_prev[i][h], _corners_frame_prev[i][(h + 1) % 4], _colors[i], 2);
+			cv::line(_detected_frame, _corners_frame_prev[i][h], _corners_frame_prev[i][(h + 1) % 4], _colors[i], 2, cv::LineTypes::LINE_AA);
+			cv::drawMarker(_detected_frame, _corners_frame_prev[i][h], _marker_color, cv::MARKER_CROSS);
 		}
-		
-	}
-}
 
-std::vector<cv::Mat> ObjectRecognition::getObjects()
-{
-	return _objects;
+	}
 }
 
 double ObjectRecognition::getFrameRate()

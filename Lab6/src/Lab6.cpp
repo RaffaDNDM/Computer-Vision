@@ -1,16 +1,15 @@
 /**
-	@file Lab5.cpp
+	@file Lab6.cpp
 	@brief Source file with main.
-	@author Di Nardo Di Maio Raffaele 1204879
+	@author Di Nardo Di Maio Raffaele
 */
+
 #include "Lab6.h"
 #include "ObjectRecognition.h"
 
-void recognition(ObjectRecognition& or_inst, bool isORB);
-std::mutex mutex;
-
 int main(int argc, char** argv)
 {
+	//Management of command line arguments
 	if (argc != 3)
 	{
 		std::cerr << LINE << std::endl;
@@ -21,60 +20,72 @@ int main(int argc, char** argv)
 	}
 
 	float ratio;
-	std::cout << LINE;
-	std::cout << "Insert ratio " << std::endl;
-	std::cin >> ratio;
-	std::cout << "\n" << LINE;
-
-	bool isORB = false;
-
-	ObjectRecognition or1(argv[1], argv[2], ratio);
-	or1.recognition(isORB);
-
-	std::string window = (isORB) ? window_ORB : window_SIFT;
-
-	/*
-	for (int i = 0; i < or1.getNumFrames(); i++)
+	while (ratio < 1.0)
 	{
-		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-		cv::imshow(window, or1.getDetectedFrame()[i]);
-		cv::waitKey(1000 / or1.getFrameRate());
+		std::cout << LINE;
+		std::cout << "Insert ratio for SIFT (ratio >= 1.0)" << std::endl;
+		std::cin >> ratio;
 	}
 
-	
-	cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window, or1.getDetectedFrame()[0]);
-	cv::waitKey(0);
-	cv::waitKey(1000 / or1.getFrameRate());
-	*/
-	
-	/*
-	std::vector<cv::Mat> frames = or1.getFrames();
-	std::vector<cv::Mat> objects = or1.getObjects();
-	ObjectRecognition or2(frames, objects, ratio);
-	
-	std::thread t1(recognition, std::ref(or1), true);
-	std::thread t2(recognition, std::ref(or2), false);
+	bool check = false;
 
-	t1.join();
-	t2.join()
-	*/
-}
-
-
-//Aggiungere 2 thread e funzione con riferimento a oggetto PanoramicImage e tipo di procedura isORB
-void recognition(ObjectRecognition& or_inst, bool isORB)
-{
-	/*
-	or_inst.recognition(isORB);
-
-	std::string window = (isORB) ? window_ORB : window_SIFT;
-
-	for (int i = 0; i < or_inst.getNumFrames(); i++)
+	while (!check)
 	{
-		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-		cv::imshow(window, or_inst.getDetectedFrame());
-		cv::waitKey(1000 / or_inst.getFrameRate());
+		try
+		{
+			//Creation of the instance
+			ObjectRecognition objr(argv[1], argv[2], ratio);
+			
+			//Recognition of objects in the video
+			objr.recognition();
+			check = true;
+		}
+		catch (const InputIMGException& e1)
+		{
+			//No png images found in input folder, specified on command line
+			std::cout << e1.what() << std::endl;
+			return 1;
+		}
+		catch (const VideoException& e2)
+		{
+			//Video can't be opened
+			std::cout << e2.what() << std::endl;
+			return 1;
+		}
+		catch (const NoFirstFrameException& e3)
+		{
+			//No first frame found
+			std::cout << e3.what() << std::endl;
+			return 1;
+		}
+		catch (const NoInliersException& e4)
+		{
+			//No inliers found during detection on first frame
+			std::cout << e4.what() << std::endl;
+			ratio = 0.0;
+
+			while (ratio < 1.0)
+			{
+				std::cout << LINE;
+				std::cout << "Insert ratio for SIFT (ratio >= 1.0)" << std::endl;
+				std::cin >> ratio;
+			}
+		}
+		catch (const NoTrackedPointsException& e5)
+		{
+			//No flows found during Lukas-Kanade method
+			std::cout << e5.what() << std::endl;
+			std::cout << "(Try to improve the number of inliers detected, increasing the ratio)" << std::endl;
+
+			ratio = 0.0;
+			while (ratio < 1.0)
+			{
+				std::cout << LINE;
+				std::cout << "Insert ratio for SIFT (ratio >= 1.0)" << std::endl;
+				std::cin >> ratio;
+			}
+		}
 	}
-	*/
+
+	return 0;
 }

@@ -6,49 +6,122 @@
 
 #include "PanoramicImage.h"
 
-std::mutex mutex;
-void panoramic(PanoramicImage &p, bool isORB);
+std::mutex mutex; //mutex
+void panoramic(PanoramicImage &p, bool isORB); //Function called by thread
 
 int main(int argc, char** argv)
 {
-	if (argc != 2)
+	//Analysis of command line arguments
+	if (argc != 3)
 	{
 		std::cerr << LINE << std::endl;
-		std::cerr << "You need to insert, as command line arguments, in order" << std::endl;
-		std::cerr << "       <input_images_folder>     <1|2>" << std::endl;
-		std::cerr << " 1 = ORB   2 = SIFT  "<< std::endl;
+		std::cerr << "You need to insert, as command line arguments, in order:" << std::endl;
+		std::cerr << "       <input_images_folder>       <FOV>" << std::endl;
 		std::cerr << LINE << std::endl;
 		return 1;
 	}
 
-	float ratio;
+	double FOV = std::stod(argv[2]);
+	while (FOV < 1.0)
+	{
+		std::cout << LINE;
+		std::cout << "Insert Field Of View for the set of images" << std::endl;
+		std::cin >> FOV;
+	}
+
+	//Ratio for ORB and SIFT
+	float ratio1=0.0, ratio2 = 0.0;
+	while (ratio1 < 1.0)
+	{
+		std::cout << LINE;
+		std::cout << "Insert ratio for ORB (ratio >= 1.0)" << std::endl;
+		std::cin >> ratio1;
+	}
+
+	while (ratio2 < 1.0)
+	{
+		std::cout << LINE;
+		std::cout << "Insert ratio for SIFT (ratio >= 1.0)" << std::endl;
+		std::cin >> ratio2;
+	}
+
 	std::cout << LINE;
-	std::cout << "Insert ratio " << std::endl;
-	std::cin >> ratio;
-	std::cout << "\n" << LINE;
 
-	PanoramicImage p1(argv[1], ratio);
-	std::vector<cv::Mat> projections = p1.getProjected();
-	PanoramicImage p2(projections, ratio);
-	
-	std::thread t1(panoramic, std::ref(p1), true);
-	std::thread t2(panoramic, std::ref(p2), false);
+	try
+	{
+		//p1=ORB, p2=SIFT
+		PanoramicImage p1(argv[1], ratio1, FOV);
+		std::vector<cv::Mat> projections = p1.getProjected();
+		PanoramicImage p2(projections, ratio2, FOV);
 
-	t1.join();
-	t2.join();
+		std::thread t1(panoramic, std::ref(p1), true);
+		std::thread t2(panoramic, std::ref(p2), false);
 
-	cv::namedWindow(window_ORB, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window_ORB, p1.getResult());
-	cv::namedWindow(window_SIFT, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-	cv::imshow(window_SIFT, p2.getResult());
-	cv::waitKey(0);
+		t1.join();
+		t2.join();
+
+
+		//Width and height of final comparison image
+		int width = (p1.getResult().cols >= p2.getResult().cols) ? p1.getResult().cols : p2.getResult().cols;
+		int height = p1.getResult().rows + p2.getResult().rows;
+
+		//Final comparison image (top = ORB, bottom = SIFT)
+		cv::Mat panoramic_comparison(cv::Size(width, height), p1.getResult().type());
+		cv::Mat img = panoramic_comparison(cv::Range(0, p1.getResult().rows), cv::Range(0, p1.getResult().cols));
+		(p1.getResult()).copyTo(img);
+		img = panoramic_comparison(cv::Range(p1.getResult().rows, height), cv::Range(0, p2.getResult().cols));
+		(p2.getResult()).copyTo(img);
+
+		//Show final comparison image
+		cv::namedWindow(window_SIFT, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+		cv::imshow(window_SIFT, panoramic_comparison);
+		cv::waitKey(0);
+	}
+	catch (const InputIMGException& e)
+	{
+		//No png images or bmp images found in input folder
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
+
+	return 0;
 }
 
-
-//Aggiungere 2 thread e funzione con riferimento a oggetto PanoramicImage e tipo di procedura isORB
 void panoramic(PanoramicImage &p, bool isORB)
 {
-	p.panoramicImage(isORB);
+	bool check = false;
+	
+	while (!check)
+	{
+		try
+		{
+			p.panoramicImage(isORB);
+			check = true;
+		}
+		catch (const NoInliersException& e)
+		{
+			//No inliers found in between 2 images
+			float ratio=0.0;
+			mutex.lock();
+			std::cout << LINE;
+			std::cout << e.what() << std::endl;
+
+			while (ratio < 1.0)
+			{
+				std::cout << LINE;
+				std::cout << "Insert ratio for " << p.getMethod() << " (ratio >= 1.0)" << std::endl;
+				std::cin >> ratio;
+			}
+			
+			std::cout << LINE;
+			mutex.unlock();
+
+			p.setRatio(ratio);
+			p.clearUsedVectors();
+		}
+	}
+
+	//Print thresholds and detected trnaslations
 	mutex.lock();
 	p.printInfo();
 	mutex.unlock();

@@ -2,9 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\dataset_lab\\data",
-    "\\include"
+    "\\data\\dataset_kitchen",
+    "\\data\\dataset_lab",
+    "\\include",
+    "\\src"
   ],
-  "SelectedNode": "\\include\\PanoramicImage.h",
+  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }

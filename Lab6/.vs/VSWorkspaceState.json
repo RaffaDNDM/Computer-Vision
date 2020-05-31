@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\data",
+    "\\data\\objects",
+    "\\include",
+    "\\src"
   ],
+  "SelectedNode": "\\include\\Lab6.h",
   "PreviewInSolutionExplorer": false
 }

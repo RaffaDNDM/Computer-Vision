@@ -8,7 +8,8 @@
       "projectTarget": "Lab5.exe",
       "name": "Lab5.exe",
       "args": [
-        "../../../data/dataset_dolomites/dolomites"
+        "../../../data/dataset_kitchen/kitchen", 
+        "66"
       ]
     }
   ]
