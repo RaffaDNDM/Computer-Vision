@@ -24,7 +24,7 @@ ObjectRecognition::ObjectRecognition(cv::String video_path, cv::String objects_p
 	loadObjects(objects_path);
 }
 
-void ObjectRecognition::recognition()
+void ObjectRecognition::recognition(bool save)
 {
 	cv::Ptr<cv::BFMatcher> matcher;
 
@@ -32,7 +32,9 @@ void ObjectRecognition::recognition()
 
 	//Loading first frame
 	_cap >> _frame;
-	cv::resize(_frame, _frame, cv::Size(_frame.cols / 2, _frame.rows / 2));
+
+	if(!save)
+		cv::resize(_frame, _frame, cv::Size(_frame.cols / 2, _frame.rows / 2));
 	
 	if (_frame.empty())
 	{
@@ -51,19 +53,33 @@ void ObjectRecognition::recognition()
 	match(matcher, matches, _thresholds);
 	computeMatches(matches, _thresholds);
 
-	//Showing first frame
-	cv::namedWindow(_window_name, cv::WINDOW_AUTOSIZE);
-	cv::imshow(_window_name, _detected_frame);
+	if(save)
+	{ 
+		//Store detected frame on the disk
+		_out=cv::VideoWriter(_output_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), _frame_rate, _frame.size());
+		_out << _detected_frame;
+	}
+	else
+	{
+		//Showing first frame
+		cv::namedWindow(_window_name, cv::WINDOW_AUTOSIZE);
+		cv::imshow(_window_name, _detected_frame);
+	}
 
 	std::cout << LINE << "Tracking phase on other frames" << std::endl;
 
-	/*
-		Store detected video on the disk
-		_out=cv::VideoWriter(_output_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), _frame_rate, _frame.size());
-	*/
 	bool check = false;
 	int i = 1;
 	int upload_step = _size / 10;
+
+	//Initialization of tracking update bar
+	std::cout << "[";
+
+	for (int k=0 ;k < 10; k++)
+		std::cout << " ";
+	
+	std::cout << "] " << 0 << "%";
+
 
 	while(!check)
 	{
@@ -77,7 +93,9 @@ void ObjectRecognition::recognition()
 			continue;
 		}
 
-		cv::resize(_frame_next, _frame_next, cv::Size(_frame_next.cols / 2, _frame_next.rows / 2));
+		if(!save)
+			cv::resize(_frame_next, _frame_next, cv::Size(_frame_next.cols / 2, _frame_next.rows / 2));
+		
 		i++;
 		_detected_frame =_frame_next.clone();
 
@@ -130,13 +148,17 @@ void ObjectRecognition::recognition()
 	
 		_frame = _frame_next.clone();
 		
-		cv::imshow(_window_name, _detected_frame);
-		cv::waitKey(1);
-		
-		/*
-			Store the final image on disk
+		if (save)
+		{
+			//Store detected frame on disk
 			_out << _detected_frame;
-		*/
+		}
+		else
+		{
+			//Show frame in a window
+			cv::imshow(_window_name, _detected_frame);
+			cv::waitKey(1);
+		}
 
 		//Tracking bar with percentage of frame already tracked
 		if (i % upload_step == 0)
@@ -153,7 +175,7 @@ void ObjectRecognition::recognition()
 			std::cout << "] " << percentage_done*10 << "%";
 		}
 	}
-	std::cout << LINE;
+	std::cout << "\n" << LINE;
 }
 
 void ObjectRecognition::loadObjects(cv::String path)
@@ -267,7 +289,7 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		if (count == 0)
 			throw NoInliersException();
 		
-		std::cout << "[Object " << "] Found " << count << "/" << k << " inliers" << std::endl;
+		std::cout << "[Object " <<i<< "] Found " << count << "/" << k << " inliers" << std::endl;
 
 		//Define corners of the object
 		std::vector<cv::Point2f> corners_object;

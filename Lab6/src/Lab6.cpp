@@ -27,6 +27,17 @@ int main(int argc, char** argv)
 		std::cin >> ratio;
 	}
 
+	int choice = -1;
+	while (choice != 2 && choice != 1)
+	{
+		std::cout << LINE;
+		std::cout << "Select the modality you want to use (insert the corresponding number):" << std::endl;
+		std::cout << "1) Save the video with detected objects" << std::endl;
+		std::cout << "2) Real-time video in a separate window through OpenCV" << std::endl;
+		std::cin >> choice;
+	}
+
+	bool save = (choice-1)? false : true;
 	bool check = false;
 
 	while (!check)
@@ -37,7 +48,7 @@ int main(int argc, char** argv)
 			ObjectRecognition objr(argv[1], argv[2], ratio);
 			
 			//Recognition of objects in the video
-			objr.recognition();
+			objr.recognition(save);
 			check = true;
 		}
 		catch (const InputIMGException& e1)

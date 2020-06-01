@@ -28,7 +28,7 @@ public:
 	/**
 		@brief Object recognition and traking among all video frames.
 	*/
-	void recognition();
+	void recognition(bool save);
 
 	/**
 		@brief Print useful informations.
