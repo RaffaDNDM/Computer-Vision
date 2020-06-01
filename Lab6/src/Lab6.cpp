@@ -1,7 +1,6 @@
 /**
 	@file Lab6.cpp
 	@brief Source file with main.
-	@author Di Nardo Di Maio Raffaele
 */
 
 #include "Lab6.h"
@@ -19,7 +18,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	float ratio;
+	float ratio=0.0;
 	while (ratio < 1.0)
 	{
 		std::cout << LINE;

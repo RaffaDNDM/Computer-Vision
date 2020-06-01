@@ -1,7 +1,6 @@
 /**
 	@file ObjectRecognition.h
-	@brief Class for objection recognition in videos.
-	@author Di Nardo Di Maio Raffaele
+	@brief Class for object recognition in videos.
 */
 
 #ifndef OBJECT_RECOGNITION

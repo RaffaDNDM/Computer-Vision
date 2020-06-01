@@ -1,7 +1,6 @@
 /**
-	@file Lab6.cpp
-	@brief Source file with main.
-	@author Di Nardo Di Maio Raffaele
+	@file Lab6.h
+	@brief Header of source file with main.
 */
 
 #ifndef LAB6

@@ -1,7 +1,6 @@
 /**
 	@file ObjectRecognition.cpp
 	@brief Implementation of the class used for object recognition in videos.
-	@author Di Nardo Di Maio Raffaele
 */
 
 #include "ObjectRecognition.h"
