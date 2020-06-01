@@ -20,6 +20,7 @@ ObjectRecognition::ObjectRecognition(cv::String video_path, cv::String objects_p
 		throw VideoException();
 	}
 
+	//Loading images of the objects
 	loadObjects(objects_path);
 }
 
@@ -29,6 +30,7 @@ void ObjectRecognition::recognition()
 
 	std::cout << " Keypoints detection on first frame" << std::endl;
 
+	//Loading first frame
 	_cap >> _frame;
 	cv::resize(_frame, _frame, cv::Size(_frame.cols / 2, _frame.rows / 2));
 	
@@ -39,6 +41,8 @@ void ObjectRecognition::recognition()
 	}
 
 	_detected_frame=_frame.clone();
+	
+	//SIFT detection
 	key_desc();
 	matcher = cv::BFMatcher::create(cv::NORM_L2, true);
 	
@@ -47,9 +51,10 @@ void ObjectRecognition::recognition()
 	match(matcher, matches, _thresholds);
 	computeMatches(matches, _thresholds);
 
+	//Showing first frame
 	cv::namedWindow(_window_name, cv::WINDOW_AUTOSIZE);
 	cv::imshow(_window_name, _detected_frame);
-	
+
 	std::cout << LINE << "Tracking phase on other frames" << std::endl;
 
 	/*
@@ -62,10 +67,12 @@ void ObjectRecognition::recognition()
 
 	while(!check)
 	{
+		//Loading next frame
 		_cap >> _frame_next;
 
 		if (_frame_next.empty())
 		{
+			//Video is ended
 			check = true;
 			continue;
 		}
@@ -74,38 +81,46 @@ void ObjectRecognition::recognition()
 		i++;
 		_detected_frame =_frame_next.clone();
 
+		//Tracking (one for each object)
 		for(int h=0; h<_inliers_frame_prev.size(); h++)
 		{
 			std::vector<cv::Point2f> inliers_frame_next;
 			std::vector<uchar> status;
 			std::vector<float> err;
 
+			//Lukas-Kanade algorithm
 			cv::calcOpticalFlowPyrLK(_frame, _frame_next, _inliers_frame_prev[h], inliers_frame_next, status, err);
 			std::vector<cv::Point2f> inliers_prev_ok;
 			std::vector<cv::Point2f> inliers_next_ok;
 
 			for (int k = 0; k < status.size(); k++)
 			{
-				if (status[k] == 1)
+				if (status[k] == 1) //If the point k is tracked
 				{
 					inliers_prev_ok.push_back(_inliers_frame_prev[h][k]);
 					inliers_next_ok.push_back(inliers_frame_next[k]);
+
+					//Draw a circle for the new tracked positions of the points
 					cv::circle(_detected_frame, inliers_frame_next[k], 2, _colors[h]);
 				}
 			}
 
+			//No tracked points by Lukas-Kanade
 			if (inliers_prev_ok.size() == 0)
 				throw NoTrackedPointsException();
 
+			//Computation of perspective transformation between previous and next frame, looking to tracked point by Lukas-Kanade
 			cv::Mat mask;
 			cv::Mat H = cv::findHomography(inliers_prev_ok, inliers_next_ok, mask, cv::RANSAC);
 
+			//Reprojection of corners of the object into the new frame
 			std::vector<cv::Point2f> corners;
 			cv::perspectiveTransform(_corners_frame_prev[h], corners, H);
 			_corners_frame_prev[h] = corners;
 
 			_inliers_frame_prev[h] = inliers_next_ok;
 
+			//Draw lines and markers, looking to projected corners of the object
 			for (int k = 0; k < _corners_frame_prev[0].size(); k++)
 			{
 				cv::line(_detected_frame, _corners_frame_prev[h][k], _corners_frame_prev[h][(k + 1) % 4], _colors[h], 2, cv::LineTypes::LINE_AA);
@@ -123,6 +138,7 @@ void ObjectRecognition::recognition()
 			_out << _detected_frame;
 		*/
 
+		//Tracking bar with percentage of frame already tracked
 		if (i % upload_step == 0)
 		{
 			int k = 0;
@@ -145,7 +161,7 @@ void ObjectRecognition::loadObjects(cv::String path)
 	std::vector<cv::String> imgs_names;
 	cv::utils::fs::glob(path, _objects_pattern, imgs_names);
 
-	if (imgs_names.size() == 0)
+	if (imgs_names.size() == 0) //No frames found with png extension
 		throw InputIMGException();
 	else
 	{
@@ -174,8 +190,11 @@ float ObjectRecognition::findMin(std::vector<cv::DMatch> d_matches)
 void ObjectRecognition::key_desc()
 {
 	cv::Ptr<cv::xfeatures2d::SIFT> sift = cv::xfeatures2d::SIFT::create();
+	
+	//Computation of keypoints and descriptors of first frame
 	sift->detectAndCompute(_frame, cv::Mat(), _keypointsFrame, _descriptorsFrame);
 	
+	//Computation of keypoints and descriptors of objects
 	for (auto img : _objects)
 	{
 		std::vector < cv::KeyPoint> kpt;
@@ -190,6 +209,7 @@ void ObjectRecognition::match(cv::Ptr<cv::BFMatcher> matcher,
 	   					      std::vector<std::vector<cv::DMatch>>& matches, 
 	                          std::vector<float>& thresholds)
 {
+	//Compute matches and thresholds, looking to minima and ratio
 	for (auto descriptor : _descriptorsObjects)
 	{
 		std::vector<cv::DMatch> match;
@@ -215,10 +235,8 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		{
 			if (matches[i][j].distance <= thresholds[i])
 			{
-				//indice del keypoint dell'immagine i-1 
 				pointsO.push_back(_keypointsObjects[i][matches[i][j].queryIdx].pt);
 
-				//indice del keypoint dell'immagine i
 				pointsS.push_back(_keypointsFrame[matches[i][j].trainIdx].pt);
 
 			}
@@ -228,6 +246,7 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		cv::Mat H;
 		H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
 
+		//Computation of inliers
 		std::vector<cv::Point2f> inliers;
 		int count = 0;
 		int k = 0;
@@ -239,6 +258,7 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 				cv::Point2f inlier(cvRound(pointsS[k].x), cvRound(pointsS[k].y));
 				inliers.push_back(inlier);
 
+				//Draw a circle for each found inlier
 				cv::circle(_detected_frame, inlier, 2, _colors[i]);
 			}
 		}
@@ -257,9 +277,12 @@ void ObjectRecognition::computeMatches(std::vector<std::vector<cv::DMatch>> matc
 		corners_object.push_back(cv::Point2f(0, _objects[i].rows - 1));
 		corners_object.push_back(cv::Point2f(0, 0));
 
+		//Project corners into the first frame
 		cv::perspectiveTransform(corners_object, corners, H);
 		
 		_corners_frame_prev.push_back(corners);
+		
+		//Draw lines and markers, looking to projected corners of the object
 		for (int h = 0; h < _corners_frame_prev[i].size(); h++)
 		{
 			cv::Mat res;
