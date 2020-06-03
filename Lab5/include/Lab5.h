@@ -24,11 +24,7 @@
 
 #define LINE "-----------------------------------------------\n"
 
-
-//Name of the ORB window
-const std::string window_ORB = "ORB Panoramic View";
-
-//Name of the SIFT window
-const std::string window_SIFT = "SIFT Panoramic View";
+//Name of the window
+const std::string window = "ORB vs SIFT Panoramic View (ORB=top SIFT=bottom)";
 
 #endif

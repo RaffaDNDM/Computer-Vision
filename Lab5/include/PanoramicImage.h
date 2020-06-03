@@ -37,7 +37,7 @@ public:
 		@brief It create panoramic image from a set of images.
 		@param isORB true if you want to use ORB, false if you want to use SIFT
 	*/
-	void panoramicImage(bool isORB);
+	void panoramic_view(bool isORB);
 
 	/**
 		@brief Get projected images.

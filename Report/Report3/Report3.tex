@@ -89,4 +89,81 @@
 \end{minipage}
 {\let\newpage\relax\maketitle}
 
+\section{Goal of the experience}
+The goal of this lab experience is to create a panoramic view by overlapping a set of images looking at their relative positions. To obtain them, I evaluate the translations between consecutive images. Hence I consider only the possibility of having a translation to the right of an image in the sequence w.r.t the previous one.  
+\section{Code Organization}
+The code of this lab is organized in 5 files (for which I provide also the documentation through doxygen):
+\begin{itemize}
+\item{\textbf{Lab5.cpp} and its header file \textbf{Lab5.h}.\\
+They are associated to \texttt{main()} where two threads create instances of \texttt{PanoramicImage()} and call their function \texttt{panoramic\_view()} to create panoramic views using SIFT or ORB.}
+\item{\textbf{PanoramicImage.cpp} and its header file \textbf{PanoramicImage.h}.\\
+These are used to create the class \texttt{PanoramicImage} and other exception classes. Its main function is called \texttt{panoramic\_view()} and manages the main flow of the program, that is organized in four main phases:
+\begin{enumerate}
+\item{Projection of images on a cylindrical surface;}
+\item{Computation of keypoints and descriptors for all images;}
+\item{Computation of matches and inliers;}
+\item{Computation of translations of an image w.r.t. the previous one.}
+\end{enumerate}
+\item{\textbf{PanoramicUtils.h}.\\
+This is the file provided by professors to compute the cylindrical projection.}
+}
+\end{itemize}
+\section{Command line parameters}
+The program needs to have, as command line arguments, the path of the folder that contains the input images and the FOV of the camera.
+\section{User interaction}
+At runtime the user needs to insert the value of FOV, if a value less than 1 is provided on command line. Then the user needs to insert separately the ratios for the definition of the inliers for SIFT and ORB.
+\section{Experimental results}
+The program uses threads and computes simultaneously ORB and SIFT detections on BW images, after their cylindrical projection. The results with SIFT are better than ORB, but the computational load is heavier.\\
+Each projected image is equalized to improve the final result, that is equalized too. The final panoramic image for each detection method, is made through mean translations of the previously computed projected images.\\
+Negative translations on x axis are considered as an error hence I transform them into translations of norm equal to the width of the previous image.\\
+In Table \ref{ratios}, there are the ratios for which I obtain the best results. The datasets \textit{"dataset\_lab\_19\_automatic"} and \textit{"dataset\_lab\_19\_manual"} give me very different results. With these images I tried different ratios for ORB, but these are the best ones even if some images seems to be covered by other ones. 
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\cline{2-4}
+\multicolumn{1}{c|}{}&{\textbf{FOV}}&{\textbf{ORB}}&{\textbf{SIFT}}\\
+\hline
+{dataset\_dolomites/dolomites/}&{54}&{2.5}&{2.5}\\
+\hline
+{dataset\_kitchen/kitchen/}&{66}&{2.5}&{3}\\
+\hline
+{dataset\_lab/data/}&{66}&{6}&{6}\\
+\hline
+{dataset\_lab\_19\_automatic/}&{66}&{4}&{2.5}\\
+\hline
+{dataset\_lab\_19\_manual/}&{66}&{4}&{2.5}\\
+\hline
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\caption{Ratios used in different datasets.}\label{ratios}
+\end{table}
+The following images show the comparison of panoramic views, obtained using ORB and SIFT, with the ratios in Table \ref{ratios}. The image on top was computed through ORB detection, instead the view on bottom was obtained through SIFT.
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=170mm]{output1} 
+\caption{\footnotesize{dataset\_dolomites/dolomites/}}
+\end{center} 
+\end{figure}
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=170mm]{output2} 
+\caption{\footnotesize{dataset\_kitchen/kitchen/.}}
+\end{center} 
+\end{figure}
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=170mm]{output3} 
+\caption{\footnotesize{dataset\_lab/data/}}
+\end{center} 
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=170mm]{output4} 
+\caption{\footnotesize{dataset\_lab\_19\_automatic/.}}
+\vspace{4mm}
+\includegraphics[width=170mm]{output5} 
+\caption{\footnotesize{dataset\_lab\_19\_manual/.}}
+\end{center} 
+\end{figure}
+
 \end{document}

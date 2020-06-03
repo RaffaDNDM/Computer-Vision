@@ -73,9 +73,11 @@ int main(int argc, char** argv)
 		(p2.getResult()).copyTo(img);
 
 		//Show final comparison image
-		cv::namedWindow(window_SIFT, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-		cv::imshow(window_SIFT, panoramic_comparison);
+		cv::namedWindow(window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+		cv::imshow(window, panoramic_comparison);
 		cv::waitKey(0);
+
+		cv::imwrite("../../../data/output1.png", panoramic_comparison);
 	}
 	catch (const InputIMGException& e)
 	{
@@ -95,7 +97,7 @@ void panoramic(PanoramicImage &p, bool isORB)
 	{
 		try
 		{
-			p.panoramicImage(isORB);
+			p.panoramic_view(isORB);
 			check = true;
 		}
 		catch (const NoInliersException& e)

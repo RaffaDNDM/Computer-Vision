@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2020.1.11)  10 MAY 2020 17:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2020.1.11)  3 JUN 2020 09:53
 entering extended mode
 **./Report3.tex
 (Report3.tex
@@ -761,8 +761,7 @@ File: lstlang1.sty 2019/09/10 1.8c listings language file
 )
 (D:\Programs\Miktex\tex/latex/listings\lstmisc.sty
 File: lstmisc.sty 2019/09/10 1.8c (Carsten Heinz)
-)
-No file Report3.aux.
+) (Report3.aux)
 \openout1 = `Report3.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
@@ -780,6 +779,7 @@ LaTeX Font Info:    ... okay on input line 78.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 78.
 LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 7
 8.
+
 (D:\Programs\Miktex\tex/latex/base\ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
@@ -897,27 +897,66 @@ Overfull \hbox (200.44592pt too wide) in paragraph at lines 83--88
 [][] 
  []
 
-[1
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 9
+8.
+(D:\Programs\Miktex\tex/latex/base\t1cmtt.fd
+File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+) [1
 
 {C:/Users/raffa/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <../Icon4.pn
-g>] (Report3.aux) ) 
+g>]
+<output1.png, id=17, 3392.675pt x 710.655pt>
+File: output1.png Graphic file (type png)
+<use output1.png>
+Package pdftex.def Info: output1.png  used on input line 143.
+(pdftex.def)             Requested size: 483.69684pt x 101.31276pt.
+<output2.png, id=18, 4855.13875pt x 872.25874pt>
+File: output2.png Graphic file (type png)
+<use output2.png>
+Package pdftex.def Info: output2.png  used on input line 149.
+(pdftex.def)             Requested size: 483.69684pt x 86.89824pt.
+<output3.png, id=19, 4151.51pt x 863.225pt>
+File: output3.png Graphic file (type png)
+<use output3.png>
+Package pdftex.def Info: output3.png  used on input line 155.
+(pdftex.def)             Requested size: 483.69684pt x 100.5662pt.
+<output4.png, id=20, 7151.71875pt x 1403.2425pt>
+File: output4.png Graphic file (type png)
+<use output4.png>
+Package pdftex.def Info: output4.png  used on input line 161.
+(pdftex.def)             Requested size: 483.69684pt x 94.89677pt.
+<output5.png, id=21, 8088.2175pt x 1469.49pt>
+File: output5.png Graphic file (type png)
+<use output5.png>
+Package pdftex.def Info: output5.png  used on input line 164.
+(pdftex.def)             Requested size: 483.69684pt x 87.8741pt.
+ [2 <./output1.png (PNG copy)> <./output2.png (PNG copy)> <./output3.png (PNG c
+opy)>] [3 <./output4.png (PNG copy)> <./output5.png (PNG copy)>] (Report3.aux) 
+) 
 Here is how much of TeX's memory you used:
- 20858 strings out of 492452
- 389468 string characters out of 3134016
- 625259 words of memory out of 3000000
- 25020 multiletter control sequences out of 15000+200000
- 544119 words of font info for 57 fonts, out of 3000000 for 9000
+ 20932 strings out of 492452
+ 390848 string characters out of 3134016
+ 632259 words of memory out of 3000000
+ 25082 multiletter control sequences out of 15000+200000
+ 548536 words of font info for 64 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 50i,12n,67p,283b,317s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jk
-nappen/ec/dpi600\ecrm1000.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk
-/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.
-9\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\raffa\AppData\Local
-\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\raffa\App
-Data\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1440.pk>
-Output written on Report3.pdf (1 page, 46779 bytes).
+ 50i,12n,67p,370b,595s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\e
+crm0800.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/e
+c/dpi600\ecti1000.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/
+jknappen/ec/dpi600\ectt1000.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/
+pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\raffa\AppData\Local\MiKTeX\
+2.9\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\raffa\AppData\Loc
+al\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\raffa\A
+ppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Use
+rs\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.p
+k> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
+ecrm1200.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/
+ec/dpi600\ecbx1728.pk> <C:\Users\raffa\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour
+/jknappen/ec/dpi600\eccc1440.pk>
+Output written on Report3.pdf (3 pages, 14430880 bytes).
 PDF statistics:
- 81 PDF objects out of 1000 (max. 8388607)
+ 288 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 

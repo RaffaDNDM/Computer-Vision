@@ -21,7 +21,7 @@ PanoramicImage::PanoramicImage(std::vector<cv::Mat> &projected_imgs, float ratio
 	copy(projected_imgs.begin(), projected_imgs.end(), std::back_inserter(_projected_imgs));
 }
 
-void PanoramicImage::panoramicImage(bool isORB)
+void PanoramicImage::panoramic_view(bool isORB)
 {
 	cv::Ptr<cv::BFMatcher> matcher;
 
@@ -165,7 +165,7 @@ void PanoramicImage::translate_imgs(std::vector<cv::Point2f>& translations,
 			}
 		}
 
-		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC, thresholds[i]);
+		cv::Mat H = cv::findHomography(pointsO, pointsS, mask, cv::RANSAC);
 
 		cv::Point2f transl(0.0, 0.0);
 
@@ -198,15 +198,13 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 	int max_height=_projected_imgs[0].rows;
 	int current_height=0;
 
-	int min_width = 0;
-	int max_width = _projected_imgs[0].cols;
-	int current_width = 0;
+	int width = _projected_imgs[0].cols;
 
 	for (int i = 1; i < _projected_imgs.size(); i++)
 	{
-		final_translations.push_back(cv::Point(cvRound(translations[i - 1].x), cvRound(translations[i - 1].y)));
+		int transl_x = (translations[i - 1].x>0)? cvRound(translations[i - 1].x) : _projected_imgs[i-1].cols;
+		final_translations.push_back(cv::Point(transl_x, cvRound(translations[i - 1].y)));
 
-		current_width += final_translations[i - 1].x;
 		current_height += final_translations[i - 1].y;
 
 		if (current_height < min_height)
@@ -218,19 +216,12 @@ void PanoramicImage::final_image(std::vector<cv::Point2f>& translations)
 			max_height += (_projected_imgs[i].rows + current_height - max_height);
 		}
 
-		if (current_width < min_width)
-		{
-			min_width += (current_width - min_width);
-		}
-		else if ((current_width + _projected_imgs[i].cols) > max_width)
-		{
-			max_width += (_projected_imgs[i].cols + current_width - max_width);
-		}
+		width += transl_x;
 	}
 
-	_panoramic_view = cv::Mat(cv::Size(max_width-min_width, max_height-min_height), _projected_imgs[0].type());
-	int x1 = 0-min_width;
-	int x2 = x1+_projected_imgs[0].cols;
+	_panoramic_view = cv::Mat(cv::Size(width, max_height-min_height), _projected_imgs[0].type());
+	int x1 = 0;
+	int x2 = _projected_imgs[0].cols;
 	int y1 = 0-min_height;
 	int y2 = y1 + _projected_imgs[0].rows;
 	cv::Mat img = _panoramic_view(cv::Range(y1, y2), cv::Range(x1, x2));

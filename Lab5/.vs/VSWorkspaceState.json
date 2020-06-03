@@ -2,10 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\dataset_kitchen",
-    "\\data\\dataset_lab",
-    "\\include",
-    "\\src"
+    "\\include"
   ],
   "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
