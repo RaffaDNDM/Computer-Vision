@@ -1,5 +1,5 @@
 ### Simple manipulation of an image
-You need to specify
+You need to specify as command line arguments, in order:
 ```
 <image_pathname>
 ```
