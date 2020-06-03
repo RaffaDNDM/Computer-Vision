@@ -3,4 +3,4 @@ You need to specify
 ```
 <image_pathname>
 ```
-where <image_pathname> = pathname of the image you want to test
+where *<image_pathname>* = pathname of the image you want to test
