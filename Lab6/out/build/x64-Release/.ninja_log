@@ -1,6 +1,0 @@
-# ninja log v5
-1	1171	612730352	CMakeFiles/Lab6.dir/src/Lab6.cpp.obj	fac08e24233813c5
-1	1623	612730924	CMakeFiles/Lab6.dir/src/ObjectRecognition.cpp.obj	e0a131c0e3040c97
-1623	1921	612730924	Lab6.exe	1bcab46124e1beae
-1	1535	612731026	CMakeFiles/Lab6.dir/src/ObjectRecognition.cpp.obj	e0a131c0e3040c97
-1535	1822	612731026	Lab6.exe	1bcab46124e1beae
