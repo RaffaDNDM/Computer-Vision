@@ -50,32 +50,32 @@ The CXX compiler identification is MSVC, found in "D:/github/Computer-Vision/Pro
 Determining if the C compiler works passed with the following output:
 Change Dir: D:/github/Computer-Vision/Project/out/build/x64-Release/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_5a09c && [1/2] Building C object CMakeFiles\cmTC_5a09c.dir\testCCompiler.c.obj
-[2/2] Linking C executable cmTC_5a09c.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_cbee7 && [1/2] Building C object CMakeFiles\cmTC_cbee7.dir\testCCompiler.c.obj
+[2/2] Linking C executable cmTC_cbee7.exe
 
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: D:/github/Computer-Vision/Project/out/build/x64-Release/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_e5c0f && [1/2] Building C object CMakeFiles\cmTC_e5c0f.dir\CMakeCCompilerABI.c.obj
-[2/2] Linking C executable cmTC_e5c0f.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_29f39 && [1/2] Building C object CMakeFiles\cmTC_29f39.dir\CMakeCCompilerABI.c.obj
+[2/2] Linking C executable cmTC_29f39.exe
 
 
 
 Determining if the CXX compiler works passed with the following output:
 Change Dir: D:/github/Computer-Vision/Project/out/build/x64-Release/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_91bc6 && [1/2] Building CXX object CMakeFiles\cmTC_91bc6.dir\testCXXCompiler.cxx.obj
-[2/2] Linking CXX executable cmTC_91bc6.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_afb46 && [1/2] Building CXX object CMakeFiles\cmTC_afb46.dir\testCXXCompiler.cxx.obj
+[2/2] Linking CXX executable cmTC_afb46.exe
 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: D:/github/Computer-Vision/Project/out/build/x64-Release/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_156ac && [1/2] Building CXX object CMakeFiles\cmTC_156ac.dir\CMakeCXXCompilerABI.cpp.obj
-[2/2] Linking CXX executable cmTC_156ac.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_5bf1d && [1/2] Building CXX object CMakeFiles\cmTC_5bf1d.dir\CMakeCXXCompilerABI.cpp.obj
+[2/2] Linking CXX executable cmTC_5bf1d.exe
 
 
 

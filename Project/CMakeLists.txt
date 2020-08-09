@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(TreeDetection)
+project(Project)
 
 if(WIN32)
 	set(OpenCV_dir $ENV{OPENCV_DIR})
@@ -23,7 +23,8 @@ include_directories(
 
 add_executable(
 	${PROJECT_NAME}
-	"src/TreeDetection.cpp"
+	"src/Project.cpp" 
+	"src/TemplateMatching.cpp"
 )
 
 
