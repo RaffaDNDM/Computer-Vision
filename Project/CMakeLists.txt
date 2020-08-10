@@ -25,7 +25,7 @@ add_executable(
 	${PROJECT_NAME}
 	"src/Project.cpp" 
 	"src/TemplateMatching.cpp"
-)
+ "src/CannyDetector.cpp")
 
 
 target_link_libraries(

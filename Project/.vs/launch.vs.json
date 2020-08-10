@@ -8,7 +8,7 @@
       "projectTarget": "Project.exe",
       "name": "Project.exe",
       "args": [
-        "../../..\\dat"
+        "../../../dat\\"
       ]
     }
   ]

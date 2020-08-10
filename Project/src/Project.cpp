@@ -7,7 +7,6 @@
 #include "TemplateMatching.hpp"
 #include "Project.hpp"
 
-std::mutex mutex; //mutex
 void matching(std::string path, Dataset::Type type); //Function called by thread
 
 int main(int argc, char** argv)
@@ -25,7 +24,7 @@ int main(int argc, char** argv)
 	try
 	{
 		std::thread t1(matching, argv[1], Dataset::Type::CAN);
-		std::thread t2(matching, argv[1], Dataset::Type::DRILL);
+		std::thread t2(matching, argv[1], Dataset::Type::DRILLER);
 		std::thread t3(matching, argv[1], Dataset::Type::DUCK);
 
 		t1.join();
@@ -45,8 +44,5 @@ int main(int argc, char** argv)
 void matching(std::string path, Dataset::Type type)
 {			 
 	TemplateMatching tm = TemplateMatching(path, type);
-
-	mutex.lock();
-	tm.printInfo();
-	mutex.unlock();
+	tm.cannyDetection();
 }
