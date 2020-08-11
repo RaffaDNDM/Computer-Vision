@@ -64,6 +64,19 @@ void TemplateMatching::stateAcquisitionImages(cv::String path)
 
 void TemplateMatching::cannyDetection()
 {
+	for (cv::Mat img : _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)])
+	{
+		CannyDetector cd(img, _dataset_type);
+		cd.detect();
+
+		cv::Mat dist(img.size(), CV_8U);
+		cv::distanceTransform(cd.getResult(), dist, cv::DIST_L2, 3);
+		cv::normalize(dist, dist, 0.0, 1.0, cv::NORM_MINMAX);
+		cv::threshold(dist, dist, 0.5, 1.0, cv::THRESH_BINARY);
+		_canny_masks.emplace_back(dist);
+	}
+
+	int img_num=0;
 	for (cv::Mat img : _input_imgs[static_cast<int>(Dataset::PatternIMG::TEST)])
 	{
 		/*
@@ -72,13 +85,82 @@ void TemplateMatching::cannyDetection()
 		*/
 		CannyDetector cd(img, _dataset_type);
 		cd.detect();
-		_canny_imgs.emplace_back(cd.getResult().clone());
 
-		cv::Mat dist(img.size(), CV_8UC3);
-		cv::distanceTransform(_canny_imgs.back(), dist, cv::DIST_L2, 3);
+		cv::Mat dist(img.size(), CV_8U);
+		cv::distanceTransform(cd.getResult(), dist, cv::DIST_L2, 3);
 		cv::normalize(dist, dist, 0.0, 1.0, cv::NORM_MINMAX);
+		cv::threshold(dist, dist, 0.5, 1.0, cv::THRESH_BINARY_INV);
+		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], dist);
+		//cv::waitKey(0);
+
+		uchar min = 255;
+		int min_index = 0;
+		int min_i = 0;
+		int min_j = 0;
+		int index = 0;
+		for (auto filter : _canny_masks)
+		{
+			//std::cout << dist.size();
+			cv::Mat result;
+			cv::filter2D(dist, result, CV_8U, filter);
+			
+			//std::cout << result.size();
+			for (int i = 0; i < result.rows; i++)
+			{
+				for (int j = 0; j < result.cols; j++)
+				{
+					if (result.at<uchar>(i, j) < min)
+					{
+						min_i = i;
+						min_j = j;
+						min = result.at<uchar>(i, j);
+						min_index = index;
+					}
+				}
+			}
+			//std::cout << result.at<uchar>(i, j) << std::endl;
+
+			//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+			//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], result);
+			//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
+			//cv::waitKey(0);
+			index++;
+		}
+
+		if ((min_i + _canny_masks[min_index].rows) < img.rows && (min_j + _canny_masks[min_index].cols) < img.cols)
+			std::cout << "OKKKKKKKKKKKKKKKKKKK" << std::endl;
+		
+		cv::Mat mask_result=img.clone();
+
 		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
-		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], dist);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
+		//cv::waitKey(0);
+		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks[min_index]);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
 		cv::waitKey(0);
+
+		cv::Mat img_canny;
+		//_canny_imgs[min_index].convertTo(img_canny, CV_8UC1, 255.0 / (static_cast<double>(std::numeric_limits<int>::max())));
+		
+		for (int i = 0; i < _canny_masks[min_index].rows; i++)
+		{
+			for (int j = 0; j < _canny_masks[min_index].cols; j++)
+			{
+				if (_canny_masks[min_index].at<int>(i, j) > 100)
+					mask_result.at<cv::Vec3b>(min_i + i, min_j + j) = cv::Vec3b(0, 0, 255);
+			}
+		}
+
+		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
+		cv::waitKey(0);
+		
+		std::cout << "Image "<< img_num << ":   mask" << min_index << ">>" << (int) min 
+			      << "<-------(" << min_i <<","<<min_j<<")"<<std::endl;
+
+		img_num++;
 	}
 }

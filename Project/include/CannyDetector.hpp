@@ -37,8 +37,8 @@ private:
 	cv::Mat _result_img;
 	cv::String _window;
 	Dataset::Type _dataset_type;
-	int _threshold1=1421;
+	//int _threshold1=1421;
+	int _threshold1 = 1421;
 	int _threshold2=300;
-
 };
 #endif

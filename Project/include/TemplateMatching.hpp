@@ -47,8 +47,10 @@ private:
 		_input_imgs[2] = test images;
 	*/
 	std::vector<std::vector<cv::Mat>> _input_imgs;
-	//Images with detected edges using Canny
+	//TEST Images with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _canny_imgs;
+	//MASKS with detected edges using Canny + distance transform
+	std::vector<cv::Mat> _canny_masks;
 	//Type of dataset, we are analysing (can, driller or duck)
 	Dataset::Type _dataset_type;
 };

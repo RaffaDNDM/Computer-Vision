@@ -4,6 +4,6 @@
     "\\include",
     "\\src"
   ],
-  "SelectedNode": "\\include\\Project.hpp",
+  "SelectedNode": "\\src\\CannyDetector.cpp",
   "PreviewInSolutionExplorer": false
 }

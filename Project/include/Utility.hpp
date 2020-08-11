@@ -35,6 +35,14 @@ namespace Dataset
 		SET_IMAGES
 	};
 
+	//Dataset type
+	enum class ColorSpace
+	{
+		B,
+		G,
+		R
+	};
+
 	const std::vector<cv::String> sub_folders = { "/models", "/models", "/test_images" };
 	const std::vector<cv::String> patterns = { "mask*.png", "model*.png", "*.jpg" };
 	const std::vector<cv::String> types = { "can", "driller", "duck" };
