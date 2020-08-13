@@ -90,9 +90,9 @@ void TemplateMatching::cannyDetection()
 		cv::distanceTransform(cd.getResult(), dist, cv::DIST_L2, 3);
 		cv::normalize(dist, dist, 0.0, 1.0, cv::NORM_MINMAX);
 		cv::threshold(dist, dist, 0.5, 1.0, cv::THRESH_BINARY_INV);
-		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
-		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], dist);
-		//cv::waitKey(0);
+		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], dist);
+		cv::waitKey(0);
 
 		uchar min = 255;
 		int min_index = 0;
@@ -104,11 +104,16 @@ void TemplateMatching::cannyDetection()
 			//std::cout << dist.size();
 			cv::Mat result;
 			cv::filter2D(dist, result, CV_8U, filter);
-			
+		
+			/*
+			Point min_point, max_point;
+			cv::minMaxLoc(result, )
+			*/
+
 			//std::cout << result.size();
-			for (int i = 0; i < result.rows; i++)
+			for (int i = 0; i < (result.rows-filter.rows); i++)
 			{
-				for (int j = 0; j < result.cols; j++)
+				for (int j = 0; j < (result.cols-filter.cols); j++)
 				{
 					if (result.at<uchar>(i, j) < min)
 					{
@@ -133,6 +138,20 @@ void TemplateMatching::cannyDetection()
 		
 		cv::Mat mask_result=img.clone();
 
+		cv::String r;
+		switch (mask_result.type()) {
+		case CV_8U:  r = "8U"; break;
+		case CV_8S:  r = "8S"; break;
+		case CV_16U: r = "16U"; break;
+		case CV_16S: r = "16S"; break;
+		case CV_32S: r = "32S"; break;
+		case CV_32F: r = "32F"; break;
+		case CV_64F: r = "64F"; break;
+		default:     r = "User"; break;
+		}
+
+		std::cout << r << std::endl;
+
 		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
@@ -144,6 +163,17 @@ void TemplateMatching::cannyDetection()
 		cv::Mat img_canny;
 		//_canny_imgs[min_index].convertTo(img_canny, CV_8UC1, 255.0 / (static_cast<double>(std::numeric_limits<int>::max())));
 		
+		switch (_canny_masks[min_index].type()) {
+			case CV_8U:  r = "8U"; break;
+			case CV_8S:  r = "8S"; break;
+			case CV_16U: r = "16U"; break;
+			case CV_16S: r = "16S"; break;
+			case CV_32S: r = "32S"; break;
+			case CV_32F: r = "32F"; break;
+			case CV_64F: r = "64F"; break;
+			default:     r = "User"; break;
+		}
+
 		for (int i = 0; i < _canny_masks[min_index].rows; i++)
 		{
 			for (int j = 0; j < _canny_masks[min_index].cols; j++)
