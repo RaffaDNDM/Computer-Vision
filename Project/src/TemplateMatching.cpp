@@ -101,8 +101,7 @@ void TemplateMatching::cannyDetection()
 		//double abs_min = std::numeric_limits<double>::max();
 		double abs_min = 0.0;
 		int min_index = 0;
-		int min_i = 0;
-		int min_j = 0;
+		cv::Point min_pos;
 
 		int index = 0;
 		/*
@@ -169,8 +168,7 @@ void TemplateMatching::cannyDetection()
 
 			if (max > abs_min)
 			{
-				min_i = max_point.y;
-				min_j = max_point.x;
+				min_pos = max_point;
 				min_index = index;
 				abs_min = max;
 			}
@@ -178,11 +176,12 @@ void TemplateMatching::cannyDetection()
 			index++;
 		}
 
-		if ((min_i + _canny_views[min_index].rows) < img.rows && (min_j + _canny_views[min_index].cols) < img.cols)
-			std::cout << "OKKKKKKKKKKKKKKKKKKK" << std::endl;
+		//if ((min_pos.y + _canny_views[min_index].rows) < img.rows && (min_pos.x + _canny_views[min_index].cols) < img.cols)
+		//	std::cout << "OKKKKKKKKKKKKKKKKKKK" << std::endl;
 		
 		cv::Mat mask_result=img.clone();
 
+		/*
 		cv::String r;
 		switch (mask_result.type()) {
 		case CV_8U:  r = "8U"; break;
@@ -196,17 +195,19 @@ void TemplateMatching::cannyDetection()
 		}
 
 		std::cout << r << std::endl;
+		*/
 
-		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
 		//cv::waitKey(0);
-		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_views[min_index]);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_views[min_index]);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
-		cv::waitKey(0);
+		//cv::waitKey(0);
 
+		/*
 		cv::Mat img_canny;
-		//_canny_imgs[min_index].convertTo(img_canny, CV_8UC1, 255.0 / (static_cast<double>(std::numeric_limits<int>::max())));
+		_canny_imgs[min_index].convertTo(img_canny, CV_8UC1, 255.0 / (static_cast<double>(std::numeric_limits<int>::max())));
 		
 		switch (_canny_views[min_index].type()) {
 			case CV_8U:  r = "8U"; break;
@@ -218,24 +219,37 @@ void TemplateMatching::cannyDetection()
 			case CV_64F: r = "64F"; break;
 			default:     r = "User"; break;
 		}
+		*/
 
 		for (int i = 0; i < _canny_views[min_index].rows; i++)
 		{
 			for (int j = 0; j < _canny_views[min_index].cols; j++)
 			{
 				if (_canny_views[min_index].at<uchar>(i, j) > 100)
-					mask_result.at<cv::Vec3b>(min_i + i, min_j + j) = cv::Vec3b(0, 0, 255);
+					mask_result.at<cv::Vec3b>(min_pos.y + i, min_pos.x + j) = cv::Vec3b(0, 0, 255);
 			}
 		}
 
-		cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
-		cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
+		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
-		cv::waitKey(0);
-		
-		std::cout << "Image "<< img_num << ":   mask" << min_index << ">>" << (int) abs_min 
-			      << "<-------(" << min_i <<","<<min_j<<")"<<std::endl;
+		//cv::waitKey(0);
 
+		printBestMatch(img_num, min_index, abs_min, min_pos, mask_result);
 		img_num++;
 	}
+}
+
+void TemplateMatching::printBestMatch(int img_num, int min_index, double abs_min, 
+	                                  cv::Point min_pos, cv::Mat mask_result)
+{
+	cv::imwrite(Dataset::output_path + Dataset::types[static_cast<int>(_dataset_type)]+
+		        "/result"+std::to_string(img_num)+".jpg", mask_result);
+
+	mutex.lock();
+	std::cout << Dataset::colors[static_cast<int>(_dataset_type)] << "image " << img_num << ":" DEFAULT << std::setw(8)
+		      << std::right << " mask"+ std::to_string(min_index) << Dataset::colors[static_cast<int>(_dataset_type)] 
+		      << " >>> " << DEFAULT << abs_min << Dataset::colors[static_cast<int>(_dataset_type)] << " in " << DEFAULT 
+		      << "(" << min_pos.y << "," << min_pos.x << ")" << std::endl;
+	mutex.unlock();
 }

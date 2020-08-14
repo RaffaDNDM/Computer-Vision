@@ -6,9 +6,9 @@ CannyDetector::CannyDetector(cv::Mat img, Dataset::Type type) :
 	_dataset_type{type},
 	_window{ "Canny " + Dataset::types[static_cast<int>(type)] }
 {
-	//cv::GaussianBlur(_input_img, _input_img, cv::Size(9, 9), 3.0);
+	cv::GaussianBlur(_input_img, _input_img, cv::Size(9, 9), 3.0);
 	//cv::GaussianBlur(_input_img, _input_img, cv::Size(3, 3), 0);
-	cv::blur(_input_img, _input_img, cv::Size(3, 3));
+	//cv::blur(_input_img, _input_img, cv::Size(3, 3));
 }
 
 void CannyDetector::detect()

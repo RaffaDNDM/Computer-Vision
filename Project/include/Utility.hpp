@@ -48,6 +48,7 @@ namespace Dataset
 	const std::vector<cv::String> types = { "can", "driller", "duck" };
 	const std::vector<cv::String> bold_colors = { BOLD_BLUE, BOLD_RED, BOLD_GREEN };
 	const std::vector<cv::String> colors = { BLUE, RED, GREEN };
+	const cv::String output_path = "../../../results/";
 }
 
 #endif

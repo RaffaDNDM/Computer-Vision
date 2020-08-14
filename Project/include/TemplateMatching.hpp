@@ -40,6 +40,16 @@ private:
 	*/
 	void stateAcquisitionImages(cv::String path);
 
+	/**
+		@brief Shows best matches found.
+		@param img_num number of the image for which we found match
+		@param min_index index of the mask that matches
+		@param abs_min value of the score for the mask that matches better 
+		@param min_pos position in the image in which we found match
+	*/
+	void printBestMatch(int img_num, int min_index, double abs_min, 
+		                cv::Point min_pos, cv::Mat mask_result);
+
 	/*
 		Input images
 		_input_imgs[0] = masks;
