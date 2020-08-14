@@ -50,7 +50,7 @@ private:
 	//TEST Images with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _canny_imgs;
 	//MASKS with detected edges using Canny + distance transform
-	//std::vector<cv::Mat> _canny_masks;
+	std::vector<cv::Mat> _filter_masks;
 	//MASKS with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _canny_views;
 	//Type of dataset, we are analysing (can, driller or duck)

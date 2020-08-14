@@ -1,8 +1,9 @@
 # ninja log v5
-3	1255	618692256	CMakeFiles/Project.dir/src/Project.cpp.obj	95309ca24236e95d
-1	1334	618692256	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	bb8872ed33da0f32
-1334	2715	618692257	Project.exe	4deb484be927f370
-1	1263	618692323	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	bb8872ed33da0f32
-1263	1651	618692323	Project.exe	4deb484be927f370
-2	1261	618692391	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	bb8872ed33da0f32
-1261	1558	618692391	Project.exe	4deb484be927f370
+0	1064	619093942	CMakeFiles/Project.dir/src/CannyDetector.cpp.obj	243fcf983b5dce7c
+6	1068	619093942	CMakeFiles/Project.dir/src/Project.cpp.obj	7346f478924aa8b5
+3	1342	619093942	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	f383fa0b53c57f5b
+1342	3325	619093944	Project.exe	fff5bfcd07a807c2
+1	1124	619094067	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	f383fa0b53c57f5b
+1124	1370	619094067	Project.exe	fff5bfcd07a807c2
+1	1085	619099078	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	f383fa0b53c57f5b
+1085	1525	619099079	Project.exe	fff5bfcd07a807c2
