@@ -5,6 +5,7 @@
 */
 #include "TemplateMatching.hpp"
 #include "CannyDetector.hpp"
+#include "BestResults.hpp"
 
 static std::mutex mutex;
 
@@ -90,7 +91,7 @@ void TemplateMatching::cannyDetection()
 	}
 	*/
 
-	int img_num=0;
+	int img_num = 0;
 	for (auto img : _input_imgs[static_cast<int>(Dataset::PatternIMG::TEST)])
 	{
 		/*
@@ -100,6 +101,7 @@ void TemplateMatching::cannyDetection()
 
 		//double abs_min = std::numeric_limits<double>::max();
 		double abs_min = 0.0;
+		double abs_max = 0.0;
 		int min_index = 0;
 		cv::Point min_pos;
 
