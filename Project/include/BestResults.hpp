@@ -31,11 +31,13 @@ public:
 	std::vector<Result> getBestResults();
 
 private:
-	int _size = 0;
+
+	double getMinScore();
+
+	double getMaxScore();
+
 	std::vector<Result> _best_elements;
 	const int MAX_SIZE = 10;
-	double _min_value = -1;
-	double _max_value = -1;
 };
 
 #endif

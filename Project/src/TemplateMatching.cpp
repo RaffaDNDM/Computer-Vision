@@ -5,7 +5,6 @@
 */
 #include "TemplateMatching.hpp"
 #include "CannyDetector.hpp"
-#include "BestResults.hpp"
 
 static std::mutex mutex;
 
@@ -91,7 +90,8 @@ void TemplateMatching::cannyDetection()
 	}
 	*/
 
-	int img_num = 0;
+	int img_index = 0;
+
 	for (auto img : _input_imgs[static_cast<int>(Dataset::PatternIMG::TEST)])
 	{
 		/*
@@ -100,12 +100,11 @@ void TemplateMatching::cannyDetection()
 		*/
 
 		//double abs_min = std::numeric_limits<double>::max();
-		double abs_min = 0.0;
 		double abs_max = 0.0;
-		int min_index = 0;
-		cv::Point min_pos;
+		int max_index = 0;
+		cv::Point max_pos;
 
-		int index = 0;
+		int mask_index = 0;
 		/*
 		for (auto filter : _canny_views)
 		{
@@ -156,6 +155,8 @@ void TemplateMatching::cannyDetection()
 			index++;
 		}
 		*/
+		
+		BestResults r;
 
 		for (auto filter : _canny_views)
 		{
@@ -163,25 +164,18 @@ void TemplateMatching::cannyDetection()
 			cd.detect();
 			
 			cv::Mat result(cv::Size(img.rows-filter.rows+1, img.cols - filter.cols + 1), CV_32F);
-			double min, max;
+			double min_score, max_score;
 			cv::Point min_point, max_point;
+			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED); //better on driller 5/10
 			cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
-			cv::minMaxLoc(result, &min, &max, &min_point, &max_point);
+			cv::minMaxLoc(result, &min_score, &max_score, &min_point, &max_point);
+			r.insert(max_point, img_index, mask_index, max_score);
 
-			if (max > abs_min)
-			{
-				min_pos = max_point;
-				min_index = index;
-				abs_min = max;
-			}
-
-			index++;
+			mask_index++;
 		}
 
 		//if ((min_pos.y + _canny_views[min_index].rows) < img.rows && (min_pos.x + _canny_views[min_index].cols) < img.cols)
 		//	std::cout << "OKKKKKKKKKKKKKKKKKKK" << std::endl;
-		
-		cv::Mat mask_result=img.clone();
 
 		/*
 		cv::String r;
@@ -223,35 +217,45 @@ void TemplateMatching::cannyDetection()
 		}
 		*/
 
-		for (int i = 0; i < _canny_views[min_index].rows; i++)
+		cv::Mat mask_result=img.clone();
+
+		for(auto res: r.getBestResults())
 		{
-			for (int j = 0; j < _canny_views[min_index].cols; j++)
+			for (int i = 0; i < _canny_views[res.getMaskIndex()].rows; i++)
 			{
-				if (_canny_views[min_index].at<uchar>(i, j) > 100)
-					mask_result.at<cv::Vec3b>(min_pos.y + i, min_pos.x + j) = cv::Vec3b(0, 0, 255);
+				for (int j = 0; j < _canny_views[res.getMaskIndex()].cols; j++)
+				{
+					if (_canny_views[res.getMaskIndex()].at<uchar>(i, j) > 100)
+						mask_result.at<cv::Vec3b>(res.getPoint().y + i, res.getPoint().x + j) = cv::Vec3b(0, 0, 255);
+				}
 			}
 		}
+		
+		printBestMatch(r, mask_result);
 
 		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], _canny_masks.back());
 		//cv::waitKey(0);
+		
 
-		printBestMatch(img_num, min_index, abs_min, min_pos, mask_result);
-		img_num++;
+		img_index++;
 	}
 }
 
-void TemplateMatching::printBestMatch(int img_num, int min_index, double abs_min, 
-	                                  cv::Point min_pos, cv::Mat mask_result)
+void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat mask_result)
 {
-	cv::imwrite(Dataset::output_path + Dataset::types[static_cast<int>(_dataset_type)]+
-		        "/result"+std::to_string(img_num)+".jpg", mask_result);
+	std::vector<Result> results = best_results.getBestResults();
+	cv::imwrite(Dataset::output_path + Dataset::types[static_cast<int>(_dataset_type)] +
+		"/result" + std::to_string(results[0].getImageIndex()) + ".jpg", mask_result);
 
 	mutex.lock();
-	std::cout << Dataset::colors[static_cast<int>(_dataset_type)] << "image " << img_num << ":" DEFAULT << std::setw(8)
-		      << std::right << " mask"+ std::to_string(min_index) << Dataset::colors[static_cast<int>(_dataset_type)] 
-		      << " >>> " << DEFAULT << abs_min << Dataset::colors[static_cast<int>(_dataset_type)] << " in " << DEFAULT 
-		      << "(" << min_pos.y << "," << min_pos.x << ")" << std::endl;
+	for(auto r : results)
+	{
+		std::cout << Dataset::colors[static_cast<int>(_dataset_type)] << "image " << r.getImageIndex() << ":" DEFAULT << std::setw(8)
+			<< std::right << " mask" + std::to_string(r.getMaskIndex()) << Dataset::colors[static_cast<int>(_dataset_type)]
+			<< " >>> " << DEFAULT << std::setw(11) << std::left << r.getScore() << Dataset::colors[static_cast<int>(_dataset_type)]
+			<< " in " << DEFAULT << "(" << r.getPoint().y << "," << r.getPoint().x << ")" << std::endl;
+	}
 	mutex.unlock();
 }

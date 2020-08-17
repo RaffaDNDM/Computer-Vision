@@ -1,9 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\include",
-    "\\src"
+    ""
   ],
-  "SelectedNode": "\\src\\TemplateMatching.cpp",
+  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }

@@ -6,6 +6,7 @@
 
 #include "Project.hpp"
 #include "Utility.hpp"
+#include "BestResults.hpp"
 
 #ifndef TEMPLATE_MATCHING
 #define TEMPLATE_MATCHING
@@ -47,8 +48,7 @@ private:
 		@param abs_min value of the score for the mask that matches better 
 		@param min_pos position in the image in which we found match
 	*/
-	void printBestMatch(int img_num, int min_index, double abs_min, 
-		                cv::Point min_pos, cv::Mat mask_result);
+	void printBestMatch(BestResults best_results, cv::Mat mask_result);
 
 	/*
 		Input images
