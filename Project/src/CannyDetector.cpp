@@ -6,10 +6,22 @@ CannyDetector::CannyDetector(cv::Mat img, Dataset::Type type) :
 	_dataset_type{type},
 	_window{ "Canny " + Dataset::types[static_cast<int>(type)] }
 {
+	/*
+	* If we use the same thresholds for template and test image
 	cv::GaussianBlur(_input_img, _input_img, cv::Size(9, 9), 3.0);
+	*/
 	//cv::GaussianBlur(_input_img, _input_img, cv::Size(3, 3), 0);
 	//cv::blur(_input_img, _input_img, cv::Size(3, 3));
 }
+
+CannyDetector::CannyDetector(cv::Mat img, Dataset::Type type, int threshold1, int threshold2) :
+	_input_img{ img.clone() },
+	_result_img{ img.clone() },
+	_dataset_type{ type },
+	_window{ "Canny " + Dataset::types[static_cast<int>(type)] },
+	_threshold1{ threshold1 },
+	_threshold2{ threshold2 }
+{ }
 
 void CannyDetector::detect()
 {

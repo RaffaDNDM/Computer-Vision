@@ -50,6 +50,9 @@ private:
 	*/
 	void printBestMatch(BestResults best_results, cv::Mat mask_result);
 
+
+	void findMax(cv::Mat result, BestResults &r, int img_index, int mask_index);
+
 	/*
 		Input images
 		_input_imgs[0] = masks;

@@ -13,6 +13,8 @@ public:
 	*/
 	CannyDetector(cv::Mat img, Dataset::Type type);
 
+	CannyDetector(cv::Mat img, Dataset::Type type, int threshold1, int threshold2);
+
 	/**
 		@brief Performs the Canny detection.
 		@param result_imgs result imgs with detected edges
@@ -38,7 +40,9 @@ private:
 	cv::String _window;
 	Dataset::Type _dataset_type;
 	//int _threshold1=1421;
-	int _threshold1 = 500;
-	int _threshold2=200;
+	//int _threshold1 = 500;
+	//int _threshold2=200;
+	int _threshold1 = 1500;
+	int _threshold2=1500;
 };
 #endif

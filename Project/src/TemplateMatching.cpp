@@ -160,7 +160,7 @@ void TemplateMatching::cannyDetection()
 
 		for (auto filter : _canny_views)
 		{
-			CannyDetector cd(img, _dataset_type);
+			CannyDetector cd(img, _dataset_type, 800, 800);
 			cd.detect();
 			
 			cv::Mat result(cv::Size(img.rows-filter.rows+1, img.cols - filter.cols + 1), CV_32F);
@@ -168,8 +168,11 @@ void TemplateMatching::cannyDetection()
 			cv::Point min_point, max_point;
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED); //better on driller 5/10
 			cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
+			
 			cv::minMaxLoc(result, &min_score, &max_score, &min_point, &max_point);
 			r.insert(max_point, img_index, mask_index, max_score);
+			
+			//findMax(result, r, img_index, mask_index);
 
 			mask_index++;
 		}
@@ -250,6 +253,7 @@ void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat mask_res
 		"/result" + std::to_string(results[0].getImageIndex()) + ".jpg", mask_result);
 
 	mutex.lock();
+	
 	for(auto r : results)
 	{
 		std::cout << Dataset::colors[static_cast<int>(_dataset_type)] << "image " << r.getImageIndex() << ":" DEFAULT << std::setw(8)
@@ -257,5 +261,25 @@ void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat mask_res
 			<< " >>> " << DEFAULT << std::setw(11) << std::left << r.getScore() << Dataset::colors[static_cast<int>(_dataset_type)]
 			<< " in " << DEFAULT << "(" << r.getPoint().y << "," << r.getPoint().x << ")" << std::endl;
 	}
+
 	mutex.unlock();
+}
+
+void TemplateMatching::findMax(cv::Mat result, BestResults& r, int img_index, int mask_index)
+{
+	cv::String x;
+	switch (result.type()) {
+	case CV_8U:  x = "8U"; break;
+	case CV_8S:  x = "8S"; break;
+	case CV_16U: x = "16U"; break;
+	case CV_16S: x = "16S"; break;
+	case CV_32S: x = "32S"; break;
+	case CV_32F: x = "32F"; break;
+	case CV_64F: x = "64F"; break;
+	default:     x = "User"; break;
+	}
+
+	for (int i = 0; i < result.rows; i++)
+		for (int j = 0; j < result.cols; j++)
+			r.insert(cv::Point(j,i), img_index, mask_index, result.at<float>(i,j));
 }
