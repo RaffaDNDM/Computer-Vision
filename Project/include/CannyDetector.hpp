@@ -13,7 +13,7 @@ public:
 	*/
 	CannyDetector(cv::Mat img, Dataset::Type type);
 
-	CannyDetector(cv::Mat img, Dataset::Type type, int threshold1, int threshold2);
+	CannyDetector(cv::Mat img, Dataset::Type type, double threshold1, double threshold2);
 
 	/**
 		@brief Performs the Canny detection.
@@ -33,7 +33,7 @@ private:
 		@param value value of modfied trackbar that User set
 		@param params object passed as parameter to trackbar
 	*/
-	static void cannyTrackbar(int value, void* params);
+	//static void cannyTrackbar(int value, void* params);
 
 	cv::Mat _input_img;
 	cv::Mat _result_img;
@@ -42,7 +42,7 @@ private:
 	//int _threshold1=1421;
 	//int _threshold1 = 500;
 	//int _threshold2=200;
-	int _threshold1 = 1500;
-	int _threshold2=1500;
+	double _threshold1 = 1.0;
+	double _threshold2 = 1.0;
 };
 #endif

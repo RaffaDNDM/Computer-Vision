@@ -53,6 +53,10 @@ private:
 
 	void findMax(cv::Mat result, BestResults &r, int img_index, int mask_index);
 
+
+	void equalization(cv::Mat& img);
+
+	void gammaTransform(cv::Mat& src, cv::Mat& dst, float gamma);
 	/*
 		Input images
 		_input_imgs[0] = masks;

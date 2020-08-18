@@ -32,7 +32,11 @@ void TemplateMatching::loadImages(cv::String path)
 			std::vector<cv::Mat> tmp_imgs;
 			for (cv::String name : imgs_names)
 			{
-				cv::Mat img = imread(name, cv::IMREAD_COLOR);
+				cv::Mat img;
+				if (i == static_cast<int>(Dataset::PatternIMG::MASKS))
+					img = imread(name, cv::IMREAD_GRAYSCALE);
+				else
+					img = imread(name, cv::IMREAD_COLOR);
 				tmp_imgs.emplace_back(img);
 			}
 
@@ -64,9 +68,24 @@ void TemplateMatching::stateAcquisitionImages(cv::String path)
 
 void TemplateMatching::cannyDetection()
 {
+	Dataset::Parameter param = Dataset::canny_params[static_cast<int>(_dataset_type)];
+
 	for (auto img : _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)])
 	{
-		CannyDetector cd(img, _dataset_type);
+		switch (static_cast<int>(_dataset_type))
+		{
+			case 0:
+				gammaTransform(img, img, 0.8);
+				break;
+
+			case 1:
+				gammaTransform(img, img, 1.2);
+				break;
+
+			case 2:
+				break;
+		}
+		CannyDetector cd(img, _dataset_type, param.threshold_template, param.threshold_template);
 		cd.detect();
 
 		//cv::Mat dist(img.size(), CV_8U);
@@ -157,18 +176,20 @@ void TemplateMatching::cannyDetection()
 		*/
 		
 		BestResults r;
+		equalization(img);
+		//gammaTransform(img, img, 0.5);
+		CannyDetector cd(img, _dataset_type, param.threshold_test, param.threshold_test);
+		cd.detect();
 
 		for (auto filter : _canny_views)
-		{
-			CannyDetector cd(img, _dataset_type, 800, 800);
-			cd.detect();
-			
+		{	
 			cv::Mat result(cv::Size(img.rows-filter.rows+1, img.cols - filter.cols + 1), CV_32F);
 			double min_score, max_score;
 			cv::Point min_point, max_point;
-			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED); //better on driller 5/10
-			cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
-			
+			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCOEFF_NORMED); //best for duck
+			cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCOEFF); //best for 
+			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED);
+			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
 			cv::minMaxLoc(result, &min_score, &max_score, &min_point, &max_point);
 			r.insert(max_point, img_index, mask_index, max_score);
 			
@@ -282,4 +303,53 @@ void TemplateMatching::findMax(cv::Mat result, BestResults& r, int img_index, in
 	for (int i = 0; i < result.rows; i++)
 		for (int j = 0; j < result.cols; j++)
 			r.insert(cv::Point(j,i), img_index, mask_index, result.at<float>(i,j));
+}
+
+void TemplateMatching::gammaTransform(cv::Mat &src, cv::Mat &dst, float gamma)
+{
+	unsigned char lut[256];
+
+	for (int i = 0; i < 256; i++)
+		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), gamma) * 255.0f);
+
+	dst = src.clone();
+	const int channels = dst.channels();
+
+	switch (channels)
+	{
+		case 1:
+		{
+			cv::MatIterator_<uchar> it, end;
+
+			for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
+				*it = lut[(*it)];
+
+			break;
+		}
+
+		case 3:
+		{
+			cv::MatIterator_<cv::Vec3b> it, end;
+
+			for (it = dst.begin<cv::Vec3b>(), end = dst.end<cv::Vec3b>(); it != end; it++)
+			{
+				(*it)[0] = lut[((*it)[0])];
+				(*it)[1] = lut[((*it)[1])];
+				(*it)[2] = lut[((*it)[2])];
+			}
+
+			break;
+		}
+	}
+}
+
+void TemplateMatching::equalization(cv::Mat& img)
+{
+	std::vector<cv::Mat> img_planes;
+	cv::split(img, img_planes);
+
+	for (int i = 0; i < img.channels(); i++)
+		cv::equalizeHist(img_planes[i], img_planes[i]);
+
+	cv::merge(img_planes, img);
 }
