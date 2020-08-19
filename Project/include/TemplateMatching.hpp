@@ -57,6 +57,8 @@ private:
 	void equalization(cv::Mat& img);
 
 	void gammaTransform(cv::Mat& src, cv::Mat& dst, float gamma);
+
+	double compareHistH(cv::Mat test_img, cv::Mat view);
 	/*
 		Input images
 		_input_imgs[0] = masks;

@@ -23,13 +23,13 @@ int main(int argc, char** argv)
 
 	try
 	{
-		std::thread t1(matching, argv[1], Dataset::Type::CAN);
+		//std::thread t1(matching, argv[1], Dataset::Type::CAN);
 		std::thread t2(matching, argv[1], Dataset::Type::DRILLER);
-		std::thread t3(matching, argv[1], Dataset::Type::DUCK);
+		//std::thread t3(matching, argv[1], Dataset::Type::DUCK);
 
-		t1.join();
+		//t1.join();
 		t2.join();
-		t3.join();
+		//t3.join();
 	}
 	catch (const InputIMGException& e)
 	{

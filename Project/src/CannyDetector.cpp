@@ -28,6 +28,13 @@ void CannyDetector::detect()
 	//cv::namedWindow(_window, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
 	//cv::createTrackbar("Threshold 1", _window, &(_threshold1), 2000, cannyTrackbar, (void*)this);
 	//cv::createTrackbar("Threshold 2", _window, &(_threshold2), 2000, cannyTrackbar, (void*)this);
+
+	/*
+	cv::Mat result;
+	cv::bilateralFilter(_input_img, result, 5, 100.0, 100.0);
+	cv::Canny(result, _result_img, _threshold1, _threshold2);
+	*/
+
 	cv::Canny(_input_img, _result_img, _threshold1, _threshold2);
 	//cv::imshow(_window, _result_img);
 	//cv::waitKey(0);

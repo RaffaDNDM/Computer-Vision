@@ -72,20 +72,22 @@ void TemplateMatching::cannyDetection()
 
 	for (auto img : _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)])
 	{
+		cv::Mat tmp;
 		switch (static_cast<int>(_dataset_type))
 		{
 			case 0:
-				gammaTransform(img, img, 0.8);
+				gammaTransform(img, tmp, 0.8);
 				break;
 
 			case 1:
-				gammaTransform(img, img, 1.2);
+				gammaTransform(img, tmp, 1.2);
 				break;
 
 			case 2:
+				gammaTransform(img, tmp, 0.8);
 				break;
 		}
-		CannyDetector cd(img, _dataset_type, param.threshold_template, param.threshold_template);
+		CannyDetector cd(tmp, _dataset_type, param.threshold_template, param.threshold_template);
 		cd.detect();
 
 		//cv::Mat dist(img.size(), CV_8U);
@@ -176,7 +178,7 @@ void TemplateMatching::cannyDetection()
 		*/
 		
 		BestResults r;
-		equalization(img);
+		//equalization(img);
 		//gammaTransform(img, img, 0.5);
 		CannyDetector cd(img, _dataset_type, param.threshold_test, param.threshold_test);
 		cd.detect();
@@ -191,10 +193,35 @@ void TemplateMatching::cannyDetection()
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED);
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
 			cv::minMaxLoc(result, &min_score, &max_score, &min_point, &max_point);
+
+			/*
+			cv::Mat detected_patch = img(cv::Range(max_point.y, max_point.y + filter.rows),
+				                         cv::Range(max_point.x, max_point.x + filter.cols)).clone();
+
+			cv::Mat mask = _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)][mask_index];
+
+			for(int i=0; i< mask.rows; i++)
+				for (int j = 0; j < mask.cols; j++)
+				{
+					if (mask.at<uchar>(i, j) < 50)
+					{
+						detected_patch.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
+					}
+				}
+			*/
+
+			/*
+			cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+			cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], detected_patch);
+			cv::waitKey(0);
+			cv::destroyWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+			*/
+
+			//double score = compareHistH(detected_patch, _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)][mask_index]);
+			//r.insert(max_point, img_index, mask_index, score);
+			//std::cout << score;
 			r.insert(max_point, img_index, mask_index, max_score);
 			
-			//findMax(result, r, img_index, mask_index);
-
 			mask_index++;
 		}
 
@@ -352,4 +379,24 @@ void TemplateMatching::equalization(cv::Mat& img)
 		cv::equalizeHist(img_planes[i], img_planes[i]);
 
 	cv::merge(img_planes, img);
+}
+
+double TemplateMatching::compareHistH(cv::Mat test_img, cv::Mat view)
+{
+	cvtColor(test_img, test_img, cv::COLOR_BGR2HSV);
+	cvtColor(view, view, cv::COLOR_BGR2HSV);
+
+	int h_bins = 180;
+	int histSize[] = { h_bins};
+	float h_ranges[] = { 0, 180 };
+	const float* ranges[] = {h_ranges};
+	int channels[] = { 0 };
+	cv::MatND test_hist, view_hist;
+	
+	cv::calcHist(&test_img, 1, channels, cv::Mat(), test_hist, 
+		         1, histSize, ranges);
+	cv::calcHist(&view, 1, channels, cv::Mat(), view_hist,
+		1, histSize, ranges);
+
+	return cv::compareHist(test_hist, view_hist, 0);
 }
