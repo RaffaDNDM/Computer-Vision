@@ -24,7 +24,7 @@ private:
 
 class BestResults {
 public:
-	BestResults();
+	BestResults(int max_size);
 
 	void insert(cv::Point pos, int img_index, int mask_index, double score);
 
@@ -37,7 +37,7 @@ private:
 	double getMaxScore();
 
 	std::vector<Result> _best_elements;
-	const int MAX_SIZE = 10;
+	int MAX_SIZE = 30;
 };
 
 #endif

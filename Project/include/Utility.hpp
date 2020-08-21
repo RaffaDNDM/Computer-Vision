@@ -48,7 +48,8 @@ namespace Dataset
 		double threshold_template;
 	};
 
-	const std::vector<Parameter> canny_params = { {150.0, 80.0}, {150.0, 150.0}, {100.0, 80.0} };
+	const std::vector<Parameter> canny_params = { {150.0, 80.0}, {150.0, 160.0}, {100.0, 100.0} };
+	const std::vector<float> gammas = { 1.4f, 1.4f, 1.4f };
 	//const std::vector<Parameter> canny_params = { {150.0, 80.0}, {150.0, 45.0}, {100.0, 80.0} };
 	const std::vector<cv::String> sub_folders = { "/models", "/models", "/test_images" };
 	const std::vector<cv::String> patterns = { "mask*.png", "model*.png", "*.jpg" };

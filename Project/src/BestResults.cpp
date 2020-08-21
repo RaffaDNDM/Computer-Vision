@@ -27,7 +27,8 @@ double Result::getScore()
 	return _score;
 }
 
-BestResults::BestResults()
+BestResults::BestResults(int max_size) :
+	MAX_SIZE{ max_size }
 {}
 
 void BestResults::insert(cv::Point pos, int img_index, int mask_index, double score)

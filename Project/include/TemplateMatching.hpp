@@ -7,6 +7,7 @@
 #include "Project.hpp"
 #include "Utility.hpp"
 #include "BestResults.hpp"
+#include "GammaTransform.hpp"
 
 #ifndef TEMPLATE_MATCHING
 #define TEMPLATE_MATCHING
@@ -56,9 +57,9 @@ private:
 
 	void equalization(cv::Mat& img);
 
-	void gammaTransform(cv::Mat& src, cv::Mat& dst, float gamma);
+	void computeHist(std::vector<cv::Mat> imgs);
 
-	double compareHistH(cv::Mat test_img, cv::Mat view);
+	double compareHistH(cv::Mat test_img, int view_num);
 	/*
 		Input images
 		_input_imgs[0] = masks;
@@ -70,8 +71,10 @@ private:
 	std::vector<cv::Mat> _canny_imgs;
 	//MASKS with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _filter_masks;
-	//MASKS with detected edges using Canny + distance transform
+	//VIEWS with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _canny_views;
+	//Histograms of views
+	std::vector<cv::MatND> _hist_views;
 	//Type of dataset, we are analysing (can, driller or duck)
 	Dataset::Type _dataset_type;
 };

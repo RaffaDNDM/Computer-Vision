@@ -37,6 +37,7 @@ void TemplateMatching::loadImages(cv::String path)
 					img = imread(name, cv::IMREAD_GRAYSCALE);
 				else
 					img = imread(name, cv::IMREAD_COLOR);
+
 				tmp_imgs.emplace_back(img);
 			}
 
@@ -69,25 +70,13 @@ void TemplateMatching::stateAcquisitionImages(cv::String path)
 void TemplateMatching::cannyDetection()
 {
 	Dataset::Parameter param = Dataset::canny_params[static_cast<int>(_dataset_type)];
+	GammaTransform g(Dataset::gammas[static_cast<int>(_dataset_type)]);
 
-	for (auto img : _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)])
+	for (auto& img : _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)])
 	{
-		cv::Mat tmp;
-		switch (static_cast<int>(_dataset_type))
-		{
-			case 0:
-				gammaTransform(img, tmp, 0.8);
-				break;
-
-			case 1:
-				gammaTransform(img, tmp, 1.2);
-				break;
-
-			case 2:
-				gammaTransform(img, tmp, 0.8);
-				break;
-		}
-		CannyDetector cd(tmp, _dataset_type, param.threshold_template, param.threshold_template);
+		cv::Mat tmp=img.clone();
+		g.computeTransform(img, tmp);
+		CannyDetector cd(img, _dataset_type, param.threshold_template, param.threshold_template-20.0);
 		cd.detect();
 
 		//cv::Mat dist(img.size(), CV_8U);
@@ -96,6 +85,8 @@ void TemplateMatching::cannyDetection()
 		//cv::threshold(dist, dist, 0.5, 1.0, cv::THRESH_BINARY);
 		_canny_views.emplace_back(cd.getResult());
 	}
+
+	computeHist(_input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)]);
 
 	/*
 	for (auto &img : _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)])
@@ -177,23 +168,23 @@ void TemplateMatching::cannyDetection()
 		}
 		*/
 		
-		BestResults r;
-		//equalization(img);
-		//gammaTransform(img, img, 0.5);
-		CannyDetector cd(img, _dataset_type, param.threshold_test, param.threshold_test);
+		cv::Mat img_copy = img.clone();
+		BestResults r1(50), r2(10);
+		//equalization(img_copy);
+		CannyDetector cd(img_copy, _dataset_type, param.threshold_test, param.threshold_test-30.0);
 		cd.detect();
 
 		for (auto filter : _canny_views)
 		{	
-			cv::Mat result(cv::Size(img.rows-filter.rows+1, img.cols - filter.cols + 1), CV_32F);
+			cv::Mat result(cv::Size(img_copy.rows-filter.rows+1, img_copy.cols - filter.cols + 1), CV_32F);
 			double min_score, max_score;
 			cv::Point min_point, max_point;
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCOEFF_NORMED); //best for duck
 			cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCOEFF); //best for 
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR_NORMED);
 			//cv::matchTemplate(cd.getResult(), filter, result, cv::TM_CCORR);
+			cv::normalize(result, result);
 			cv::minMaxLoc(result, &min_score, &max_score, &min_point, &max_point);
-
 			/*
 			cv::Mat detected_patch = img(cv::Range(max_point.y, max_point.y + filter.rows),
 				                         cv::Range(max_point.x, max_point.x + filter.cols)).clone();
@@ -210,17 +201,10 @@ void TemplateMatching::cannyDetection()
 				}
 			*/
 
-			/*
-			cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
-			cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], detected_patch);
-			cv::waitKey(0);
-			cv::destroyWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
-			*/
-
 			//double score = compareHistH(detected_patch, _input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)][mask_index]);
 			//r.insert(max_point, img_index, mask_index, score);
 			//std::cout << score;
-			r.insert(max_point, img_index, mask_index, max_score);
+			r1.insert(max_point, img_index, mask_index, max_score);
 			
 			mask_index++;
 		}
@@ -268,9 +252,57 @@ void TemplateMatching::cannyDetection()
 		}
 		*/
 
-		cv::Mat mask_result=img.clone();
+		for (auto res : r1.getBestResults())
+		{
+			cv::Mat detected_patch = img(cv::Range(res.getPoint().y,
+				                                   res.getPoint().y + _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)][res.getMaskIndex()].rows),
+				                         cv::Range(res.getPoint().x, 
+											       res.getPoint().x + _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)][res.getMaskIndex()].cols))
+				                         .clone();
 
-		for(auto res: r.getBestResults())
+			cv::Mat mask = _input_imgs[static_cast<int>(Dataset::PatternIMG::MASKS)][res.getMaskIndex()].clone();
+
+			double count=0;
+			double count_w = 0;
+			for (int i = 0; i < mask.rows; i++)
+				for (int j = 0; j < mask.cols; j++)
+				{
+					if (mask.at<uchar>(i, j) < 50)
+					{
+						detected_patch.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
+					}
+					else
+					{
+						count+=1.0;
+						if (_input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)][res.getMaskIndex()].at<cv::Vec3b>(i, j)[0] > 200 &&
+							_input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)][res.getMaskIndex()].at<cv::Vec3b>(i, j)[1] > 200 &&
+							_input_imgs[static_cast<int>(Dataset::PatternIMG::VIEWS)][res.getMaskIndex()].at<cv::Vec3b>(i, j)[2] > 200)
+							count_w+=1.0;
+					}
+				}			
+			
+			//g.computeTransform(detected_patch, detected_patch);
+
+			if(count/count_w > 0.9)
+				r2.insert(res.getPoint(), res.getImageIndex(), res.getMaskIndex(), res.getScore());
+			else
+			{
+				double score = compareHistH(detected_patch, res.getMaskIndex());
+				//std::cout << score << std::endl;
+				r2.insert(res.getPoint(), res.getImageIndex(), res.getMaskIndex(), res.getScore() + score);
+			}
+
+			/*
+			cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+			cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], detected_patch);
+			cv::waitKey(0);
+			cv::destroyWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
+			*/
+		}
+
+		cv::Mat mask_result = img.clone();
+
+		for(auto res: r2.getBestResults())
 		{
 			for (int i = 0; i < _canny_views[res.getMaskIndex()].rows; i++)
 			{
@@ -282,7 +314,7 @@ void TemplateMatching::cannyDetection()
 			}
 		}
 		
-		printBestMatch(r, mask_result);
+		printBestMatch(r2, mask_result);
 
 		//cv::namedWindow("Canny" + Dataset::types[static_cast<int>(_dataset_type)]);
 		//cv::imshow("Canny" + Dataset::types[static_cast<int>(_dataset_type)], mask_result);
@@ -332,44 +364,6 @@ void TemplateMatching::findMax(cv::Mat result, BestResults& r, int img_index, in
 			r.insert(cv::Point(j,i), img_index, mask_index, result.at<float>(i,j));
 }
 
-void TemplateMatching::gammaTransform(cv::Mat &src, cv::Mat &dst, float gamma)
-{
-	unsigned char lut[256];
-
-	for (int i = 0; i < 256; i++)
-		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), gamma) * 255.0f);
-
-	dst = src.clone();
-	const int channels = dst.channels();
-
-	switch (channels)
-	{
-		case 1:
-		{
-			cv::MatIterator_<uchar> it, end;
-
-			for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
-				*it = lut[(*it)];
-
-			break;
-		}
-
-		case 3:
-		{
-			cv::MatIterator_<cv::Vec3b> it, end;
-
-			for (it = dst.begin<cv::Vec3b>(), end = dst.end<cv::Vec3b>(); it != end; it++)
-			{
-				(*it)[0] = lut[((*it)[0])];
-				(*it)[1] = lut[((*it)[1])];
-				(*it)[2] = lut[((*it)[2])];
-			}
-
-			break;
-		}
-	}
-}
-
 void TemplateMatching::equalization(cv::Mat& img)
 {
 	std::vector<cv::Mat> img_planes;
@@ -381,22 +375,37 @@ void TemplateMatching::equalization(cv::Mat& img)
 	cv::merge(img_planes, img);
 }
 
-double TemplateMatching::compareHistH(cv::Mat test_img, cv::Mat view)
+void TemplateMatching::computeHist(std::vector<cv::Mat> imgs)
+{
+	for(auto& img : imgs)
+	{
+		cv::Mat tmp;
+		cvtColor(img, tmp, cv::COLOR_BGR2HSV);
+
+		int h_bins = 45;
+		float h_ranges[] = { 0, 180 };
+		const float* ranges[] = { h_ranges };
+		int channels = 0;
+		cv::MatND hist;
+
+		cv::calcHist(&tmp, 1, &channels, cv::Mat(), hist, 1, &h_bins, ranges);
+
+		_hist_views.emplace_back(hist);
+	}
+}
+
+double TemplateMatching::compareHistH(cv::Mat test_img, int view_num)
 {
 	cvtColor(test_img, test_img, cv::COLOR_BGR2HSV);
-	cvtColor(view, view, cv::COLOR_BGR2HSV);
 
-	int h_bins = 180;
-	int histSize[] = { h_bins};
+	int h_bins = 45;
 	float h_ranges[] = { 0, 180 };
 	const float* ranges[] = {h_ranges};
-	int channels[] = { 0 };
-	cv::MatND test_hist, view_hist;
+	int channels = 0;
+	cv::MatND test_hist;
 	
-	cv::calcHist(&test_img, 1, channels, cv::Mat(), test_hist, 
-		         1, histSize, ranges);
-	cv::calcHist(&view, 1, channels, cv::Mat(), view_hist,
-		1, histSize, ranges);
-
-	return cv::compareHist(test_hist, view_hist, 0);
+	cv::calcHist(&test_img, 1, &channels, cv::Mat(), test_hist, 
+		         1, &h_bins, ranges);
+	
+	return cv::compareHist(test_hist, _hist_views[view_num], 0);
 }

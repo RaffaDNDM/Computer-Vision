@@ -33,3 +33,13 @@
 4	981	619560613	CMakeFiles/Project.dir/src/CannyDetector.cpp.obj	fe4fd2c3d2b822a7
 1	1049	619560613	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	92ff6a33fe5949ef
 1049	2579	619560613	Project.exe	a69d47214b6e700d
+1	1615	619705026	CMakeFiles/Project.dir/src/BestResults.cpp.obj	176618e64c0c277
+13	1622	619705026	CMakeFiles/Project.dir/src/CannyDetector.cpp.obj	fe4fd2c3d2b822a7
+10	1634	619705026	CMakeFiles/Project.dir/src/Project.cpp.obj	abf914174e337da3
+5	1663	619705026	CMakeFiles/Project.dir/src/GammaTransform.cpp.obj	c40f758f4dee5aaa
+7	1700	619705026	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	92ff6a33fe5949ef
+5	1130	619705254	CMakeFiles/Project.dir/src/Project.cpp.obj	abf914174e337da3
+1	1421	619705769	CMakeFiles/Project.dir/src/GammaTransform.cpp.obj	c40f758f4dee5aaa
+4	1494	619705769	CMakeFiles/Project.dir/src/Project.cpp.obj	abf914174e337da3
+7	1536	619705769	CMakeFiles/Project.dir/src/TemplateMatching.cpp.obj	92ff6a33fe5949ef
+1537	1978	619705769	Project.exe	acfee7ed5afb993a
