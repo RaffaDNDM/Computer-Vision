@@ -1,8 +1,14 @@
-#include "Project.hpp"
-#include "Utility.hpp"
+/**
+	@file CannyDetector.hpp
+	@brief Class for canny detection.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
 
 #ifndef CANNY_DETECTOR
 #define CANNY_DETECTOR
+
+#include "Project.hpp"
+#include "Utility.hpp"
 
 class CannyDetector
 {
@@ -11,9 +17,9 @@ public:
 		@brief Canny detector.
 		@param vector of test images
 	*/
-	CannyDetector(cv::Mat img, Dataset::Type type);
+	CannyDetector(cv::Mat img, Utility::Type type);
 
-	CannyDetector(cv::Mat img, Dataset::Type type, double threshold1, double threshold2);
+	CannyDetector(cv::Mat img, Utility::Type type, double threshold1, double threshold2);
 
 	/**
 		@brief Performs the Canny detection.
@@ -28,20 +34,10 @@ public:
 	cv::Mat getResult();
 
 private:
-	/**
-		@brief Callback for the trackbars of Canny window.
-		@param value value of modfied trackbar that User set
-		@param params object passed as parameter to trackbar
-	*/
-	//static void cannyTrackbar(int value, void* params);
-
 	cv::Mat _input_img;
 	cv::Mat _result_img;
 	cv::String _window;
-	Dataset::Type _dataset_type;
-	//int _threshold1=1421;
-	//int _threshold1 = 500;
-	//int _threshold2=200;
+	Utility::Type _dataset_type;
 	double _threshold1 = 1.0;
 	double _threshold2 = 1.0;
 };

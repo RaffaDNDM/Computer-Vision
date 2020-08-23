@@ -1,3 +1,9 @@
+/**
+	@file BestResults.cpp
+	@brief Implementation of class for management of the results with higher score.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "BestResults.hpp"
 
 Result::Result(cv::Point pos, int img_index, int mask_index, double score):

@@ -7,7 +7,7 @@
 #include "TemplateMatching.hpp"
 #include "Project.hpp"
 
-void matching(std::string path, Dataset::Type type); //Function called by thread
+void matching(std::string path, Utility::Type type); //Function called by thread
 
 int main(int argc, char** argv)
 {
@@ -23,13 +23,15 @@ int main(int argc, char** argv)
 
 	try
 	{
-		std::thread t1(matching, argv[1], Dataset::Type::CAN);
-		std::thread t2(matching, argv[1], Dataset::Type::DRILLER);
-		std::thread t3(matching, argv[1], Dataset::Type::DUCK);
-
+		std::thread t1(matching, argv[1], Utility::Type::CAN);
+		std::thread t2(matching, argv[1], Utility::Type::DRILLER);
+		std::thread t3(matching, argv[1], Utility::Type::DUCK);
+		
 		t1.join();
 		t2.join();
 		t3.join();
+		
+		
 	}
 	catch (const InputIMGException& e)
 	{
@@ -41,8 +43,8 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-void matching(std::string path, Dataset::Type type)
+void matching(std::string path, Utility::Type type)
 {			 
 	TemplateMatching tm = TemplateMatching(path, type);
-	tm.cannyDetection();
+	tm.match();
 }

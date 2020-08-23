@@ -1,7 +1,15 @@
-#include "Project.hpp"
+/**
+	@file GammaTransform.hpp
+	@brief Class for gamma transform.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
 
 #ifndef GAMMA
 #define GAMMA
+
+#include "Project.hpp"
+#include "Utility.hpp"
+
 class GammaTransform 
 {
 public:

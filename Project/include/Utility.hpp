@@ -1,5 +1,13 @@
+/**
+	@file Utility.hpp
+	@brief Class for definition of utility variables and values.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #ifndef UTILITY
 #define UTILITY
+
+#include "Project.hpp"
 
 #define LINE "_______________________________________________\n"
 #define BLUE "\033[0;34m"
@@ -16,7 +24,7 @@
 #define BOLD_YELLOW "\033[1;33m"
 #define DEFAULT "\033[0m"
 
-namespace Dataset
+namespace Utility
 {
 	//Dataset type
 	enum class Type
@@ -48,8 +56,8 @@ namespace Dataset
 		double threshold_template;
 	};
 
-	const std::vector<Parameter> canny_params = { {150.0, 80.0}, {150.0, 160.0}, {100.0, 100.0} };
-	const std::vector<float> gammas = { 1.4f, 1.4f, 1.4f };
+	const std::vector<Parameter> canny_params = { {150.0, 90.0}, {150.0, 160.0}, {100.0, 100.0} };
+	const std::vector<float> gammas = { 1.4f, 1.3f, 1.4f };
 	//const std::vector<Parameter> canny_params = { {150.0, 80.0}, {150.0, 45.0}, {100.0, 80.0} };
 	const std::vector<cv::String> sub_folders = { "/models", "/models", "/test_images" };
 	const std::vector<cv::String> patterns = { "mask*.png", "model*.png", "*.jpg" };
@@ -57,6 +65,9 @@ namespace Dataset
 	const std::vector<cv::String> bold_colors = { BOLD_BLUE, BOLD_RED, BOLD_GREEN };
 	const std::vector<cv::String> colors = { BLUE, RED, GREEN };
 	const cv::String output_path = "../../../results/";
+	const cv::String results_files_path = "../../../";
+	const cv::Vec3b MASK_CANNY(0, 0, 255);
+	const cv::Scalar MASK_NAME(255, 255, 255);
 }
 
 #endif

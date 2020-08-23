@@ -1,5 +1,5 @@
 /**
-	@file Lab5.h
+	@file Project.hpp
 	@brief Header of source file with main.
 	@author Di Nardo Di Maio Raffaele 1204879
 */
@@ -12,6 +12,7 @@
 #include <thread>
 #include <mutex>
 #include <iomanip>
+#include <fstream>
 
 
 #include <opencv2/core.hpp>

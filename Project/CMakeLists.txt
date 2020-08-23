@@ -25,7 +25,7 @@ add_executable(
 	${PROJECT_NAME}
 	"src/Project.cpp" 
 	"src/TemplateMatching.cpp"
- "src/CannyDetector.cpp" "include/BestResults.hpp" "src/BestResults.cpp" "include/GammaTransform.hpp" "src/GammaTransform.cpp")
+ "src/CannyDetector.cpp" "include/BestResults.hpp" "src/BestResults.cpp" "include/GammaTransform.hpp" "src/GammaTransform.cpp" )
 
 
 target_link_libraries(

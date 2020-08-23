@@ -1,16 +1,16 @@
 /**
-	@file TemplateMatching.h
+	@file TemplateMatching.hpp
 	@brief Class for template matching.
 	@author Di Nardo Di Maio Raffaele 1204879
 */
+
+#ifndef TEMPLATE_MATCHING
+#define TEMPLATE_MATCHING
 
 #include "Project.hpp"
 #include "Utility.hpp"
 #include "BestResults.hpp"
 #include "GammaTransform.hpp"
-
-#ifndef TEMPLATE_MATCHING
-#define TEMPLATE_MATCHING
 
 /**
 	@brief Find best template matches in input images.
@@ -22,12 +22,9 @@ public:
 		@param path folder containing the 3 subfolders: can/, driller/, duck/
 		@param dataset_type type of dataset that you want to analyse (can, driller, duck)
 	*/
-	TemplateMatching(cv::String path, Dataset::Type dataset_type);
+	TemplateMatching(cv::String path, Utility::Type dataset_type);
 
-	/**
-		@brief Detection of edges from test images.
-	*/
-	void cannyDetection();
+	void match();
 
 private:
 	/**
@@ -49,10 +46,7 @@ private:
 		@param abs_min value of the score for the mask that matches better 
 		@param min_pos position in the image in which we found match
 	*/
-	void printBestMatch(BestResults best_results, cv::Mat mask_result);
-
-
-	void findMax(cv::Mat result, BestResults &r, int img_index, int mask_index);
+	void printBestMatch(BestResults best_results, cv::Mat img);
 
 
 	void equalization(cv::Mat& img);
@@ -60,6 +54,12 @@ private:
 	void computeHist(std::vector<cv::Mat> imgs);
 
 	double compareHistH(cv::Mat test_img, int view_num);
+
+	/**
+	@brief Detection of edges from test images.
+	*/
+	void cannyDetection();
+
 	/*
 		Input images
 		_input_imgs[0] = masks;
@@ -76,7 +76,11 @@ private:
 	//Histograms of views
 	std::vector<cv::MatND> _hist_views;
 	//Type of dataset, we are analysing (can, driller or duck)
-	Dataset::Type _dataset_type;
+	Utility::Type _dataset_type;
+	//File stream for output
+	std::fstream _fs;
+	//Parameter used by canny detection
+	Utility::Parameter _param;
 };
 
 /**

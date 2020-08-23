@@ -1,7 +1,13 @@
-#include "Project.hpp"
+/**
+	@file BestResults.hpp
+	@brief Class for management of the results with higher score.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
 
 #ifndef BEST_RESULTS
 #define BEST_RESULTS
+
+#include "Project.hpp"
 
 class Result {
 public:

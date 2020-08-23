@@ -1,3 +1,9 @@
+/**
+	@file GammaTransform.cpp
+	@brief Implementation of class for gamma transform.
+	@author Di Nardo Di Maio Raffaele 1204879
+*/
+
 #include "GammaTransform.hpp"
 
 GammaTransform::GammaTransform(float gamma)
@@ -29,9 +35,9 @@ void GammaTransform::computeTransform(cv::Mat &src, cv::Mat &dst)
 
 			for (it = dst.begin<cv::Vec3b>(), end = dst.end<cv::Vec3b>(); it != end; it++)
 			{
-				(*it)[0] = _values[((*it)[0])];
-				(*it)[1] = _values[((*it)[1])];
-				(*it)[2] = _values[((*it)[2])];
+				(*it)[static_cast<int>(Utility::ColorSpace::R)] = _values[((*it)[static_cast<int>(Utility::ColorSpace::R)])];
+				(*it)[static_cast<int>(Utility::ColorSpace::G)] = _values[((*it)[static_cast<int>(Utility::ColorSpace::G)])];
+				(*it)[static_cast<int>(Utility::ColorSpace::B)] = _values[((*it)[static_cast<int>(Utility::ColorSpace::B)])];
 			}
 
 			break;
