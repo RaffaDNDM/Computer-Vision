@@ -39,9 +39,10 @@ BestResults::BestResults(int max_size) :
 
 void BestResults::insert(cv::Point pos, int img_index, int mask_index, double score)
 {
-	//std::cout << "(" << pos.x << "," << pos.y << ")  " << img_index << "   " << mask_index << "   "<< score << std::endl;
+	//Creation of the Result entity
 	Result r(pos, img_index, mask_index, score);
 	
+	//Insertion of the element in the buffer
 	int i = 0;
 	if(_best_elements.size()==0)
 		_best_elements.emplace_back(r);
@@ -49,11 +50,12 @@ void BestResults::insert(cv::Point pos, int img_index, int mask_index, double sc
 	{
 		if (_best_elements.size() == MAX_SIZE)
 		{
-			//No insertion of the new element
+			//Full buffer (No insertion of the new element)
 			if (r.getScore() <= getMinScore())
 				return;
 		}
 
+		//Find correct position in the buffer for the new insertion
 		std::vector<Result>::iterator iter = _best_elements.begin();
 		for (; iter != _best_elements.end(); ++iter)
 		{
@@ -64,9 +66,11 @@ void BestResults::insert(cv::Point pos, int img_index, int mask_index, double sc
 			}
 		}
 
+		//This new result has the highest score (best one)
 		if (iter == _best_elements.end())
 			_best_elements.emplace_back(r);
 		
+		//I overcome the MAX SIZE inserting the new result
 		if (_best_elements.size() == (MAX_SIZE + 1))
 			_best_elements.erase(_best_elements.begin());
 	}

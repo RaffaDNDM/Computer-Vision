@@ -6,25 +6,18 @@
 
 #include "CannyDetector.hpp"
 
-CannyDetector::CannyDetector(cv::Mat img, Utility::Type type) :
-	_input_img{img.clone()},
-	_result_img{img.clone()},
-	_dataset_type{type},
-	_window{ "Canny " + Utility::types[static_cast<int>(type)] }
-{}
-
-CannyDetector::CannyDetector(cv::Mat img, Utility::Type type, double threshold1, double threshold2) :
+CannyDetector::CannyDetector(cv::Mat img, Utility::Type type, double low_threshold, double high_threshold) :
 	_input_img{ img.clone() },
 	_result_img{ img.clone() },
 	_dataset_type{ type },
-	_window{ "Canny " + Utility::types[static_cast<int>(type)] },
-	_threshold1{ threshold1 },
-	_threshold2{ threshold2 }
+	_low_threshold{ low_threshold },
+	_high_threshold{ high_threshold }
 { }
 
 void CannyDetector::detect()
 {
-	cv::Canny(_input_img, _result_img, _threshold1, _threshold2);
+	//Computation of Canny detection
+	cv::Canny(_input_img, _result_img, _low_threshold, _high_threshold);
 }
 
 cv::Mat CannyDetector::getResult()

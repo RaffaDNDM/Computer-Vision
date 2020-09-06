@@ -24,6 +24,9 @@ public:
 	*/
 	TemplateMatching(cv::String path, Utility::Type dataset_type);
 
+	/**
+		@brief Compute template matching.
+	*/
 	void match();
 
 private:
@@ -48,43 +51,83 @@ private:
 	*/
 	void printBestMatch(BestResults best_results, cv::Mat img);
 
-
+	/**
+		@brief Equalize an image.
+		@param img image to be equalized
+	*/
 	void equalization(cv::Mat& img);
 
-	void computeHist(std::vector<cv::Mat> imgs);
+	/**
+		@brief Compute histograms of a view images.
+		@param imgs input set of view images
+	*/
+	void computeHistViews(std::vector<cv::Mat> imgs);
 
+	/**
+		@brief Compute HUE histogram of an image
+		@param img input image
+	*/
+	cv::MatND computeHist(cv::Mat img);
+
+	/**
+		@brief Compare histograms of two images.
+		@param tes_img first image to be compared
+		@param view_num index of view image in the buffer to be compared
+	*/
 	double compareHistH(cv::Mat test_img, int view_num);
 
 	/**
-	@brief Detection of edges from test images.
+		@brief Detection of edges from test images.
 	*/
 	void cannyDetection();
 
-	/*
-		Input images
+	/**
+		@brief Compute template matching on Canny image.
+		@param canny_img image with edges detected through Canny detector
+		@param img_index index of the image on which compute template matching
+		@param r buffer of best results
+	*/
+	void match(cv::Mat canny_img, int img_index, BestResults& r);
+
+	/**
+		@brief Refinement of results obtained in r1 using histogram comparison.
+		@param img image on which we are refining the results
+		@param r1 oldest buffer of results
+		@param r2 improved buffer of results
+	*/
+	void refinement(cv::Mat img, BestResults& r1, BestResults& r2);
+
+	/*   Input images
 		_input_imgs[0] = masks;
 		_input_imgs[1] = views;
 		_input_imgs[2] = test images;
 	*/
-	std::vector<std::vector<cv::Mat>> _input_imgs;
+	std::vector<std::vector<cv::Mat>> _input_imgs;	
+
 	//TEST Images with detected edges using Canny + distance transform
 	std::vector<cv::Mat> _canny_imgs;
-	//MASKS with detected edges using Canny + distance transform
-	std::vector<cv::Mat> _filter_masks;
-	//VIEWS with detected edges using Canny + distance transform
+	
+	//MASKS with detected edges using  Canny + distance transform
+	std::vector<cv::Mat> _filter_masks; 
+
+	//VIEWS with detected edges using  Canny + distance transform
 	std::vector<cv::Mat> _canny_views;
-	//Histograms of views
+
+	// Histograms of views
 	std::vector<cv::MatND> _hist_views;
+
 	//Type of dataset, we are analysing (can, driller or duck)
 	Utility::Type _dataset_type;
+
 	//File stream for output
 	std::fstream _fs;
+
 	//Parameter used by canny detection
 	Utility::Parameter _param;
 };
 
 /**
-	Exception thrown if the images are not found in specified folder
+	@brief Exception thrown if the images are not found in specified folder.
 */
 class InputIMGException : public std::exception
 {

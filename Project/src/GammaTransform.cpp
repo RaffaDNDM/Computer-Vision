@@ -8,18 +8,26 @@
 
 GammaTransform::GammaTransform(float gamma)
 {
+	/*
+		Compute associations between original value and gamma transformed value
+		_values[i]=gamma_transform(i)  for each i in [0, 255]
+	*/
 	for (int i = 0; i < 256; i++)
 		_values.emplace_back(cv::saturate_cast<uchar>(pow((float)(i / 255.0), gamma) * 255.0f));
 }
 
 void GammaTransform::computeTransform(cv::Mat &src, cv::Mat &dst)
 {
+	//Creation of result image
 	dst = src.clone();
+
+	//Number of channels of result image = number of channels of input image
 	const int channels = dst.channels();
 
+	//Transformation based on the number of channels
 	switch (channels)
 	{
-		case 1:
+		case 1: //Grayscale image
 		{
 			cv::MatIterator_<uchar> it, end;
 
@@ -29,7 +37,7 @@ void GammaTransform::computeTransform(cv::Mat &src, cv::Mat &dst)
 			break;
 		}
 
-		case 3:
+		case 3: //RGB image
 		{
 			cv::MatIterator_<cv::Vec3b> it, end;
 

@@ -15,11 +15,11 @@ class CannyDetector
 public:
 	/**
 		@brief Canny detector.
-		@param vector of test images
+		@param img input RGB image
+		@param type type of dataset (CAN, DRILLER or DUCK)
+		@param threshold1
 	*/
-	CannyDetector(cv::Mat img, Utility::Type type);
-
-	CannyDetector(cv::Mat img, Utility::Type type, double threshold1, double threshold2);
+	CannyDetector(cv::Mat img, Utility::Type type, double low_threshold, double high_threshold);
 
 	/**
 		@brief Performs the Canny detection.
@@ -34,11 +34,19 @@ public:
 	cv::Mat getResult();
 
 private:
+	//Input image
 	cv::Mat _input_img;
+
+	//Image with detected edges
 	cv::Mat _result_img;
-	cv::String _window;
+
+	//Type of dataset on which the detection is performeed
 	Utility::Type _dataset_type;
-	double _threshold1 = 1.0;
-	double _threshold2 = 1.0;
+
+	//Low threshold for Hysteresis phase
+	double _low_threshold = 1.0;
+
+	//High threshold for Hysteresis phase
+	double _high_threshold = 1.0;
 };
 #endif

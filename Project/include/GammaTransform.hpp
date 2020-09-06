@@ -13,12 +13,21 @@
 class GammaTransform 
 {
 public:
+	/**
+		@brief Constructor of gamma transform.
+		@param gamma gamma coefficent
+	*/
 	GammaTransform(float gamma);
 
+	/**
+		@brief Compute the gamma transform of an image.
+		@param src input image
+		@param dst transformed input image
+	*/
 	void computeTransform(cv::Mat& src, cv::Mat& dst);
 
 private:
-	std::vector<uchar> _values;
+	std::vector<uchar> _values; /**< Association between level and transformed level*/
 };
 
 #endif
