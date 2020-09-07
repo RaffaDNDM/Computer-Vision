@@ -9,7 +9,7 @@
 
 #include "Project.hpp"
 
-/** Colors of print statemets*/
+//Colors of print statemets
 #define LINE "_______________________________________________\n"
 #define BLUE "\033[0;34m"
 #define CYAN "\033[0;36m"
@@ -36,6 +36,8 @@ namespace Utility
 		const cv::String title = BOLD_CYAN;
 		const cv::String option_num = CYAN;
 		const cv::String option_string = YELLOW;
+		const cv::String error = BOLD_RED;
+		const cv::String cmd_arg = BOLD_BLUE;
 	};
 
 	//Dataset type
@@ -88,8 +90,6 @@ namespace Utility
 	const std::vector<cv::String> bold_colors = { BOLD_BLUE, BOLD_RED, BOLD_GREEN };
 	//Colors for each dataset
 	const std::vector<cv::String> colors = { BLUE, RED, GREEN };
-	//Output folder with resulting best images + mask matches
-	const cv::String output_path = "../../../results/";
 	//Folder that contains the output files (???_results.txt) with found matches infos
 	const cv::String results_files_path = "../../../";
 	//Color for mask in result image (one image for each match)

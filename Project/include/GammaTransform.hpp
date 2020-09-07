@@ -27,7 +27,8 @@ public:
 	void computeTransform(cv::Mat& src, cv::Mat& dst);
 
 private:
-	std::vector<uchar> _values; /**< Association between level and transformed level*/
+	//Association between level and transformed level
+	std::vector<uchar> _values; 
 };
 
 #endif

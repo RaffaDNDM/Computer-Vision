@@ -7,6 +7,8 @@
 #ifndef TEMPLATE_MATCHING
 #define TEMPLATE_MATCHING
 
+//#define STORE_IMAGES
+
 #include "Project.hpp"
 #include "Utility.hpp"
 #include "BestResults.hpp"
@@ -22,7 +24,8 @@ public:
 		@param path folder containing the 3 subfolders: can/, driller/, duck/
 		@param dataset_type type of dataset that you want to analyse (can, driller, duck)
 	*/
-	TemplateMatching(cv::String path, Utility::Type dataset_type);
+	TemplateMatching(cv::String input_path, cv::String results_path, 
+		             cv::String output_path, Utility::Type dataset_type);
 
 	/**
 		@brief Compute template matching.
@@ -30,6 +33,14 @@ public:
 	void match();
 
 private:
+	
+	/**
+		@brief Return path with last character equal to '/'.
+		@param path path to be analized and transformed if it doesn't respect format
+		@return path with last character equal to '/'
+	*/
+	cv::String pathFormat(cv::String path);
+
 	/**
 		@brief Load images from the path.
 		@param path folder containing the 3 subfolders: can/, driller/, duck/
@@ -124,6 +135,12 @@ private:
 
 	//Parameter used by canny detection
 	Utility::Parameter _param;
+
+	//Path of resulting txt files
+	cv::String _results_path = Utility::results_files_path;
+
+	//Path of resulting images
+	cv::String _output_path;
 };
 
 /**
@@ -137,6 +154,5 @@ public:
 		return "No images found with this pattern.";
 	}
 };
-
 
 #endif

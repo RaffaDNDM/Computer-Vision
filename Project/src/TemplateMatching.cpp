@@ -8,18 +8,30 @@
 
 static std::mutex mutex;
 
-TemplateMatching::TemplateMatching(cv::String path, Utility::Type dataset_type) :
+TemplateMatching::TemplateMatching(cv::String input_path, cv::String results_path,
+ 	                               cv::String output_path, Utility::Type dataset_type):
 	_dataset_type{ dataset_type },
 	_param { Utility::canny_params[static_cast<int>(_dataset_type)] }
 {
-	//Definition of path for actual dataset looking to termination character
-	if (path.back() == '\\' || path.back() == '/')
-		loadImages(path + Utility::types[static_cast<int>(dataset_type)]);
-	else
-		loadImages(path + "/" + Utility::types[static_cast<int>(dataset_type)]);
+	//Definition of path for actual dataset looking to termination character	
+	loadImages(pathFormat(input_path) + Utility::types[static_cast<int>(dataset_type)]);
 
-	//Open and create file for writing results
-	_fs.open(Utility::results_files_path + Utility::types[static_cast<int>(_dataset_type)] + "_results.txt", std::fstream::out);
+	//If specified by user, I use the specified path otherwise the default one
+	if (results_path != "")
+		_results_path = pathFormat(results_path);
+
+	_fs.open(_results_path + Utility::types[static_cast<int>(_dataset_type)] + "_results.txt", std::fstream::out);
+
+	_output_path = (output_path != "")? pathFormat(output_path) : output_path;
+	
+}
+
+cv::String TemplateMatching::pathFormat(cv::String path)
+{
+	if (path.back() != '\\' && path.back() != '/')
+		return path + "/";
+	else
+		return path;
 }
 
 void TemplateMatching::loadImages(cv::String path) 
@@ -208,30 +220,33 @@ void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat img)
 	//Analyze the best results of template matching on img
 	for (int k = results.size() - 1; k >= 0; k--)
 	{
-		cv::Mat mask_result=img.clone();
-
-		//Print the edges detected on the view on the image
-		for (int i = 0; i < _canny_views[results[k].getMaskIndex()].rows; i++)
+		if (_output_path != "")
 		{
-			for (int j = 0; j < _canny_views[results[k].getMaskIndex()].cols; j++)
+			cv::Mat mask_result = img.clone();
+
+			//Print the edges detected on the view on the image
+			for (int i = 0; i < _canny_views[results[k].getMaskIndex()].rows; i++)
 			{
-				if (_canny_views[results[k].getMaskIndex()].at<uchar>(i, j) > 100)
-					mask_result.at<cv::Vec3b>(results[k].getPoint().y + i, results[k].getPoint().x + j) = Utility::MASK_CANNY;
+				for (int j = 0; j < _canny_views[results[k].getMaskIndex()].cols; j++)
+				{
+					if (_canny_views[results[k].getMaskIndex()].at<uchar>(i, j) > 100)
+						mask_result.at<cv::Vec3b>(results[k].getPoint().y + i, results[k].getPoint().x + j) = Utility::MASK_CANNY;
+				}
 			}
+
+			//Add the name of the mask to the result image
+			cv::putText(mask_result,
+				"mask " + std::to_string(results[k].getMaskIndex()), //String
+				cv::Point(40, 40), //Coordinates
+				cv::FONT_HERSHEY_COMPLEX_SMALL, //Font
+				1.0, //Scale
+				Utility::MASK_NAME); //BGR Color
+
+			//Store the result image on the disk
+			cv::imwrite(_output_path + Utility::types[static_cast<int>(_dataset_type)]
+				+ std::to_string(results[0].getImageIndex()) + "_" +
+				std::to_string(results.size() - 1 - k) + ".jpg", mask_result);
 		}
-
-		//Add the name of the mask to the result image
-		cv::putText(mask_result,
-			"mask " + std::to_string(results[k].getMaskIndex()), //String
-			cv::Point(40, 40), //Coordinates
-			cv::FONT_HERSHEY_COMPLEX_SMALL, //Font
-			1.0, //Scale
-			Utility::MASK_NAME); //BGR Color
-
-		//Store the result image on the disk
-		cv::imwrite(Utility::output_path + Utility::types[static_cast<int>(_dataset_type)] +
-			"/result" + std::to_string(results[0].getImageIndex()) +"_"+
-			std::to_string(index)+".jpg", mask_result);
 
 		index++;
 
