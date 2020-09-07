@@ -23,15 +23,58 @@ int main(int argc, char** argv)
 
 	try
 	{
-		std::thread t1(matching, argv[1], Utility::Type::CAN);
-		std::thread t2(matching, argv[1], Utility::Type::DRILLER);
-		std::thread t3(matching, argv[1], Utility::Type::DUCK);
+		bool end = false;
 		
-		t1.join();
-		t2.join();
-		t3.join();
-		
-		
+		while (!end)
+		{
+			int choice = -1;
+
+			while (choice<0 || choice > 4)
+			{
+				show_menu();
+				std::cin >> choice;
+			}
+
+			switch (choice)
+			{
+				case static_cast<int>(Utility::Type::CAN) :
+				{
+					std::thread t(matching, argv[1], Utility::Type::CAN);
+					t.join();
+					break;
+				}
+
+				case static_cast<int>(Utility::Type::DRILLER) :
+				{
+					std::thread t(matching, argv[1], Utility::Type::DRILLER);
+					t.join();
+					break;
+				}
+
+				case static_cast<int>(Utility::Type::DUCK) :
+				{
+					std::thread t(matching, argv[1], Utility::Type::DUCK);
+					t.join();
+					break;
+				}
+
+				case static_cast<int>(Utility::Type::DATASETS_NUM) :
+				{
+					std::thread t1(matching, argv[1], Utility::Type::CAN);
+					std::thread t2(matching, argv[1], Utility::Type::DRILLER);
+					std::thread t3(matching, argv[1], Utility::Type::DUCK);
+
+					t1.join();
+					t2.join();
+					t3.join();
+
+					break;
+				}
+
+				case Utility::EXIT:
+					end = true;
+			}
+		}
 	}
 	catch (const InputIMGException& e)
 	{
@@ -41,6 +84,22 @@ int main(int argc, char** argv)
 	}
 
 	return 0;
+}
+
+void show_menu()
+{
+	std::cout << Utility::Menu::title << "Select which dataset you want to analyze" << std::endl << LINE;
+	std::cout << Utility::Menu::option_num << "0)" << Utility::Menu::option_string
+			  << " CAN dataset" << std::endl;
+	std::cout << Utility::Menu::option_num << "1)" << Utility::Menu::option_string
+			  << " DRILLER dataset" << std::endl;
+	std::cout << Utility::Menu::option_num << "2)" << Utility::Menu::option_string
+			  << " DUCK dataset" << std::endl;
+	std::cout << Utility::Menu::option_num << "3)" << Utility::Menu::option_string
+			  << " All datasets" << std::endl;
+	std::cout << Utility::Menu::option_num << "4)" << Utility::Menu::option_string
+			  << " Exit from the program" << std::endl;
+	std::cout << Utility::Menu::title <<LINE << DEFAULT;
 }
 
 void matching(std::string path, Utility::Type type)

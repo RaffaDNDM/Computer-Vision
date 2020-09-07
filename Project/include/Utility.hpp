@@ -27,12 +27,24 @@
 
 namespace Utility
 {
+	//Value for exit from program
+	const int EXIT = 4;
+	
+	//Menu colors
+	namespace Menu
+	{
+		const cv::String title = BOLD_CYAN;
+		const cv::String option_num = CYAN;
+		const cv::String option_string = YELLOW;
+	};
+
 	//Dataset type
 	enum class Type
 	{
 		CAN,
 		DRILLER,
-		DUCK
+		DUCK,
+		DATASETS_NUM
 	};
 
 	//Pattern type
@@ -62,6 +74,7 @@ namespace Utility
 	const std::vector<Parameter> canny_params = { {150.0, 100.0}, //CAN thresholds
 		                                          {150.0, 160.0}, //DRILLER thresholds
 		                                          {100.0, 100.0} }; //DUCK thresholds
+	
 	
 	//Gamma values for gamma transform for each dataset type
 	const std::vector<float> gammas = { 1.4f, 1.3f, 1.4f };
