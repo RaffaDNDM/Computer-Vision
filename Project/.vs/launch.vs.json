@@ -8,7 +8,7 @@
       "projectTarget": "Project.exe",
       "name": "Project.exe",
       "args": [
-        "-i ../../../dat\\ -r ../../../dat/ -o ../../../results/"
+        "-i ../../../dat\\ -r ../../../dat/ -dist -o ../../../results_dist"
       ]
     }
   ]

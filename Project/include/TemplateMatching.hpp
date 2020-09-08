@@ -25,8 +25,9 @@ public:
 		@param dataset_type type of dataset that you want to analyse (can, driller, duck)
 	*/
 	TemplateMatching(cv::String input_path, cv::String results_path, 
-		             cv::String output_path, Utility::Type dataset_type);
-
+		             cv::String output_path, Utility::Type dataset_type,
+		             bool chamfer_distance);
+	
 	/**
 		@brief Compute template matching.
 	*/
@@ -61,12 +62,6 @@ private:
 		@param min_pos position in the image in which we found match
 	*/
 	void printBestMatch(BestResults best_results, cv::Mat img);
-
-	/**
-		@brief Equalize an image.
-		@param img image to be equalized
-	*/
-	void equalization(cv::Mat& img);
 
 	/**
 		@brief Compute histograms of a view images.
@@ -141,6 +136,9 @@ private:
 
 	//Path of resulting images
 	cv::String _output_path;
+
+	//Method to be used
+	bool _distance_transform;
 };
 
 /**

@@ -33,11 +33,13 @@ namespace Utility
 	//Menu colors
 	namespace Menu
 	{
-		const cv::String title = BOLD_CYAN;
-		const cv::String option_num = CYAN;
-		const cv::String option_string = YELLOW;
-		const cv::String error = BOLD_RED;
-		const cv::String cmd_arg = BOLD_BLUE;
+		const std::string title = BOLD_CYAN;
+		const std::string option_num = CYAN;
+		const std::string option_string = YELLOW;
+		const std::string error = BOLD_RED;
+		const std::string help_arg = BOLD_BLUE;
+		const std::string user_arg = CYAN;
+		const std::vector<std::string> commands{ "-i", "-r", "-o", "-dist"};
 	};
 
 	//Dataset type

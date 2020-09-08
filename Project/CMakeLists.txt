@@ -26,7 +26,7 @@ add_executable(
 	"src/CannyDetector.cpp"
 	"src/BestResults.cpp"
 	"src/GammaTransform.cpp"
-)
+ "include/Menu.hpp" "src/Menu.cpp")
 
 target_link_libraries(
 	${PROJECT_NAME}

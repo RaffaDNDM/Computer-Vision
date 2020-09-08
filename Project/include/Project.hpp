@@ -20,25 +20,4 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-/**
-	@brief Display menu options.
-*/
-void show_menu();
-
-/**
-	@brief Display command line arguments infos.
-*/
-void cmd_help();
-
-/**
-	@brief Parser of command line arguments.
-	@param argc number of inserted arguments
-	@param argv list of command line arguments
-	@param input_path folder containing subfolders with images inside them
-	@param results_path folder that will contain the txt results files
-	@param output_path folder that will contain the images with detected templates
-*/
-void args_parser(int argc, char** argv, std::string& input_path, 
-	             std::string& results_path, std::string& output_path);
-
 #endif

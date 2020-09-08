@@ -9,9 +9,11 @@
 static std::mutex mutex;
 
 TemplateMatching::TemplateMatching(cv::String input_path, cv::String results_path,
- 	                               cv::String output_path, Utility::Type dataset_type):
+								   cv::String output_path, Utility::Type dataset_type,
+								   bool distance_transform) :
 	_dataset_type{ dataset_type },
-	_param { Utility::canny_params[static_cast<int>(_dataset_type)] }
+	_param{ Utility::canny_params[static_cast<int>(_dataset_type)] },
+	_distance_transform{_distance_transform}
 {
 	//Definition of path for actual dataset looking to termination character	
 	loadImages(pathFormat(input_path) + Utility::types[static_cast<int>(dataset_type)]);
@@ -130,8 +132,25 @@ void TemplateMatching::match(cv::Mat canny_img, int img_index, BestResults& r)
 		double min_score, max_score;
 		cv::Point min_point, max_point;
 		
-		//Template Matching using Correlation Coefficient 
-		cv::matchTemplate(canny_img, filter, result, cv::TM_CCOEFF);
+		if (_distance_transform)
+		{
+			//Distance transform
+			cv::Mat dist_img;
+			cv::distanceTransform(canny_img, dist_img, cv::DIST_L2, 3);
+			cv::normalize(dist_img, dist_img, 0.0, 1.0, cv::NORM_MINMAX);
+
+			cv::Mat tmp;
+			filter.convertTo(tmp, CV_32F);
+
+			//Template Matching using Correlation Coefficient 
+			cv::matchTemplate(dist_img, tmp, result, cv::TM_CCOEFF);
+		}
+		else
+		{
+			//Template Matching using Correlation Coefficient 
+			cv::matchTemplate(canny_img, filter, result, cv::TM_CCOEFF);
+		}
+
 		//Normalization of results
 		cv::normalize(result, result);
 		//Find min and max elements in result matrix
@@ -191,14 +210,24 @@ void TemplateMatching::match()
 		int max_index = 0;
 		cv::Point max_pos;
 
-		BestResults r1(50), r2(10);
+		BestResults r2(10);
 		CannyDetector cd(img.clone(), _dataset_type, _param.threshold_test-40.0, _param.threshold_test);
 		cd.detect();
 
-		//Template matching based on Canny detection
-		match(cd.getResult(), img_index, r1);
-		//Refinement based on histogram comparison
-		refinement(img, r1, r2);
+		if (_distance_transform)
+		{
+			//Template matching using Chamfer distance
+			match(cd.getResult(), img_index, r2);
+		}
+		else
+		{
+			BestResults r1(50);
+			//Template matching based on Canny detection
+			match(cd.getResult(), img_index, r1);
+			//Refinement based on histogram comparison
+			refinement(img, r1, r2);
+		}
+
 		//Print results on screen and in relative file
 		printBestMatch(r2, img);
 
@@ -269,20 +298,6 @@ void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat img)
 	}
 
 	mutex.unlock();
-}
-
-void TemplateMatching::equalization(cv::Mat& img)
-{
-	//Split the image in the 3 channels
-	std::vector<cv::Mat> img_planes;
-	cv::split(img, img_planes);
-
-	//Equalize image of each channel w.r.t. histogram
-	for (int i = 0; i < img.channels(); i++)
-		cv::equalizeHist(img_planes[i], img_planes[i]);
-
-	//Merge the equalized images related to the 3 channels
-	cv::merge(img_planes, img);
 }
 
 void TemplateMatching::computeHistViews(std::vector<cv::Mat> imgs)
