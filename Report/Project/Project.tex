@@ -89,12 +89,113 @@
 \end{minipage}
 {\let\newpage\relax\maketitle}
 
-\section{Goal of the experience}
-The goal of the experience was to 
-\section{Code Organization}
+\section{Project details}
+The goal of the experience was to estimate in an image the best match from a series of views of an object that we are trying to localize. 
+\begin{enumerate}
+\item{\textbf{Computation of $\gamma$-transform}\\
+this transform was applied to increase the constrast and stretch very high values in the images. In fact the values of the gamma values are all greater than 1. This transformation was applied only to views because of very strong brightness in them.}
+\item{\textbf{Computation of Canny detection}\\
+Canny detector is applied to test images and also to $\gamma$-transformed views.}
+\item{\textbf{Matching phase}\\
+this phase is performed using two different approaches, depending on specification of optional argument \texttt{-dist} (see Section \ref{args}). These approaches are:
+\begin{itemize}
+\item{\textbf{Template Matching with distance transform}\\
+The distance transformed is applied to each test image and then the function \texttt{cv::matchTemplate()} is applied to the result of the transform using Canny detected view as template. Then I search the max value in the resulting matrix and using the position of that pixel as the position of the template for the match. With this approach I take only the ten best matches for each image, as specified in the assignment. The score value used to establish the best matches is the value contained in the max entry of result matrix.
+}
+\item{\textbf{Template Matching with histogram refinement}\\
+The matching is performed applying \texttt{cv::matchTemplate()} on the test image with detected edges and using view image with detected edges as template. To improve the results obtained, I don't take only the 10 best results but the 50 best results and then apply a refinement algorithm based on histogram, established using the same score of previous method. For each match previously computed a subwindow, related to the position of found match and with size equal to the related view, is computed and filtered with the mask related to the view of the match. This RGB subwindow of the original test image is then converted to the HSV space and its histogram of the Hue channel is computed. The resulting histogram is then compared with the Hue histogram of the original view image using \texttt{cv::compareHist()}. The final score of a match is the following:
+$$final\_score=\alpha*match\_score + \beta*hist\_score$$
+where \textit{match\_score} is the score obtained by applying only \texttt{cv::matchTemplate()} and \textit{hist\_score} is the score obtained by \texttt{cv::compareHist()}. Hence from the set of 50 best matches only 10 best matches survive.}
+\end{itemize}
+}
+\item{\textbf{Generation of result txt files and result images}\\
+for each mask of 10 best matches, its egdes are highlighted in red and printed in position evaluated before over the image. For each dataset the matches are written in the corresponding result txt file.}
+\end{enumerate}
 
-\section{Command line parameters}
+\subsection{Performance}
 
-\section{Experimental results}
+\subsection{Experimental results}\label{exp}
 I tried also to equalize images to increase contrast in the image but the results were worst than obtained ones without it.
+\section{Code}
+\subsection{Command line parameters}\label{args}
+The program needs to have, as command line arguments, the following ones with the specified format:
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[linewidth=320pt, basicstyle=\footnotesize\sffamily,]
+-i input_path [-r results_path] [-o output_path] [-h] [-dist]
+\end{lstlisting}
+\end{tabular}
+\end{center}
+\begin{table}[h]
+\footnotesize\centering
+\begin{tabular}{rl}
+\textbf{-i input\_path} & {\textit{Mandatory argument}}\\
+& {input\_path is the folder that contains the subfolders of the three datasets(\texttt{can/}, \texttt{driller/} and \texttt{duck/})}.\\
+& {Each one of this folders must contains also, as specified in the assignment of the project, the two}\\
+&{subfolders \texttt{models/} and \texttt{test\_images/}.}\\
+&\\
+\textbf{-r results\_path} & {\textit{Optional argument}}\\
+& {results\_path is the folder that will contain the txt files describing the ten best matches for each image}\\
+& {(\texttt{can\_results.txt}, \texttt{driller\_results.txt} and \texttt{duck\_results.txt}).}\\
+& {If this argument isn't specified by the user, the txt files are going to be stored in "default" path \texttt{../../../}}\\
+&\\
+\textbf{-o output\_path} & {\textit{Optional argument}}\\
+& {output\_path represents the path in which the program will save all the test\_images, modified by printing}\\
+&{the edges detected through Canny of the mask of the 10 best matches.}\\
+&{These are written on the image using red color and the name of the related model is shown in the high left }\\
+&{corner of the image.} \\
+& {If this argument isn't specified, the result images with highlighted matches are not going to be store on disk.}\\
+&\\
+\textbf{-h} & {\textit{Optional argument}}\\
+& {if this argument is specified, even if there are other arguments, the program exits printing the description}\\
+&{of possible command line arguments.}\\
+&\\
+\textbf{-dist} & {\textit{Optional argument}}\\
+& {if this argument is specified, distance transform method will be used in the computation of best matches,}\\
+&{otherwise it will be used histogram refinement.}\\
+\end{tabular}
+\end{table}
+
+\subsection{Code Organization}
+The program is organized in 13 files that we can organized, looking to their functionalities, into the following sets:
+\begin{itemize}
+\item{\textbf{Template matching}\\
+It's composed by \texttt{TemplateMatching.hpp} and \texttt{TemplateMatching.cpp} files that implement the two methods used in the program to estimate the best matches.
+}
+\item{\textbf{Gamma transform}\\
+It's composed by \texttt{GammaTransform.hpp} and \texttt{GammaTransform.cpp} files that implement the gamma transform, used in the program to change the contrast of test images. 
+}
+\item{\textbf{Menu}\\
+It's composed by \texttt{Menu.hpp} and \texttt{Menu.cpp} files that implement the parser of the command line arguments and manage the lines to be shown on the screen.
+}
+\item{\textbf{Main activity}\\
+It's composed by \texttt{Project.hpp} and \texttt{Project.cpp} that manage threads that perform Template Matching.
+}
+\item{\textbf{Canny detection}\\
+It's composed by \texttt{CannyDetector.hpp} and \texttt{CannyDetector.cpp} that compute Canny Detection for a specified image.
+}
+\item{\textbf{Storing of best matches}\\
+It's composed by \texttt{BestResults.hpp} and \texttt{BestResults.cpp} that implement the classes:
+\begin{itemize}
+\item{\texttt{Result}\\
+it constructs the entity of result of match and implements the methods needed to access to its fields.
+}
+\item{\texttt{BestResults}\\
+it constructs the buffer of results and manage the update of best matches for each image.
+}
+\end{itemize}
+}
+\item{\textbf{Utility constants}\\
+It's composed by \texttt{Utility.hpp} file and implements some usefull values:
+\begin{itemize}
+\item{Color used in log printing}
+\item{Color used in Menu}
+\item{Color used for printing the mask name and the edges of the matched mask in the result image}
+\item{Gamma values for Gamma Transform}
+\item{Threshold values for Canny Detection}
+\item{Threshold values for Canny Detection}
+\item{Name of subfolders needed to load images of datasets provided by user}
+\end{itemize}
+}
+\end{itemize}
 \end{document}
