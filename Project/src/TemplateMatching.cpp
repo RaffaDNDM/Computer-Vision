@@ -111,7 +111,7 @@ void TemplateMatching::cannyDetection()
 	{
 		cv::Mat tmp = img.clone();
 		g.computeTransform(img, tmp);
-		CannyDetector cd(img, _dataset_type, _param.threshold_template - 30.0, _param.threshold_template);
+		CannyDetector cd(img, _dataset_type, _param.threshold_template - Utility::view_range_Canny, _param.threshold_template);
 		cd.detect();
 
 		_canny_views.emplace_back(cd.getResult());
@@ -211,7 +211,7 @@ void TemplateMatching::match()
 		cv::Point max_pos;
 
 		BestResults r2(10);
-		CannyDetector cd(img.clone(), _dataset_type, _param.threshold_test-40.0, _param.threshold_test);
+		CannyDetector cd(img.clone(), _dataset_type, _param.threshold_test-Utility::test_range_Canny, _param.threshold_test);
 		cd.detect();
 
 		if (_distance_transform)

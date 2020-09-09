@@ -68,6 +68,9 @@ namespace Utility
 		R
 	};
 
+	//Gamma values for gamma transform for each dataset type
+	const std::vector<float> gammas = { 1.4f, 1.3f, 1.4f };
+	
 	//Thresholds for Canny detection of a dataset 
 	struct Parameter {
 		double threshold_test; //Threshold for test images
@@ -80,8 +83,9 @@ namespace Utility
 		                                          {100.0, 100.0} }; //DUCK thresholds
 	
 	
-	//Gamma values for gamma transform for each dataset type
-	const std::vector<float> gammas = { 1.4f, 1.3f, 1.4f };
+	const double view_range_Canny = 30.0f;
+	const double test_range_Canny = 40.0f;
+
 	//Subfolders of user folder on which we can find input images [MASKS, VIEWS, TEST]
 	const std::vector<cv::String> sub_folders = { "/models", "/models", "/test_images" };
 	//Patterns of image extensions and names w.r.t. types of input images [MASKS, VIEWS, TEST]
