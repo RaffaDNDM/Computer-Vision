@@ -16,20 +16,31 @@ TemplateMatching::TemplateMatching(cv::String input_path, cv::String results_pat
 	_distance_transform{_distance_transform}
 {
 	//Definition of path for actual dataset looking to termination character	
-	loadImages(pathFormat(input_path) + Utility::types[static_cast<int>(dataset_type)]);
+	try
+	{
+		loadImages(pathFormat(input_path) + Utility::types[static_cast<int>(dataset_type)]);
 
-	//If specified by user, I use the specified path otherwise the default one
-	if (results_path != "")
-		_results_path = pathFormat(results_path);
+		//If specified by user, I use the specified path otherwise the default one
+		if (results_path != "")
+			_results_path = pathFormat(results_path);
 
-	_fs.open(_results_path + Utility::types[static_cast<int>(_dataset_type)] + "_results.txt", std::fstream::out);
+		_fs.open(_results_path + Utility::types[static_cast<int>(_dataset_type)] + "_results.txt", std::fstream::out);
 
-	_output_path = (output_path != "")? pathFormat(output_path) : output_path;
-	
+		_output_path = (output_path != "") ? pathFormat(output_path) : output_path;
+	}
+	catch (InputIMGException e)
+	{
+		mutex.lock();
+		std::cout << Utility::Menu::error << "Problem reading input images" << DEFAULT << std::endl;
+		exit(0);
+		mutex.unlock();
+	}
 }
 
 cv::String TemplateMatching::pathFormat(cv::String path)
 {
+	//I assume that user inserting slashes in path, write them in correct orientation
+	//for Windows or Linux machine on which the program is running
 	if (path.back() != '\\' && path.back() != '/')
 		return path + "/";
 	else
@@ -43,7 +54,15 @@ void TemplateMatching::loadImages(cv::String path)
 	for (; i<static_cast<int>(Utility::PatternIMG::SET_IMAGES); i++)
 	{
 		std::vector<cv::String> imgs_names;
-		cv::utils::fs::glob(path+ Utility::sub_folders[i], Utility::patterns[i], imgs_names);
+		
+		try 
+		{
+			cv::utils::fs::glob(path + Utility::sub_folders[i], Utility::patterns[i], imgs_names);
+		}
+		catch (std::exception e)
+		{
+			throw InputIMGException();
+		}
 
 		/*
 			Problems with detection of elements with this pattern in the actual subfolder
@@ -291,10 +310,10 @@ void TemplateMatching::printBestMatch(BestResults best_results, cv::Mat img)
 	
 	for(int k=results.size()-1; k>=0; k--)
 	{
-		std::cout << Utility::colors[static_cast<int>(_dataset_type)] << "image " << results[k].getImageIndex() << ":" DEFAULT << std::setw(8)
+		std::cout << Utility::colors[static_cast<int>(_dataset_type)] << "test " << results[k].getImageIndex() << ":" DEFAULT << std::setw(8)
 			<< std::right << " mask" + std::to_string(results[k].getMaskIndex()) << Utility::colors[static_cast<int>(_dataset_type)]
 			<< " >>> " << DEFAULT << std::setw(11) << std::left << results[k].getScore() << Utility::colors[static_cast<int>(_dataset_type)]
-			<< " in " << DEFAULT << "(" << results[k].getPoint().y << "," << results[k].getPoint().x << ")" << std::endl;
+			<< " in " << DEFAULT << "(" << results[k].getPoint().x << "," << results[k].getPoint().y << ")" << std::endl;
 	}
 
 	mutex.unlock();

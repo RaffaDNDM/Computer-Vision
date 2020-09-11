@@ -20,6 +20,7 @@
 \usepackage{cite}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{hyperref}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -55,6 +56,14 @@
   tabsize=2
 }
 
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={blue!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
 \title{\textbf{Report about Project}} % Title
 \author{Raffaele \textsc{Di Nardo Di Maio} 1204879} % Author name
 \date{\today}
@@ -73,27 +82,28 @@
 \end{minipage}
 {\let\newpage\relax\maketitle}
 
-\section{Project details}\label{details}
-The goal of the experience was to estimate in an image the best match from a series of views of an object that we are trying to localize. 
+\section{Method used}
+\subsection{Project details}\label{details}
+The goal of the experience was to find in an image the best match from a set of views of an object that we are trying to localize. The steps followed by the implemented program, to reach the goal, are the following:
 \begin{enumerate}
 \item{\textbf{Computation of $\gamma$-transform}\\
-this transform was applied to increase the contrast and stretch very high values in the images. In fact the values of the gamma values are all greater than 1. This transformation was applied only to views because of very strong brightness in them.}
+the used gamma values are all greater than 1. This transform is applied to increase the contrast and stretch very high pixel values in an image. This operation is performed only on views because of their very high brightness.}
 \item{\textbf{Computation of Canny detection}\\
-Canny detector is applied to test images and also to $\gamma$-transformed views.}
+Canny detector is applied to the test images and also to the $\gamma$-transformed views.}
 \item{\textbf{Matching phase}\\
-this phase is performed using two different approaches, depending on specification of optional argument \texttt{-dist} (see Section \ref{args}). These approaches are:
+this phase is performed using two different approaches, depending on the specification of the optional argument \texttt{-dist} (see Section \ref{args}). These approaches are:
 \begin{itemize}
 \item{\textbf{Template Matching with distance transform}\\
-The distance transformed is applied to each test image and then the function \texttt{cv::matchTemplate()} is applied to the result of the transform using Canny detected view as template. The metric used is the \textit{Template Matching Correlation Coefficient (TM\_CCOEF} in opencv\textit{)}. Then I search the max value in the resulting matrix and using the position of that pixel as the position of the template for the match. With this approach I take only the ten best matches for each image, as specified in the assignment. The score value used to establish the best matches is the value contained in the max entry of result matrix.
+The distance transform is applied to each test image with detected edges. Then the function \texttt{cv::matchTemplate()} is applied to the result of the transform using, as templates, the views on which Canny was applied. The metric used is the \textit{Correlation Coefficient (TM\_CCOEF} in opencv\textit{)}. Then the max value of an element in the resulting matrix is kept and its position is used as the location of the template for the corresponding match. With this approach I take only the ten best matches for each image, as specified in the assignment, by looking only at the best matches of each view in that image. The score value used to establish the best matches is the value contained in the max entry of the result matrix.
 }
 \item{\textbf{Template Matching with histogram refinement}\\
-The template matching is performed looking to TM\_CCOEF as in the previous approach on the test image with detected edges and using view image with detected edges as template. To improve the results obtained, I don't take only the 10 best matches but the 50 best results and then I apply a refinement algorithm based on histogram. For each previously computed match I compute a sub-window, related to the position of found match and with size equal to the related view, and I filter it with the corresponding mask. This RGB sub-window of the original test image is then converted to the HSV space and its histogram of the Hue channel is computed. The resulting histogram is then compared with the Hue histogram of the original view image using \texttt{cv::compareHist()}. The final score of a match is the following:
+Template matching is performed on the test image (on which Canny was applied) and using view images processed with Canny as templates, looking at TM\_CCOEF as in the previous approach. To improve the results obtained, I don't take only the 10 best matches for a test image but the 50 best results and then I apply a histogram-based refinement algorithm. For each one of the 50 matches I take a sub-window, related to the position of the match and with size equal to the related view, and I filter it with the corresponding mask. This RGB sub-window of the original test image is then converted to the HSV space and the histogram of its Hue channel is computed. The resulting histogram is then compared with the Hue histogram of the original view image using \texttt{cv::compareHist()}. The final score assigned to a match is the composition of the sliding window score and the histogram comparison score:
 $$final\_score=\alpha*match\_score + \beta*hist\_score$$
-where \textit{match\_score} is the score obtained by applying only \texttt{cv::matchTemplate()} and \textit{hist\_score} is the score obtained by \texttt{cv::compareHist()}. Hence from the set of 50 best matches only 10 best matches survive.}
+where \textit{match\_score} is the score obtained by applying only \texttt{cv::matchTemplate()} and \textit{hist\_score} is the score obtained through \texttt{cv::compareHist()}. Hence from the initial set of 50 best matches obtained through template matching, based on sliding window, I only take the 10 best matches w.r.t. new final score.}
 \end{itemize}
 }
 \item{\textbf{Generation of result text files and result images}\\
-for each mask of 10 best matches, its egdes are highlighted in red and printed in position evaluated before over the image (see Figure \ref{example_matching}). Each result image has a name with this format:
+for each of the 10 best matches, the edges of its mask are highlighted in red and printed on the position evaluated before over the image. Each result image has a name with this format:
 \begin{center}
 \begin{tabular}{c}
 \begin{lstlisting}[linewidth=120pt, basicstyle=\footnotesize\sffamily,]
@@ -101,57 +111,15 @@ datasetNum_matchNum.jpg
 \end{lstlisting}
 \end{tabular}
 \end{center}
-where \texttt{datasetNum} is the name of the dataset folder (it can be \textit{can}, \textit{driller} or \textit{duck}) followed by the number of the corresponding test image and \textbf{matchNum} is the number of the corresponding mask/view.
-For each dataset the matches are written in the corresponding result text file with format specified in the assignment.}
+where \texttt{datasetNum} is the name of the dataset folder (it can be \textit{can}, \textit{driller} or \textit{duck}) followed by the number of the corresponding test image and \texttt{matchNum} is an integer number in $[0,9]$ that identifies the quality of the score of a match in the set of 10 best matches (\texttt{0} for higher score, \texttt{9} for lower score).\\
+The edges of the view that matches in the test image are highlighted in red. For each dataset the matches are written in the corresponding results text file with the format specified in the assignment.}
 \end{enumerate}
-\begin{figure}[H]
-\begin{subfigure}{.5\textwidth}
-  \centering
-  % include first image
-  \includegraphics[width=.9\linewidth]{Images/can_dist.jpg}
-  \caption{can0\_0.jpg}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
-  \centering
-  % include second image
-  \includegraphics[width=.9\linewidth]{Images/can_refinement.jpg}  
-  \caption{can0\_0.jpg}
-\end{subfigure}
-\newline
-\begin{subfigure}{.5\textwidth}
-  \centering
-  % include third image
-  \includegraphics[width=.9\linewidth]{Images/driller_dist.jpg}  
-  \caption{driller0\_0.jpg}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
-  \centering
-  % include fourth image
-  \includegraphics[width=.9\linewidth]{Images/driller_refinement.jpg}  
-  \caption{driller0\_0.jpg}
-\end{subfigure}
-\newline
-\vspace{0.5cm}
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.9\linewidth]{Images/duck_dist.jpg}  
-  \caption{duck0\_0.jpg}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
-  \centering
-  % include fourth image
-  \includegraphics[width=.9\linewidth]{Images/duck_refinement.jpg}  
-  \caption{duck0\_0.jpg}
-\end{subfigure}
-\caption{Example of result images with highlighted detected edges of views (left for Distance Transform approach, right for Histogram Refiniment approach).}
-\label{example_matching}
-\end{figure}
 
 \subsection{Experimental results}\label{exp}
-Looking to details of previous analysed steps of the implementation, I explain the reasons and the results obtained with the previous operations:
+Looking at the details of the previously analysed steps of the implementation, I explain the reasons and the results obtained with the previous operations:
 \begin{enumerate}
 \item{\textbf{Computation of $\gamma$-transform}\\
-The $\gamma$-transform was applied after different trials because of the precence of too many week edges and the colours of the views. Instead of using this transform, I tried also to equalize images before but the results were worst than obtained ones without any single-pixel operations. After different trials, the final values of $\gamma$ in $\gamma$-transform applied to each set of views are the following:
+The $\gamma$-transform was applied after different trials because of the presence of too many weak edges and because of the colours of the views. Instead of using this transform, I tried to equalize the images but the results were worse than those obtained without any single-pixel operations. After several trials, the final values of $\gamma$ in $\gamma$-transform applied to each set of views are the following:
 \begin{table}[H]
 \footnotesize\centering
 \begin{tabular}{rccc}
@@ -161,11 +129,11 @@ The $\gamma$-transform was applied after different trials because of the precenc
 {$\mathtt{\gamma}$} & {1.4} & {1.3} & {1.4}\\
 \hline
 \end{tabular}
-\caption{\footnotesize{$\gamma$ values for $\gamma$-transform applied on views of each dataset.}}
+\caption{$\gamma$ values for $\gamma$-transform applied on views of each dataset.}
 \end{table}
 }
 \item{\textbf{Computation of Canny detection}\\
-For each dataset I defined two different high threshold of Canny detector for each dataset: the first for the views and the second for test images. Then looking to the results obtained, I assigned to low thresholds of Canny detector the value of the high thresholds decreased of a specific quantity: 30 for views and 40 for test images. The values for high thresholds are the following:
+For each dataset I defined two different high thresholds of the Canny detector for each dataset: the first for the views and the second for the test images. Then, looking at the results obtained, I assigned to the low thresholds of Canny detector the values of the high thresholds decreased by a specific quantity: 30 for views and 40 for the test images. The values for high thresholds are the following:
 \begin{table}[H]
 \footnotesize\centering
 \begin{tabular}{rccc}
@@ -177,42 +145,73 @@ For each dataset I defined two different high threshold of Canny detector for ea
 \textbf{views} & {100.0} & {160.0} & {100.0}\\
 \hline
 \end{tabular}
-\caption{\footnotesize{High thresholds for Canny detector.}}
+\caption{High thresholds for the Canny detector.}
 \end{table}
-The values of high thresholds are both smaller than other ones for \textit{duck} dataset because of need of more details for detection of shape of wing and beak.
+The high thresholds of the \textit{duck} dataset are both smaller than the others  because more details are needed to correctly detect the shape of the wing and the beak of the object.
 }
 \item{\textbf{Matching phase}\\
-In this phase for each image of each dataset, the two methods obtain both all the best feasible matches. For both approaches, the matching was more simple on \textbf{can} dataset and very complex for several images of \textbf{driller} and \textbf{duck} datasets. In particular the method with distance transform is more efficient in terms of memory occupation because it stores less results.
-In many images the histogram refinement approach obtains best results with wrong matches, positioning matches around the zone of the object to search even if they have a little bit wrong shapes.\\
-The main problem of first method based on histogram refinement was to find the best thresholds for Canny detection for \texttt{driller} and \texttt{duck} because of some problems based on the shapes. In particular for \texttt{driller} matching, too small values for high Canny threshold help me to identify better the object in some images but loosing the correct matches on other ones. The same happens with too big values for high Canny threshold.\\
-The reason comes from the level of contrast of different images and the smoothness of someone, that was very highlighted in several \textbf{can} images. The histogram comparison was performed only on Hue channel because of difference saturation and value of test image object and the corresponding model. For the same reason, to enhance the accuracy of comparison I did not work in RGB colour space. I tried another approach to estimate final score from histogram comparison without combining it with the previous one. I try to use only the histogram comparison score to discover from the set of 50 best matches the new 10 best ones. I used two approaches: 
+In this phase for each image of each dataset, the two methods obtain both all the best feasible matches. In several cases the correct match isn't the match with highest score (e.g. Figure \ref{example_matching}). For both approaches, the matching was more simple on the \texttt{can} dataset and very complex for images of the \texttt{driller} and \texttt{duck} datasets.\\
+The main problem of these methods based on histogram refinement was to find the best thresholds for Canny detection of \texttt{driller} and \texttt{duck} because of many problems based on their shapes. In particular for \texttt{driller} matching, too small values for the high Canny threshold help me to identify better the object in some images but increase the loss of correct matches on other ones. The same happens with too big values for the high Canny threshold. The reason comes from the level of contrast of different images and the smoothness of some of them.\\
+In particular, the method with the distance transform is more efficient in terms of memory occupation because it stores less results.
+As explained before, the histogram comparison performed during the Refinement phase only involved the Hue channel of the HSV colour space. I did not work with the RGB colour space because the test image objects and their corresponding models differed in luminosity and saturation. I tried another approach to estimate the final score from the histogram comparison without combining it with the previous one. I tried to use only the histogram comparison score to discover, from the set of 50 best matches, the new 10 best ones. The two approaches implemented were: 
 \begin{itemize}
-\item{Take only matches with the score of histogram comparison greater than a specified threshold}
-\item{Take the 10 matches with highest score of histogram comparison}
+\item{take only matches with the histogram comparison score greater than a specified threshold;}
+\item{take the 10 matches with the highest histogram comparison score}
 \end{itemize}
-For both methods, I notice that having higher scores of histogram comparison doesn't mean that there will not be false positive. In fact there were a lot of wrong matches and for this reason I decide to give an higher weight to previous Template Matching score and combine them in the following final score:
-$$final\_score=100*match\_score + hist\_score$$}
+For both methods, I noticed that having higher histogram comparison scores doesn't mean that there will not be false positives. For this reason I decided to give a higher weight to the previous Template Matching score and combine it with the histogram comparison score in the following way:
+$$final\_score=100*match\_score + hist\_score$$
+The coefficients were computed after trying several combinations of them.}
 \end{enumerate}
+\begin{figure}[H]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  % include third image
+  \includegraphics[width=.9\linewidth]{Images/driller_score1.jpg}  
+  \caption{Match with the highest score on test1.jpg.}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  % include fourth image
+  \includegraphics[width=.9\linewidth]{Images/driller_best1.jpg}  
+  \caption{Correct match on test1.jpg.}
+\end{subfigure}
+\newline
+\vspace{0.5cm}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{Images/driller_score3.jpg}  
+  \caption{Match with the highest score on test3.jpg.}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  % include fourth image
+  \includegraphics[width=.9\linewidth]{Images/driller_best3.jpg}  
+  \caption{Correct match on test3.jpg.}
+\end{subfigure}
+\caption{Comparison between the highest score match and the correct match on two images of the \texttt{driller} dataset.}
+\label{example_matching}
+\end{figure}
+
 \section{Code}
 \subsection{Performance}
-The program can run analysing only one dataset or all the datasets in parallel. The management of this behaviour was done by using threads. Each thread performs the template matching on a dataset and the terminal window, for log printing, is the only resource managed using mutual exclusion.\\
+The program can analyse only one dataset or all the datasets in parallel. The management of this behaviour was done using threads. Each thread performs the template matching on a dataset and the terminal window, for log printing, is the only resource managed using mutual exclusion.\\
 Referencing to Section \ref{details}, I'm going to discuss the little tricks that I used to improved efficiency of the phases of the algorithm:
 \begin{enumerate}
 \item{\textbf{Computation of $\gamma$-transform}\\
-To reduce the number of computation performed by the gamma transform, I compute only once, at the creation of the object related to Gamma Transform, a vector of size equal to the number of levels that has in position \textit{i} the value of the $\gamma$-transform for the input \textit{i}.}
+At the instantiation of the GammaTransform object, I create a vector of size equal to the number of pixel levels to reduce the computational complexity. In position \textit{i} of this vector there is the value of the $\gamma$-transform for the input level \textit{i}. In this way all the following computations of gamma transform on an image require only $O(M*N*channels)$ accesses in that vector where $M*N$ is the size of the image and $channels$ is its number of channels.}
 \item{\textbf{Computation of Canny detection}\\
-The computation of Canny detection for each view image is performed before the Matching phase and the results are stored. In this way then we need to compute the edges only once for each test image.
+The computation of Canny detection for each view image is performed before the Matching phase and the results are stored. In this way then we need to compute the edges only once for each test image but no more for each view image.
 }
 \item{\textbf{Matching phase}\\
-To improve the efficiency of the buffer containing the best matches for each image of each dataset, I use a sorted vector (sorted by increasing score of matching) and I insert every element without loosing the sort. Every time that I obtain the best position/score of a mask in the template matching, I try to insert it in the best results buffer following this approach:\\\\
+To improve the efficiency of the buffer containing the best matches for each image, I use a sorted vector (by increasing score of matches). Every time that I obtain the best position/score of a mask in the image, I try to insert it in the buffer following this approach:\\\\
 \begin{minipage}{.999\linewidth}
 \begin{algorithm}[H]
 \DontPrintSemicolon
 \BlankLine
   \If{$\mathtt{buffer}\;is\;full$}{
     \BlankLine
-	\If{$\mathtt{match}.score < \;\mathtt{buffer[0]}.score$}{
-	  	$buffer.insert\_ordered(element)$
+	\If{$\mathtt{match}.score > \;\mathtt{buffer[0]}.score$}{
+	  	$buffer.insert\_ordered(element)$;
 	}
     \BlankLine
   }
@@ -224,20 +223,21 @@ To improve the efficiency of the buffer containing the best matches for each ima
 \end{algorithm}
 \end{minipage}
 \vspace{0.5 cm}
-\\The insertion is based on the search of the position in the buffer for which the new match has a score that maintains sorted the vector. The manage of best matches for the created methods is done in the following way:
+\\The insertion is based on the search of the position in the buffer that maintains sorted the vector even if the new element is inserted. In my program was implemented using a \texttt{std::vector}. In this way if the vector was already composed by the maximum number of elements, I find the position for the new match and I insert it. Then I immediately remove the first element of the buffer, that has the minimum score w.r.t. all the others. The two template matching approaches use buffers of different sizes, as explained in the following lines:
 \begin{itemize}
 \item{\textbf{Template Matching with distance transform}\\
-for each test image a buffer of max size equal to 10 is created. In the first buffer the best match of each view is inserted in the buffer with score obtained by \texttt{cv::matchTemplate()}.
+for each test image a buffer of max size equal to 10 is created. The best match of each view is inserted in the buffer with the score obtained from \texttt{cv::matchTemplate()}.
 }
 \item{\textbf{Template Matching with histogram refinement}\\
-for each test image a buffer of max size equal to 50 and then a buffer of max size equal to 10 are created. In the first buffer the best match of each view is inserted in the buffer with score obtained by \texttt{cv::matchTemplate()}. After inserting all the best matches for that image, I insert all of them in the second buffer with the score equal to final\_score, previously described.}
+for each test image a buffer of max size equal to 50 is created. The best match of each view is inserted in the buffer with the score obtained from \texttt{cv::matchTemplate()}. Then a new buffer of max size equal to 10 is created. After reading all the best matches from the first buffer, I insert them in the second buffer using the \textit{final\_score} previously described.}
 \end{itemize}
 }
 \item{\textbf{Generation of result text files and result images}\\
-If the user decides to analyse all the datasets in parallel, each thread performs the creation of text result files and writes in each of them. The same happens for the creation of the images with 10 best detected matches. The use of threads was first of all added to write in parallel these files without loosing too much time.}
+If the user decides to analyse all the datasets in parallel, each thread creates the text result files and writes in each of them. The same happens for the creation of the images with 10 best detected matches. The use of threads was intended to write in parallel these files without loosing too much time. All the results were written in reverse order w.r.t. the buffer of results. This is because the buffer is sorted w.r.t. increasing score value but the detected object are printed from higher to lower best score values.}
 \end{enumerate}
-\subsection{Command line parameters}\label{args}
-The program needs to have, as command line arguments, the following ones with the specified format:
+
+\subsection{Program execution}\label{args}
+The program needs to receive the following command line arguments with the specified format:
 \begin{center}
 \begin{tabular}{c}
 \begin{lstlisting}[linewidth=320pt, basicstyle=\footnotesize\sffamily,]
@@ -249,32 +249,32 @@ The program needs to have, as command line arguments, the following ones with th
 \footnotesize\centering
 \begin{tabular}{rl}
 \textbf{-i input\_path} & {\textit{Mandatory argument}}\\
-& {input\_path is the existing folder that contains the sub-folders of the three datasets(\texttt{can/}, \texttt{driller/} and \texttt{duck/})}.\\
-& {Each one of this folders must contains also, as specified in the assignment of the project, the two}\\
-&{sub-folders \texttt{models/} and \texttt{test\_images/}.}\\
+& {\texttt{input\_path} is the existing folder that contains the sub-folders of the three datasets (\texttt{can/}, \texttt{driller/} and}\\
+& {\texttt{duck/}). Each one of these sub-folders must also contain, as specified in the assignment of the project,}\\
+&{the two sub-folders \texttt{models/} and \texttt{test\_images/}.}\\
 &\\
 \textbf{-r results\_path} & {\textit{Optional argument}}\\
-& {results\_path is the existing folder that will contain the text files describing the ten best matches for each}\\
+& {\texttt{results\_path} is the existing folder that will contain the text files describing the ten best matches for each}\\
 & {image (\texttt{can\_results.txt}, \texttt{driller\_results.txt} and \texttt{duck\_results.txt}).}\\
-& {If this argument isn't specified by the user, the text files are going to be stored in "default" path \texttt{../../../}}\\
+& {If this argument isn't specified by the user, the text files are stored by "default" path \texttt{../../../}}\\
 &\\
 \textbf{-o output\_path} & {\textit{Optional argument}}\\
-& {output\_path is the existing path in which the program will save all the test\_images, modified by printing}\\
-&{the edges detected through Canny of the mask of the 10 best matches.}\\
-&{These are written on the image using red color and the name of the related model is shown in the high left }\\
+& {\texttt{output\_path} is the existing path in which the program will save all the test\_images, modified by printing}\\
+&{the edges (detected through Canny) of the views corresponding to the 10 best matches.}\\
+&{These are written in red on the image and the name of the related model is shown in the top-left.}\\
 &{corner of the image.} \\
-& {If this argument isn't specified, the result images with highlighted matches are not going to be store on disk.}\\
+& {If this argument isn't specified, the result images with highlighted matches are not going to be stored on disk.}\\
 &\\
 \textbf{-h} & {\textit{Optional argument}}\\
 & {if this argument is specified, even if there are other arguments, the program exits printing the description}\\
 &{of possible command line arguments.}\\
 &\\
 \textbf{-dist} & {\textit{Optional argument}}\\
-& {if this argument is specified, distance transform method will be used in the computation of best matches,}\\
-&{otherwise it will be used histogram refinement.}\\
+& {if the argument is specified, the distance transform method will be used in the computation of the best}\\
+&{matches, otherwise the histogram refinement method will be used instead.}\\
 \end{tabular}
 \end{table}
-The parser that process the command line arguments, detects also if some parameter is present twice and if "-i", "-r", "-o" are typed without the specified paths. An example of possible command on terminal on Windows can be the following:
+The parser that processes the command line arguments also detects if any of them is inserted twice and if "-i", "-r", "-o" are typed without the specified paths. An example of a possible command on the terminal on Windows is the following:
 \begin{center}
 \begin{tabular}{c}
 \begin{lstlisting}[linewidth=390pt, basicstyle=\footnotesize\sffamily,]
@@ -282,46 +282,68 @@ The parser that process the command line arguments, detects also if some paramet
 \end{lstlisting}
 \end{tabular}
 \end{center}
-After running the program, a Menu page will be display and the user can interact with it, selecting if he wants to apply Template Matching on a single dataset or in parallel to all the datasets. The user can also exit from the program using this menu that will be displayed again at the end of the computation desired.
-\subsection{Code Organization}
-The program is organized in 13 files that we can organized, looking to their functionalities, into the following sets:
+After running the program, a menu page will be displayed and the user can interact with it, selecting if he wants to apply Template Matching on a single dataset or in parallel to all the datasets (see Figure \ref{menu} and \ref{parallel_log}). The user can also exit from the program using this menu that will be displayed again at the end of the desired computation. To select an option, the user needs to type the number related to the action that he wants to perform.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.5\linewidth]{Images/menu.png}
+\caption{Appearance of the initial Menu.}
+\label{menu}
+\end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  % include second image
+  \includegraphics[width=.9\linewidth]{Images/parallel_init.png}
+\caption{Initial program log with the description of the input.}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  % include second image
+  \includegraphics[width=.9\linewidth]{Images/parallel_run.png}
+\caption{Log with image number, matched mask, score and position of the mask.}
+\end{subfigure}
+  \caption{Logs during execution on all datasets in parallel.}
+  \label{parallel_log}
+\end{figure}
+\subsection{Code Organisation}
+The program is composed by 13 files organized, looking to their functionalities, into the following sets:
 \begin{itemize}
 \item{\textbf{Template matching}\\
-It's composed by \texttt{TemplateMatching.hpp} and \texttt{TemplateMatching.cpp} files that implement the two methods used in the program to estimate the best matches.
+It's composed by the \texttt{TemplateMatching.hpp} and \texttt{TemplateMatching.cpp} files that implement the class used to perform the two methods for estimating the best matches.
 }
-\item{\textbf{Gamma transform}\\
-It's composed by \texttt{GammaTransform.hpp} and \texttt{GammaTransform.cpp} files that implement the gamma transform, used in the program to change the contrast of test images. 
+\item{\textbf{$\gamma$-transform}\\
+It's composed by the \texttt{GammaTransform.hpp} and \texttt{GammaTransform.cpp} files that implement the class used to perform the $\gamma$-transform. 
 }
 \item{\textbf{Menu}\\
-It's composed by \texttt{Menu.hpp} and \texttt{Menu.cpp} files that implement the parser of the command line arguments and manage the lines to be shown on the screen.
+It's composed by the \texttt{Menu.hpp} and \texttt{Menu.cpp} files that implement the static class with parser of the command line arguments and management of menu printing on screen.
 }
 \item{\textbf{Main activity}\\
-It's composed by \texttt{Project.hpp} and \texttt{Project.cpp} that manage threads that perform Template Matching.
+It's composed by the \texttt{Project.hpp} and \texttt{Project.cpp} files that implement the main function and manage threads to perform Template Matching.
 }
 \item{\textbf{Canny detection}\\
-It's composed by \texttt{CannyDetector.hpp} and \texttt{CannyDetector.cpp} that compute Canny Detection for a specified image.
+It's composed by the \texttt{CannyDetector.hpp} and \texttt{CannyDetector.cpp} files that implement the class used to perform Canny Detection on a specific image.
 }
 \item{\textbf{Storing of best matches}\\
-It's composed by \texttt{BestResults.hpp} and \texttt{BestResults.cpp} that implement the classes:
+It's composed by the \texttt{BestResults.hpp} and \texttt{BestResults.cpp} files that implement the classes:
 \begin{itemize}
 \item{\texttt{Result}\\
-it constructs the entity of result of match and implements the methods needed to access to its fields.
+it defines the main information to be stored for each result of the matching approaches and implements the methods needed to access these fields.
 }
 \item{\texttt{BestResults}\\
-it constructs the buffer of results and manages the update of best matches for each image.
+it constructs the buffer of results and manages its update.
 }
 \end{itemize}
 }
 \item{\textbf{Utility constants}\\
-It's composed by \texttt{Utility.hpp} file and implements some useful values:
+It's composed by the \texttt{Utility.hpp} file and declares some useful variables:
 \begin{itemize}
-\item{Colour used in log printing}
-\item{Colour used in Menu}
-\item{Colour used for printing the mask name and the edges of the matched mask in the result image}
+\item{Colours used in log printing}
+\item{Colours used in Menu}
+\item{Colours used for printing the mask name and the edges of the matched mask in the result image}
 \item{Gamma values for Gamma Transform}
 \item{Threshold values for Canny Detection}
-\item{Threshold values for Canny Detection}
-\item{Name of sub-folders needed to load images of datasets provided by user}
+\item{Name of sub-folders needed to load images of datasets provided by the user}
 \end{itemize}
 }
 \end{itemize}
