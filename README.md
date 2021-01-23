@@ -1,5 +1,5 @@
 # Computer Vision Labs
-The datasets of images used in these lab can be downloaded on [Google Drive](https://drive.google.com/drive/folders/1b8I7EnS0JqlW9YGPakoY_DfkL4lha7R-)
+The datasets of images used in these lab can be downloaded on [Google Drive](https://drive.google.com/file/d/1YdR-IVwoLjmPVVhKQnajP2ShdHFd8ypb/view?usp=sharing)
 
 ### Code
 <details><summary><b><i>HelloWorld</b></i></summary>
